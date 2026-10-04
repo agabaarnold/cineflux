@@ -1,13 +1,7 @@
-import { create } from "axios";
-
-import { serverEnv } from "#/env/server.ts";
-
-const api = create({
-	baseURL: serverEnv.TMDB_BASE_URL,
-	headers: {
-		Authorization: `Bearer ${serverEnv.TMDB_READ_ACCESS_TOKEN}`,
-		"Content-Type": "application/json",
-	},
-});
-
-export default api;
+/**
+ * @deprecated Import from `#/server/tmdb/client.ts` instead.
+ * This shim keeps old imports working. The axios instance was removed
+ * so `TMDB_READ_ACCESS_TOKEN` stays server-only behind `tmdbFetch`.
+ */
+export { ApiError, tmdbFetch, tmdbFetchValidated } from "./tmdb/client";
+export type { TmdbRequestOptions } from "./tmdb/client";
