@@ -13,9 +13,11 @@ import {
 	genreSchema,
 	idSchema,
 	networkSchema,
+	nullableDateOrEmptySchema,
 	productionCompanySchema,
 	productionCountrySchema,
 	spokenLanguageSchema,
+	appendToResponseParamSchema,
 } from "./common";
 
 export const tvQueryParamsSchema = z.object({
@@ -28,11 +30,7 @@ export type TVQueryParams = z.infer<typeof tvQueryParamsSchema>;
 export const tvSeriesSchema = z.object({
 	adult: z.boolean().default(false),
 	backdrop_path: z.string().nullable(),
-	first_air_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-		z.null(),
-	]),
+	first_air_date: nullableDateOrEmptySchema,
 	genre_ids: z.array(z.number().int().positive()),
 	id: idSchema,
 	name: z.string().min(1),
@@ -52,11 +50,7 @@ export const tvSeriesResultsSchema = paginatedSchema(tvSeriesSchema);
 export type TVSeriesResults = z.infer<typeof tvSeriesResultsSchema>;
 
 export const episodeSchema = z.object({
-	air_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-		z.null(),
-	]),
+	air_date: nullableDateOrEmptySchema,
 	episode_number: z.number().int().nonnegative(),
 	id: idSchema,
 	name: z.string(),
@@ -71,20 +65,25 @@ export const episodeSchema = z.object({
 });
 export type Episode = z.infer<typeof episodeSchema>;
 
+const episodeGuestStarSchema = castSchema
+	.omit({ cast_id: true })
+	.partial()
+	.required({ credit_id: true, id: true });
+
+const episodeCrewSchema = crewSchema
+	.partial()
+	.required({ credit_id: true, id: true });
+
 export const episodeDetailsSchema = episodeSchema.extend({
-	crew: z.array(crewSchema),
+	crew: z.array(episodeCrewSchema),
 	episode_type: z.string(),
-	guest_stars: z.array(castSchema.omit({ cast_id: true })),
+	guest_stars: z.array(episodeGuestStarSchema),
 });
 export type EpisodeDetails = z.infer<typeof episodeDetailsSchema>;
 
 export const seasonDetailsSchema = z.object({
-	_id: z.string(),
-	air_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-		z.null(),
-	]),
+	_id: z.string().optional(),
+	air_date: nullableDateOrEmptySchema,
 	episodes: z.array(episodeDetailsSchema),
 	id: idSchema,
 	name: z.string(),
@@ -97,11 +96,7 @@ export const seasonDetailsSchema = z.object({
 export type Season = z.infer<typeof seasonDetailsSchema>;
 
 export const seasonSummarySchema = z.object({
-	air_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-		z.null(),
-	]),
+	air_date: nullableDateOrEmptySchema,
 	episode_count: z.number().int().nonnegative(),
 	id: idSchema,
 	name: z.string(),
@@ -125,21 +120,13 @@ export const TVSeriesDetailsSchema = z.object({
 		})
 	),
 	episode_run_time: z.array(z.number().int().nonnegative()),
-	first_air_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-		z.null(),
-	]),
+	first_air_date: nullableDateOrEmptySchema,
 	genres: z.array(genreSchema),
 	homepage: z.union([z.url(), z.literal(""), z.null()]),
 	id: idSchema,
 	in_production: z.boolean().default(true),
 	languages: z.array(z.string()),
-	last_air_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-		z.null(),
-	]),
+	last_air_date: nullableDateOrEmptySchema,
 	last_episode_to_air: episodeSchema.nullable(),
 	name: z.string().min(1),
 	next_episode_to_air: episodeSchema.nullable(),
@@ -190,23 +177,9 @@ export type TVSeriesAppendToResponseNamespace = z.infer<
 >;
 
 export const tvSeriesDetailsQueryParamsSchema = tvQueryParamsSchema.extend({
-	append_to_response: z
-		.string()
-		.min(1)
-		.refine(
-			(value) => {
-				const namespaces = value.split(",");
-				return (
-					namespaces.length <= 20 &&
-					namespaces.every(
-						(namespace) =>
-							tvSeriesAppendToResponseSchema.safeParse(namespace.trim()).success
-					)
-				);
-			},
-			{ message: "Invalid append_to_response namespace" }
-		)
-		.optional(),
+	append_to_response: appendToResponseParamSchema(
+		tvSeriesAppendToResponseSchema
+	).optional(),
 });
 export type TVSeriesDetailsQueryParams = z.infer<
 	typeof tvSeriesDetailsQueryParamsSchema
