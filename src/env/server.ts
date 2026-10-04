@@ -6,6 +6,9 @@ export const serverEnv = createEnv({
 		BETTER_AUTH_URL: z.url(),
 		BETTER_AUTH_SECRET: z.string().min(1),
 		DATABASE_URL: z.url(),
+		NODE_ENV: z
+			.enum(["development", "production", "test"])
+			.default("development"),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
