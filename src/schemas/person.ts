@@ -1,13 +1,14 @@
 import { z } from "zod";
 
-import { paginatedSchema } from "./aggregate";
-import { castSchema, crewSchema, idSchema } from "./common";
-
-const dateOrEmpty = z.union([
-	z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-	z.literal(""),
-	z.null(),
-]);
+import { imageResultsSchema, paginatedSchema } from "./aggregate";
+import {
+	appendToResponseParamSchema,
+	castSchema,
+	crewSchema,
+	idSchema,
+	nullableDateOrEmptySchema,
+	screenMediaTypeSchema,
+} from "./common";
 
 export const personQueryParamsSchema = z.object({
 	language: z.string().min(2).optional(),
@@ -17,16 +18,16 @@ export type PersonQueryParams = z.infer<typeof personQueryParamsSchema>;
 
 export const knownForItemSchema = z.object({
 	id: idSchema,
-	media_type: z.enum(["movie", "tv"]),
-	adult: z.boolean().default(false).optional(),
+	media_type: screenMediaTypeSchema,
+	adult: z.boolean().default(false),
 	backdrop_path: z.string().nullable().optional(),
 	genre_ids: z.array(z.number().int().positive()).optional(),
 	original_language: z.string().optional(),
 	overview: z.string().optional(),
 	popularity: z.number().nonnegative().optional(),
 	poster_path: z.string().nullable().optional(),
-	release_date: dateOrEmpty.optional(),
-	first_air_date: dateOrEmpty.optional(),
+	release_date: nullableDateOrEmptySchema.optional(),
+	first_air_date: nullableDateOrEmptySchema.optional(),
 	title: z.string().optional(),
 	name: z.string().optional(),
 	original_title: z.string().optional(),
@@ -57,8 +58,8 @@ export const personDetailsSchema = z.object({
 	adult: z.boolean().default(false),
 	also_known_as: z.array(z.string()),
 	biography: z.string(),
-	birthday: dateOrEmpty.optional(),
-	deathday: dateOrEmpty.optional(),
+	birthday: nullableDateOrEmptySchema.optional(),
+	deathday: nullableDateOrEmptySchema.optional(),
 	gender: z.number().int().nullable(),
 	homepage: z.union([z.url(), z.literal(""), z.null()]).optional(),
 	id: idSchema,
@@ -74,7 +75,7 @@ export type PersonDetails = z.infer<typeof personDetailsSchema>;
 const personMovieExtrasSchema = z.object({
 	title: z.string().optional(),
 	original_title: z.string().optional(),
-	release_date: dateOrEmpty.optional(),
+	release_date: nullableDateOrEmptySchema.optional(),
 	poster_path: z.string().nullable().optional(),
 	backdrop_path: z.string().nullable().optional(),
 	genre_ids: z.array(z.number().int().positive()).optional(),
@@ -84,14 +85,13 @@ const personMovieExtrasSchema = z.object({
 	video: z.boolean().optional(),
 	vote_average: z.number().nonnegative().optional(),
 	vote_count: z.number().int().nonnegative().optional(),
-	media_type: z.enum(["movie", "tv"]).optional(),
-	episode_count: z.number().int().nonnegative().optional(),
+	media_type: screenMediaTypeSchema.optional(),
 });
 
 const personTvExtrasSchema = z.object({
 	name: z.string().optional(),
 	original_name: z.string().optional(),
-	first_air_date: dateOrEmpty.optional(),
+	first_air_date: nullableDateOrEmptySchema.optional(),
 	poster_path: z.string().nullable().optional(),
 	backdrop_path: z.string().nullable().optional(),
 	genre_ids: z.array(z.number().int().positive()).optional(),
@@ -101,7 +101,7 @@ const personTvExtrasSchema = z.object({
 	popularity: z.number().nonnegative().optional(),
 	vote_average: z.number().nonnegative().optional(),
 	vote_count: z.number().int().nonnegative().optional(),
-	media_type: z.enum(["movie", "tv"]).optional(),
+	media_type: screenMediaTypeSchema.optional(),
 	episode_count: z.number().int().nonnegative().optional(),
 });
 
@@ -188,3 +188,41 @@ export type PersonAppendToResponseNamespace =
 	| "tagged_images"
 	| "translations"
 	| "tv_credits";
+
+export const personAppendToResponseSchema = z.enum([
+	"combined_credits",
+	"external_ids",
+	"images",
+	"movie_credits",
+	"tagged_images",
+	"translations",
+	"tv_credits",
+]);
+
+export const personDetailsQueryParamsSchema = personQueryParamsSchema.extend({
+	append_to_response: appendToResponseParamSchema(
+		personAppendToResponseSchema
+	).optional(),
+});
+export type PersonDetailsQueryParams = z.infer<
+	typeof personDetailsQueryParamsSchema
+>;
+
+export const buildPersonAppendToResponse = (
+	namespaces: PersonAppendToResponseNamespace[]
+): string | undefined =>
+	namespaces.length === 0 ? undefined : namespaces.join(",");
+
+// Appended namespaces listed below are validated. Other supported
+// namespaces pass through unvalidated until they have schemas.
+export const personDetailsWithAppendSchema = z.looseObject({
+	...personDetailsSchema.shape,
+	movie_credits: personMovieCreditsSchema.optional(),
+	tv_credits: personTvCreditsSchema.optional(),
+	combined_credits: personCombinedCreditsSchema.optional(),
+	external_ids: personExternalIdsSchema.optional(),
+	images: imageResultsSchema.optional(),
+});
+export type PersonDetailsWithAppend = z.infer<
+	typeof personDetailsWithAppendSchema
+>;
