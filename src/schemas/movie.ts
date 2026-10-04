@@ -19,7 +19,7 @@ export const movieQueryParamsSchema = z.object({
 export type MovieQueryParams = z.infer<typeof movieQueryParamsSchema>;
 
 export const movieSchema = z.object({
-	adult: z.boolean(),
+	adult: z.boolean().default(false),
 	backdrop_path: z.string().nullable(),
 	genre_ids: z.array(z.number().int().positive()),
 	id: idSchema,
@@ -59,7 +59,7 @@ export const movieCollectionSchema = z.object({
 export type MovieCollection = z.infer<typeof movieCollectionSchema>;
 
 export const movieDetailSchema = z.object({
-	adult: z.boolean(),
+	adult: z.boolean().default(false),
 	backdrop_path: z.string().nullable(),
 	belongs_to_collection: movieCollectionSchema.nullable(),
 	budget: z.number().int().nonnegative().nullable(),
@@ -79,8 +79,8 @@ export const movieDetailSchema = z.object({
 	revenue: z.number().int().nonnegative().nullable(),
 	runtime: z.number().int().nonnegative().nullable(),
 	softcore: z.boolean(),
-	spokenLanguages: z.array(spokenLanguageSchema),
-	status: z.string().min(1),
+	spokenLanguages: z.array(spokenLanguageSchema).optional(),
+	status: z.string().optional(),
 	tagline: z.string().nullable(),
 	title: z.string().min(1),
 	video: z.boolean(),
