@@ -194,13 +194,16 @@ export const tvSeriesDetailsQueryParamsSchema = tvQueryParamsSchema.extend({
 		.string()
 		.min(1)
 		.refine(
-			(value) =>
-				value
-					.split(",")
-					.every(
+			(value) => {
+				const namespaces = value.split(",");
+				return (
+					namespaces.length <= 20 &&
+					namespaces.every(
 						(namespace) =>
 							tvSeriesAppendToResponseSchema.safeParse(namespace.trim()).success
-					),
+					)
+				);
+			},
 			{ message: "Invalid append_to_response namespace" }
 		)
 		.optional(),
@@ -211,7 +214,8 @@ export type TVSeriesDetailsQueryParams = z.infer<
 
 export const buildTvAppendToResponse = (
 	namespaces: TVSeriesAppendToResponseNamespace[]
-): string => namespaces.join(",");
+): string | undefined =>
+	namespaces.length === 0 ? undefined : namespaces.join(",");
 
 // Appended namespaces listed below are validated. Other supported
 // namespaces pass through unvalidated until they have schemas.
