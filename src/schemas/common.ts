@@ -113,7 +113,7 @@ export const reviewSchema = z.object({
 	url: z.url(),
 });
 
-export const mediaTypeSchema = z.enum(["movie", "tv"]);
+export const mediaTypeSchema = z.enum(["movie", "tv", "person"]);
 export type MediaType = z.infer<typeof mediaTypeSchema>;
 
 export const networkSchema = z.object({
