@@ -135,7 +135,6 @@ export const personCombinedCastSchema = castSchema
 	.extend({
 		...personMovieExtrasSchema.shape,
 		...personTvExtrasSchema.shape,
-		media_type: z.enum(["movie", "tv"]).optional(),
 	});
 export type PersonCombinedCast = z.infer<typeof personCombinedCastSchema>;
 
@@ -145,7 +144,6 @@ export const personCombinedCrewSchema = crewSchema
 	.extend({
 		...personMovieExtrasSchema.shape,
 		...personTvExtrasSchema.shape,
-		media_type: z.enum(["movie", "tv"]).optional(),
 	});
 export type PersonCombinedCrew = z.infer<typeof personCombinedCrewSchema>;
 
