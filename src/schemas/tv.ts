@@ -149,7 +149,7 @@ export const TVSeriesDetailsSchema = z.object({
 	production_companies: z.array(productionCompanySchema).optional(),
 	production_countries: z.array(productionCountrySchema).optional(),
 	seasons: z.array(seasonSummarySchema),
-	softcore: z.boolean().default(false).optional(),
+	softcore: z.boolean().default(false),
 	spoken_languages: z.array(spokenLanguageSchema).optional(),
 	status: z.string().optional(),
 	tagline: z.string().nullable(),
