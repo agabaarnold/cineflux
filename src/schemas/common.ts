@@ -5,6 +5,44 @@ export const idSchemaOptional = z.number().int().optional();
 export const nameSchema = z.string().min(1);
 export const countrySchema = z.string().length(2);
 
+const tmdbDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/u);
+
+export const dateOrEmptySchema = z.union([tmdbDateSchema, z.literal("")]);
+
+export const nullableDateOrEmptySchema = z.union([
+	tmdbDateSchema,
+	z.literal(""),
+	z.null(),
+]);
+
+export const screenMediaTypeSchema = z.enum(["movie", "tv"]);
+
+export const appendToResponseParamSchema = (
+	namespaceSchema: z.ZodType<string>,
+	maxEntries = 20
+) =>
+	z
+		.string()
+		.min(1)
+		.transform((value) =>
+			value
+				.split(",")
+				.map((entry) => entry.trim())
+				.join(",")
+		)
+		.refine(
+			(value) => {
+				const namespaces = value.split(",");
+				return (
+					namespaces.length <= maxEntries &&
+					namespaces.every(
+						(namespace) => namespaceSchema.safeParse(namespace).success
+					)
+				);
+			},
+			{ message: "Invalid append_to_response namespace" }
+		);
+
 export const genreSchema = z.object({
 	id: idSchema,
 	name: nameSchema,
@@ -70,7 +108,7 @@ export const videoSchema = z.object({
 	name: z.string(),
 	key: z.string().min(1),
 	site: z.string(),
-	size: z.number().int(),
+	size: z.number().int().nonnegative(),
 	type: z.string(),
 	official: z.boolean(),
 	published_at: z.iso.datetime(),
