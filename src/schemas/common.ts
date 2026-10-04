@@ -35,7 +35,7 @@ export type SpokenLanguage = z.infer<typeof spokenLanguageSchema>;
 
 const creditSchema = z.object({
 	id: idSchema,
-	adult: z.boolean(),
+	adult: z.boolean().default(false),
 	gender: z.number().int().nullable(),
 	known_for_department: z.string().min(1),
 	name: nameSchema,
@@ -115,3 +115,11 @@ export const reviewSchema = z.object({
 
 export const mediaTypeSchema = z.enum(["movie", "tv"]);
 export type MediaType = z.infer<typeof mediaTypeSchema>;
+
+export const networkSchema = z.object({
+	id: idSchema,
+	logo_path: z.string().nullable(),
+	name: nameSchema,
+	origin_country: countrySchema,
+});
+export type Network = z.infer<typeof networkSchema>;
