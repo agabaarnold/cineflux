@@ -117,12 +117,15 @@ export const tmdbFetch = async <T = unknown>(
 		if (error instanceof ApiError) {
 			throw error;
 		}
-		if (error instanceof Error && error.name === "AbortError") {
+		if (error instanceof Error && error.name === "TimeoutError") {
 			throw new ApiError({
 				endpoint,
-				message: `TMDB request to ${endpoint} timed out or was aborted`,
+				message: `TMDB request to ${endpoint} timed out`,
 				status: 504,
 			});
+		}
+		if (error instanceof Error && error.name === "AbortError") {
+			throw error;
 		}
 		throw new ApiError({
 			cause: error,
