@@ -200,7 +200,10 @@ export const buildTvAppendToResponse = (
 	namespaces: TVSeriesAppendToResponseNamespace[]
 ): string => namespaces.join(",");
 
-export const tvSeriesDetailsWithAppendSchema = TVSeriesDetailsSchema.extend({
+// Undeclared appended namespaces pass through unvalidated until they have
+// schemas. Only the six namespaces below are validated.
+export const tvSeriesDetailsWithAppendSchema = z.looseObject({
+	...TVSeriesDetailsSchema.shape,
 	credits: creditsSchema.optional(),
 	images: imageResultsSchema.optional(),
 	videos: videoResultsSchema.optional(),
