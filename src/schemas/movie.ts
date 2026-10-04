@@ -1,8 +1,16 @@
 import { z } from "zod";
 
-import { paginatedSchema } from "./aggregate";
 import {
+	imageResultsSchema,
+	paginatedSchema,
+	reviewsSchema,
+	videoResultsSchema,
+} from "./aggregate";
+import {
+	appendToResponseParamSchema,
 	countrySchema,
+	creditsSchema,
+	dateOrEmptySchema,
 	genreSchema,
 	idSchema,
 	nameSchema,
@@ -28,10 +36,7 @@ export const movieSchema = z.object({
 	overview: z.string(),
 	popularity: z.number().nonnegative(),
 	poster_path: z.string().nullable(),
-	release_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-	]),
+	release_date: dateOrEmptySchema,
 	softcore: z.boolean().default(false),
 	title: nameSchema,
 	video: z.boolean(),
@@ -78,10 +83,7 @@ export const movieDetailSchema = z.object({
 	poster_path: z.string().nullable(),
 	production_companies: z.array(productionCompanySchema),
 	production_countries: z.array(productionCountrySchema),
-	release_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-	]),
+	release_date: dateOrEmptySchema,
 	revenue: z.number().int().nonnegative().nullable(),
 	runtime: z.number().int().nonnegative().nullable(),
 	softcore: z.boolean().default(false),
@@ -96,12 +98,14 @@ export const movieDetailSchema = z.object({
 export type MovieDetails = z.infer<typeof movieDetailSchema>;
 
 export type MovieAppendToResponseNamespace =
+	| "account_states"
 	| "alternative_titles"
 	| "changes"
 	| "credits"
 	| "external_ids"
 	| "images"
 	| "keywords"
+	| "lists"
 	| "recommendations"
 	| "release_dates"
 	| "reviews"
@@ -109,3 +113,50 @@ export type MovieAppendToResponseNamespace =
 	| "translations"
 	| "videos"
 	| "watch/providers";
+
+export const movieAppendToResponseSchema = z.enum([
+	"account_states",
+	"alternative_titles",
+	"changes",
+	"credits",
+	"external_ids",
+	"images",
+	"keywords",
+	"lists",
+	"recommendations",
+	"release_dates",
+	"reviews",
+	"similar",
+	"translations",
+	"videos",
+	"watch/providers",
+]);
+
+export const movieDetailsQueryParamsSchema = movieQueryParamsSchema.extend({
+	append_to_response: appendToResponseParamSchema(
+		movieAppendToResponseSchema
+	).optional(),
+});
+export type MovieDetailsQueryParams = z.infer<
+	typeof movieDetailsQueryParamsSchema
+>;
+
+export const buildMovieAppendToResponse = (
+	namespaces: MovieAppendToResponseNamespace[]
+): string | undefined =>
+	namespaces.length === 0 ? undefined : namespaces.join(",");
+
+// Appended namespaces listed below are validated. Other supported
+// namespaces pass through unvalidated until they have schemas.
+export const movieDetailsWithAppendSchema = z.looseObject({
+	...movieDetailSchema.shape,
+	credits: creditsSchema.optional(),
+	images: imageResultsSchema.optional(),
+	videos: videoResultsSchema.optional(),
+	reviews: reviewsSchema.optional(),
+	similar: movieResultsSchema.optional(),
+	recommendations: movieResultsSchema.optional(),
+});
+export type MovieDetailsWithAppend = z.infer<
+	typeof movieDetailsWithAppendSchema
+>;
