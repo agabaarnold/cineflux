@@ -108,7 +108,6 @@ export const tmdbFetch = async <T = unknown>(
 			headers: {
 				Accept: "application/json",
 				Authorization: `Bearer ${serverEnv.TMDB_READ_ACCESS_TOKEN}`,
-				"Content-Type": "application/json",
 			},
 			method: "GET",
 			signal: combineSignals(options.signal, timeoutMs),
