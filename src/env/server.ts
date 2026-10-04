@@ -12,6 +12,7 @@ export const serverEnv = createEnv({
 		TMDB_API_KEY: z.string().min(1),
 		TMDB_READ_ACCESS_TOKEN: z.string().min(1),
 		TMDB_BASE_URL: z.url(),
+		TMDB_IMAGE_BASE_URL: z.url(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
