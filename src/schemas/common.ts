@@ -20,11 +20,11 @@ export const productionCompanySchema = z.object({
 });
 export type ProductionCompany = z.infer<typeof productionCompanySchema>;
 
-export const productionCountry = z.object({
+export const productionCountrySchema = z.object({
 	iso_3166_1: countrySchema,
 	name: nameSchema,
 });
-export type ProductionCountry = z.infer<typeof productionCountry>;
+export type ProductionCountry = z.infer<typeof productionCountrySchema>;
 
 export const spokenLanguageSchema = z.object({
 	iso_639_1: z.string().length(2),
