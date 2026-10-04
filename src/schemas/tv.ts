@@ -1,8 +1,14 @@
 import { z } from "zod";
 
-import { paginatedSchema } from "./aggregate";
+import {
+	imageResultsSchema,
+	paginatedSchema,
+	reviewsSchema,
+	videoResultsSchema,
+} from "./aggregate";
 import {
 	castSchema,
+	creditsSchema,
 	crewSchema,
 	genreSchema,
 	idSchema,
@@ -158,3 +164,50 @@ export const TVSeriesDetailsSchema = z.object({
 	vote_count: z.number().int().nonnegative().optional(),
 });
 export type TVSeriesDetails = z.infer<typeof TVSeriesDetailsSchema>;
+
+export const tvSeriesAppendToResponseSchema = z.enum([
+	"account_states",
+	"aggregate_credits",
+	"alternative_titles",
+	"changes",
+	"content_ratings",
+	"credits",
+	"episode_groups",
+	"external_ids",
+	"images",
+	"keywords",
+	"lists",
+	"recommendations",
+	"reviews",
+	"screened_theatrically",
+	"similar",
+	"translations",
+	"videos",
+	"watch/providers",
+]);
+export type TVSeriesAppendToResponseNamespace = z.infer<
+	typeof tvSeriesAppendToResponseSchema
+>;
+
+export const tvSeriesDetailsQueryParamsSchema = tvQueryParamsSchema.extend({
+	append_to_response: z.string().min(1).optional(),
+});
+export type TVSeriesDetailsQueryParams = z.infer<
+	typeof tvSeriesDetailsQueryParamsSchema
+>;
+
+export const buildTvAppendToResponse = (
+	namespaces: TVSeriesAppendToResponseNamespace[]
+): string => namespaces.join(",");
+
+export const tvSeriesDetailsWithAppendSchema = TVSeriesDetailsSchema.extend({
+	credits: creditsSchema.optional(),
+	images: imageResultsSchema.optional(),
+	videos: videoResultsSchema.optional(),
+	reviews: reviewsSchema.optional(),
+	similar: tvSeriesResultsSchema.optional(),
+	recommendations: tvSeriesResultsSchema.optional(),
+});
+export type TVSeriesDetailsWithAppend = z.infer<
+	typeof tvSeriesDetailsWithAppendSchema
+>;
