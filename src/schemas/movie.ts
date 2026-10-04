@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { paginatedSchema } from "./aggreagate";
+import { paginatedSchema } from "./aggregate";
 import {
 	countrySchema,
 	genreSchema,
@@ -12,7 +12,7 @@ import {
 } from "./common";
 
 export const movieQueryParamsSchema = z.object({
-	language: z.string().length(2).optional(),
+	language: z.string().min(2).optional(),
 	page: z.number().int().positive().optional(),
 	region: countrySchema.optional(),
 });
@@ -23,13 +23,16 @@ export const movieSchema = z.object({
 	backdrop_path: z.string().nullable(),
 	genre_ids: z.array(z.number().int().positive()),
 	id: idSchema,
-	original_language: z.string().length(2),
+	original_language: z.string().min(1),
 	original_title: nameSchema,
 	overview: z.string(),
 	popularity: z.number().nonnegative(),
 	poster_path: z.string().nullable(),
-	release_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-	softcore: z.boolean(),
+	release_date: z.union([
+		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
+		z.literal(""),
+	]),
+	softcore: z.boolean().default(false),
 	title: nameSchema,
 	video: z.boolean(),
 	vote_average: z.number().nonnegative(),
@@ -64,22 +67,25 @@ export const movieDetailSchema = z.object({
 	belongs_to_collection: movieCollectionSchema.nullable(),
 	budget: z.number().int().nonnegative().nullable(),
 	genres: z.array(genreSchema),
-	homepage: z.url().nullable(),
+	homepage: z.union([z.url(), z.literal(""), z.null()]),
 	id: idSchema,
 	imdb_id: z.string().nullable(),
-	orgin_country: z.array(z.string().length(2)),
-	original_language: z.string().length(2),
+	origin_country: z.array(z.string()),
+	original_language: z.string().min(1),
 	original_title: z.string().min(1),
 	overview: z.string(),
 	popularity: z.number().nonnegative(),
 	poster_path: z.string().nullable(),
 	production_companies: z.array(productionCompanySchema),
 	production_countries: z.array(productionCountrySchema),
-	release_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
+	release_date: z.union([
+		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
+		z.literal(""),
+	]),
 	revenue: z.number().int().nonnegative().nullable(),
 	runtime: z.number().int().nonnegative().nullable(),
-	softcore: z.boolean(),
-	spokenLanguages: z.array(spokenLanguageSchema).optional(),
+	softcore: z.boolean().default(false),
+	spoken_languages: z.array(spokenLanguageSchema).optional(),
 	status: z.string().optional(),
 	tagline: z.string().nullable(),
 	title: z.string().min(1),
