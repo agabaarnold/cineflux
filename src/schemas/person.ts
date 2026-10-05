@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { imageResultsSchema, paginatedSchema } from "./aggregate";
 import {
-	appendToResponseParamSchema,
 	castSchema,
 	crewSchema,
 	idSchema,
@@ -192,15 +191,6 @@ export const personAppendToResponseSchema = z.enum([
 ]);
 export type PersonAppendToResponseNamespace = z.infer<
 	typeof personAppendToResponseSchema
->;
-
-export const personDetailsQueryParamsSchema = personQueryParamsSchema.extend({
-	append_to_response: appendToResponseParamSchema(
-		personAppendToResponseSchema
-	).optional(),
-});
-export type PersonDetailsQueryParams = z.infer<
-	typeof personDetailsQueryParamsSchema
 >;
 
 export const buildPersonAppendToResponse = (
