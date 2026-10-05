@@ -129,22 +129,32 @@ export const personTvCrewSchema = crewSchema
 	.extend(personTvExtrasSchema.shape);
 export type PersonTvCrew = z.infer<typeof personTvCrewSchema>;
 
-export const personCombinedCastSchema = castSchema
-	.partial()
-	.required({ credit_id: true, id: true })
-	.extend({
-		...personMovieExtrasSchema.shape,
-		...personTvExtrasSchema.shape,
-	});
+const personCombinedMovieCastSchema = personMovieCastSchema.extend({
+	media_type: z.literal("movie"),
+});
+
+const personCombinedTvCastSchema = personTvCastSchema.extend({
+	media_type: z.literal("tv"),
+});
+
+export const personCombinedCastSchema = z.discriminatedUnion("media_type", [
+	personCombinedMovieCastSchema,
+	personCombinedTvCastSchema,
+]);
 export type PersonCombinedCast = z.infer<typeof personCombinedCastSchema>;
 
-export const personCombinedCrewSchema = crewSchema
-	.partial()
-	.required({ credit_id: true, id: true })
-	.extend({
-		...personMovieExtrasSchema.shape,
-		...personTvExtrasSchema.shape,
-	});
+const personCombinedMovieCrewSchema = personMovieCrewSchema.extend({
+	media_type: z.literal("movie"),
+});
+
+const personCombinedTvCrewSchema = personTvCrewSchema.extend({
+	media_type: z.literal("tv"),
+});
+
+export const personCombinedCrewSchema = z.discriminatedUnion("media_type", [
+	personCombinedMovieCrewSchema,
+	personCombinedTvCrewSchema,
+]);
 export type PersonCombinedCrew = z.infer<typeof personCombinedCrewSchema>;
 
 export const personMovieCreditsSchema = z.object({
