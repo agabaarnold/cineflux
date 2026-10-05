@@ -186,7 +186,7 @@ export type WatchProviders = z.infer<typeof watchProvidersSchema>;
 export const tmdbListSummarySchema = z.object({
 	description: z.string(),
 	favorite_count: z.number().int().nonnegative(),
-	id: z.string().min(1),
+	id: z.union([z.number().int(), z.string().min(1)]),
 	item_count: z.number().int().nonnegative(),
 	iso_639_1: z.string().optional(),
 	iso_3166_1: z.string().optional(),
