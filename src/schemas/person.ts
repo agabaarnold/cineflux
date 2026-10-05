@@ -6,6 +6,7 @@ import {
 	castSchema,
 	crewSchema,
 	idSchema,
+	idSchemaOptional,
 	nullableDateOrEmptySchema,
 	screenMediaTypeSchema,
 } from "./common";
@@ -227,3 +228,46 @@ export const personDetailsWithAppendSchema = personDetailsSchema
 export type PersonDetailsWithAppend = z.infer<
 	typeof personDetailsWithAppendSchema
 >;
+
+export const personTaggedImagesSchema = z.object({
+	id: idSchemaOptional,
+	page: z.number().int().positive().optional(),
+	results: z.array(
+		z.object({
+			aspect_ratio: z.number().positive(),
+			file_path: z.string().min(1),
+			height: z.number().int().positive(),
+			id: idSchema.optional(),
+			iso_639_1: z.string().nullable(),
+			media: z
+				.object({
+					id: idSchema,
+					media_type: screenMediaTypeSchema,
+				})
+				.catchall(z.json()),
+			media_type: screenMediaTypeSchema,
+			vote_average: z.number().nonnegative(),
+			vote_count: z.number().nonnegative(),
+			width: z.number().int().positive(),
+		})
+	),
+	total_pages: z.number().int().nonnegative().optional(),
+	total_results: z.number().int().nonnegative().optional(),
+});
+export type PersonTaggedImages = z.infer<typeof personTaggedImagesSchema>;
+
+export const personTranslationsSchema = z.object({
+	id: idSchemaOptional,
+	translations: z.array(
+		z.object({
+			iso_3166_1: z.string(),
+			iso_639_1: z.string(),
+			name: z.string(),
+			english_name: z.string(),
+			data: z.object({
+				biography: z.string().optional(),
+			}),
+		})
+	),
+});
+export type PersonTranslations = z.infer<typeof personTranslationsSchema>;
