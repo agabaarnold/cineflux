@@ -154,6 +154,9 @@ export const reviewSchema = z.object({
 export const mediaTypeSchema = z.enum(["movie", "tv", "person"]);
 export type MediaType = z.infer<typeof mediaTypeSchema>;
 
+export const timeWindowSchema = z.enum(["day", "week"]);
+export type TimeWindow = z.infer<typeof timeWindowSchema>;
+
 export const networkSchema = z.object({
 	id: idSchema,
 	logo_path: z.string().nullable(),
