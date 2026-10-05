@@ -2,8 +2,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+import { HeroCarousel } from "#/components/media/hero-carousel.tsx";
 import { fetchTrendingQueryOptions } from "#/queries/trending.ts";
 import { timeWindowSchema } from "#/schemas/common.ts";
+import { getBackdropUrl } from "#/server/tmdb/images.ts";
 
 export const Route = createFileRoute("/")({
 	component: Home,
@@ -30,10 +32,29 @@ export const Route = createFileRoute("/")({
 function Home() {
 	const { trendingData } = Route.useLoaderData();
 
+	const screenItems = trendingData.results.filter(
+		(item) => item.media_type === "movie" || item.media_type === "tv"
+	);
+	const heroItems = screenItems
+		.filter((item) => item.backdrop_path !== null)
+		.slice(0, 5)
+		.map((item) => ({
+			id: `${item.media_type}-${item.id}`,
+			href:
+				item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`,
+			backdrop: getBackdropUrl(item.backdrop_path, "w1280"),
+			title: item.media_type === "movie" ? item.title : item.name,
+			overview: item.overview,
+			voteAverage: item.vote_average,
+			meta: (item.media_type === "movie"
+				? item.release_date
+				: (item.first_air_date ?? "")
+			).slice(0, 4),
+		}));
+
 	return (
-		<div className="p-8">
-			<h1 className="text-4xl font-bold">Trending this week</h1>
-			<p>{trendingData?.results[4].media_type}</p>
+		<div className="">
+			<HeroCarousel items={heroItems} />
 		</div>
 	);
 }
