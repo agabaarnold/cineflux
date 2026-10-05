@@ -17,32 +17,6 @@ export const nullableDateOrEmptySchema = z.union([
 
 export const screenMediaTypeSchema = z.enum(["movie", "tv"]);
 
-export const appendToResponseParamSchema = (
-	namespaceSchema: z.ZodType<string>,
-	maxEntries = 20
-) =>
-	z
-		.string()
-		.min(1)
-		.transform((value) =>
-			value
-				.split(",")
-				.map((entry) => entry.trim())
-				.join(",")
-		)
-		.refine(
-			(value) => {
-				const namespaces = value.split(",");
-				return (
-					namespaces.length <= maxEntries &&
-					namespaces.every(
-						(namespace) => namespaceSchema.safeParse(namespace).success
-					)
-				);
-			},
-			{ message: "Invalid append_to_response namespace" }
-		);
-
 export const genreSchema = z.object({
 	id: idSchema,
 	name: nameSchema,
