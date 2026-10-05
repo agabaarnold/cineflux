@@ -5,6 +5,7 @@ import {
 	IconMovie,
 	IconSearch,
 	IconSun,
+	IconUsersGroup,
 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
@@ -57,6 +58,10 @@ export const Navbar = () => (
 
 				<NavItem to="/tv" icon={IconDeviceTv}>
 					TV Shows
+				</NavItem>
+
+				<NavItem to="/people" icon={IconUsersGroup}>
+					People
 				</NavItem>
 			</div>
 
