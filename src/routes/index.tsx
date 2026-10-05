@@ -165,6 +165,7 @@ const Home = () => {
 						year: movie.release_date.slice(0, 4),
 					}))}
 					title="Popular movies"
+					href="/movie"
 				/>
 
 				<MediaRow
@@ -179,6 +180,7 @@ const Home = () => {
 						year: (show.first_air_date ?? "").slice(0, 4),
 					}))}
 					title="Popular TV shows"
+					href="/tv"
 				/>
 
 				<MediaRow
@@ -193,6 +195,7 @@ const Home = () => {
 						year: person.known_for_department,
 					}))}
 					title="Popular people"
+					href="/people"
 				/>
 			</div>
 		</div>
