@@ -97,9 +97,16 @@ export const fetchTvAlternativeTitles = createServerFn({ method: "GET" })
 
 export const fetchTvChanges = createServerFn({ method: "GET" })
 	.validator(
-		tvIdInputSchema.extend({
-			end_date: z.string().optional(),
-			start_date: z.string().optional(),
+		z.object({
+			id: idSchema,
+			end_date: z
+				.string()
+				.regex(/^\d{4}-\d{2}-\d{2}$/u)
+				.optional(),
+			start_date: z
+				.string()
+				.regex(/^\d{4}-\d{2}-\d{2}$/u)
+				.optional(),
 		})
 	)
 	.handler(({ data }) =>
