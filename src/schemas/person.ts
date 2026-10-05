@@ -214,15 +214,16 @@ export const buildPersonAppendToResponse = (
 	namespaces.length === 0 ? undefined : namespaces.join(",");
 
 // Appended namespaces listed below are validated. Other supported
-// namespaces pass through unvalidated until they have schemas.
-export const personDetailsWithAppendSchema = z.looseObject({
-	...personDetailsSchema.shape,
-	movie_credits: personMovieCreditsSchema.optional(),
-	tv_credits: personTvCreditsSchema.optional(),
-	combined_credits: personCombinedCreditsSchema.optional(),
-	external_ids: personExternalIdsSchema.optional(),
-	images: imageResultsSchema.optional(),
-});
+// namespaces must be valid JSON and pass through preserved.
+export const personDetailsWithAppendSchema = personDetailsSchema
+	.extend({
+		movie_credits: personMovieCreditsSchema.optional(),
+		tv_credits: personTvCreditsSchema.optional(),
+		combined_credits: personCombinedCreditsSchema.optional(),
+		external_ids: personExternalIdsSchema.optional(),
+		images: imageResultsSchema.optional(),
+	})
+	.catchall(z.json());
 export type PersonDetailsWithAppend = z.infer<
 	typeof personDetailsWithAppendSchema
 >;
