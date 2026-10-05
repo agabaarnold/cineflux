@@ -191,16 +191,15 @@ export const buildTvAppendToResponse = (
 	namespaces.length === 0 ? undefined : namespaces.join(",");
 
 // Appended namespaces listed below are validated. Other supported
-// namespaces pass through unvalidated until they have schemas.
-export const tvSeriesDetailsWithAppendSchema = z.looseObject({
-	...TVSeriesDetailsSchema.shape,
+// namespaces must be valid JSON and pass through preserved.
+export const tvSeriesDetailsWithAppendSchema = TVSeriesDetailsSchema.extend({
 	credits: creditsSchema.optional(),
 	images: imageResultsSchema.optional(),
 	videos: videoResultsSchema.optional(),
 	reviews: reviewsSchema.optional(),
 	similar: tvSeriesResultsSchema.optional(),
 	recommendations: tvSeriesResultsSchema.optional(),
-});
+}).catchall(z.json());
 export type TVSeriesDetailsWithAppend = z.infer<
 	typeof tvSeriesDetailsWithAppendSchema
 >;
