@@ -130,7 +130,7 @@ export const fetchMovieWatchProvidersQueryOptions = (
 export const fetchMovieLatestQueryOptions = (
 	args: Parameters<typeof fetchMovieLatest>[0]
 ) =>
-	tmdbQueryOptions(tmdbKeys.movie.latest(args.data), "lists", () =>
+	tmdbQueryOptions(tmdbKeys.movie.latest(args.data), "volatile", () =>
 		fetchMovieLatest(args)
 	);
 
