@@ -10,6 +10,8 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "react-hot-toast";
 
+import { TooltipProvider } from "#/components/ui/tooltip.tsx";
+
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -48,7 +50,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 
 			<body>
-				{children}
+				<TooltipProvider>{children}</TooltipProvider>
 				<Toaster />
 
 				<TanStackDevtools
