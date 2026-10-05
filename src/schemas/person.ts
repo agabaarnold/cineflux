@@ -181,15 +181,6 @@ export const personExternalIdsSchema = z.object({
 });
 export type PersonExternalIds = z.infer<typeof personExternalIdsSchema>;
 
-export type PersonAppendToResponseNamespace =
-	| "combined_credits"
-	| "external_ids"
-	| "images"
-	| "movie_credits"
-	| "tagged_images"
-	| "translations"
-	| "tv_credits";
-
 export const personAppendToResponseSchema = z.enum([
 	"combined_credits",
 	"external_ids",
@@ -199,6 +190,9 @@ export const personAppendToResponseSchema = z.enum([
 	"translations",
 	"tv_credits",
 ]);
+export type PersonAppendToResponseNamespace = z.infer<
+	typeof personAppendToResponseSchema
+>;
 
 export const personDetailsQueryParamsSchema = personQueryParamsSchema.extend({
 	append_to_response: appendToResponseParamSchema(
