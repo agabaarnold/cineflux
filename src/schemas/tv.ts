@@ -20,7 +20,6 @@ import {
 	productionCountrySchema,
 	spokenLanguageSchema,
 	tmdbListsSchema,
-	appendToResponseParamSchema,
 	watchProvidersSchema,
 } from "./common";
 
@@ -180,15 +179,6 @@ export const tvSeriesAppendToResponseSchema = z.enum([
 ]);
 export type TVSeriesAppendToResponseNamespace = z.infer<
 	typeof tvSeriesAppendToResponseSchema
->;
-
-export const tvSeriesDetailsQueryParamsSchema = tvQueryParamsSchema.extend({
-	append_to_response: appendToResponseParamSchema(
-		tvSeriesAppendToResponseSchema
-	).optional(),
-});
-export type TVSeriesDetailsQueryParams = z.infer<
-	typeof tvSeriesDetailsQueryParamsSchema
 >;
 
 export const buildTvAppendToResponse = (
