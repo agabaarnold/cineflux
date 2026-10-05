@@ -5,7 +5,7 @@ export const idSchemaOptional = z.number().int().optional();
 export const nameSchema = z.string().min(1);
 export const countrySchema = z.string().length(2);
 
-const tmdbDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/u);
+const tmdbDateSchema = z.iso.date();
 
 export const dateOrEmptySchema = z.union([tmdbDateSchema, z.literal("")]);
 
