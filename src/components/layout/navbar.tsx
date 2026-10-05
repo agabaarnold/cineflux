@@ -1,3 +1,4 @@
+// oxlint-disable shadcn/no-restyle
 import {
 	IconDeviceTv,
 	IconHome,
