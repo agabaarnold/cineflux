@@ -134,7 +134,7 @@ export type MovieDetailsQueryParams = z.infer<
 export const buildMovieAppendToResponse = (
 	namespaces: MovieAppendToResponseNamespace[]
 ): string | undefined =>
-	namespaces.length === 0 ? undefined : namespaces.join(",");
+	namespaces.length === 0 ? undefined : [...new Set(namespaces)].join(",");
 
 // Appended namespaces listed below are validated. Other supported
 // namespaces must be valid JSON and pass through preserved.
