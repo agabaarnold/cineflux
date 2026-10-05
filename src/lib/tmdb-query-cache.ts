@@ -12,9 +12,9 @@ export type CacheTier = keyof typeof STALE_TIME;
 export const GC_TIME: Record<CacheTier, number> = {
 	default: 30 * 60 * 1000,
 	volatile: 5 * 60 * 1000,
-	lists: STALE_TIME.lists,
-	slow: STALE_TIME.slow,
-	static: STALE_TIME.static,
+	lists: STALE_TIME.lists * 2,
+	slow: STALE_TIME.slow * 2,
+	static: STALE_TIME.static * 2,
 };
 
 export type KeyInputValue =
