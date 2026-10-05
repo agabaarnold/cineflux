@@ -10,6 +10,7 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "react-hot-toast";
 
+import { Navbar } from "#/components/layout/navbar.tsx";
 import { TooltipProvider } from "#/components/ui/tooltip.tsx";
 
 import appCss from "../styles.css?url";
@@ -50,7 +51,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 
 			<body>
-				<TooltipProvider>{children}</TooltipProvider>
+				<TooltipProvider>
+					<Navbar />
+					{children}
+				</TooltipProvider>
 				<Toaster />
 
 				<TanStackDevtools
