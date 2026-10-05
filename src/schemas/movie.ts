@@ -147,16 +147,17 @@ export const buildMovieAppendToResponse = (
 	namespaces.length === 0 ? undefined : namespaces.join(",");
 
 // Appended namespaces listed below are validated. Other supported
-// namespaces pass through unvalidated until they have schemas.
-export const movieDetailsWithAppendSchema = z.looseObject({
-	...movieDetailSchema.shape,
-	credits: creditsSchema.optional(),
-	images: imageResultsSchema.optional(),
-	videos: videoResultsSchema.optional(),
-	reviews: reviewsSchema.optional(),
-	similar: movieResultsSchema.optional(),
-	recommendations: movieResultsSchema.optional(),
-});
+// namespaces must be valid JSON and pass through preserved.
+export const movieDetailsWithAppendSchema = movieDetailSchema
+	.extend({
+		credits: creditsSchema.optional(),
+		images: imageResultsSchema.optional(),
+		videos: videoResultsSchema.optional(),
+		reviews: reviewsSchema.optional(),
+		similar: movieResultsSchema.optional(),
+		recommendations: movieResultsSchema.optional(),
+	})
+	.catchall(z.json());
 export type MovieDetailsWithAppend = z.infer<
 	typeof movieDetailsWithAppendSchema
 >;
