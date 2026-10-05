@@ -1,3 +1,5 @@
+import { IconChevronRight } from "@tabler/icons-react";
+
 import { MediaCard } from "#/components/media/media-card.tsx";
 import type {
 	CardMediaType,
@@ -16,14 +18,27 @@ export interface RowItem {
 }
 
 export const MediaRow = ({
+	href,
 	items,
 	title,
 }: {
+	href?: string;
 	items: RowItem[];
 	title: string;
 }) => (
 	<section>
-		<h2 className="mb-3 text-2xl font-semibold">{title}</h2>
+		<div className="mb-3 flex items-center justify-between">
+			<h2 className="text-2xl font-semibold">{title}</h2>
+			{href ? (
+				<a
+					className="text-muted-foreground hover:text-foreground flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors"
+					href={href}
+				>
+					View more
+					<IconChevronRight className="size-3.5" />
+				</a>
+			) : null}
+		</div>
 		<div className="flex gap-4 overflow-x-auto pb-2">
 			{items.map((item) => (
 				<MediaCard
