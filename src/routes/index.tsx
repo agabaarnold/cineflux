@@ -140,6 +140,7 @@ const Home = () => {
 								href: trendingHref(item),
 								id: `${item.media_type}-${item.id}`,
 								image: trendingImage(item),
+								mediaType: item.media_type,
 								overview:
 									item.media_type === "person"
 										? (item.known_for?.[0]?.overview ?? "")
@@ -157,6 +158,7 @@ const Home = () => {
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
 						image: getPosterUrl(movie.poster_path),
+						mediaType: "movie",
 						overview: movie.overview,
 						stat: { kind: "rating", value: movie.vote_average } as const,
 						title: movie.title,
@@ -170,6 +172,7 @@ const Home = () => {
 						href: `/tv/${show.id}`,
 						id: String(show.id),
 						image: getPosterUrl(show.poster_path),
+						mediaType: "tv",
 						overview: show.overview,
 						stat: { kind: "rating", value: show.vote_average } as const,
 						title: show.name,
@@ -183,6 +186,7 @@ const Home = () => {
 						href: `/person/${person.id}`,
 						id: String(person.id),
 						image: getProfileUrl(person.profile_path),
+						mediaType: "person",
 						overview: person.known_for?.[0]?.overview ?? "",
 						stat: { kind: "popularity", value: person.popularity } as const,
 						title: person.name,
