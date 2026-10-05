@@ -101,7 +101,6 @@ export const movieDetailSchema = z.object({
 export type MovieDetails = z.infer<typeof movieDetailSchema>;
 
 export const movieAppendToResponseSchema = z.enum([
-	"account_states",
 	"alternative_titles",
 	"changes",
 	"credits",
