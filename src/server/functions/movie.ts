@@ -13,6 +13,7 @@ import {
 	movieAppendToResponseSchema,
 	movieChangesSchema,
 	movieCreditsSchema,
+	movieDetailSchema,
 	movieDetailsWithAppendSchema,
 	movieExternalIdsSchema,
 	movieKeywordsSchema,
@@ -181,7 +182,7 @@ export const fetchMovieWatchProviders = createServerFn({ method: "GET" })
 export const fetchMovieLatest = createServerFn({ method: "GET" })
 	.validator(movieQueryParamsSchema.pick({ language: true }))
 	.handler(({ data }) =>
-		tmdbFetchValidated(`/movie/latest`, movieDetailsWithAppendSchema, {
+		tmdbFetchValidated(`/movie/latest`, movieDetailSchema, {
 			params: { language: data.language },
 		})
 	);
