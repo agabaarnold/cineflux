@@ -286,6 +286,6 @@ export const fetchTvTopRatedQueryOptions = (
 export const fetchTvLatestQueryOptions = (
 	args: Parameters<typeof fetchTvLatest>[0]
 ) =>
-	tmdbQueryOptions(tmdbKeys.tv.latest(args.data), "lists", () =>
+	tmdbQueryOptions(tmdbKeys.tv.latest(args.data), "volatile", () =>
 		fetchTvLatest(args)
 	);
