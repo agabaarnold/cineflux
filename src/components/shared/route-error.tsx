@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import {
 	IconAlertTriangle,
 	IconCloudOff,
@@ -7,6 +6,7 @@ import {
 	IconSearchOff,
 	IconWifiOff,
 } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
 
 import { Button, buttonVariants } from "#/components/ui/button.tsx";
 import { cn } from "#/lib/utils.ts";
@@ -42,7 +42,8 @@ export const RouteError = ({
 		content = {
 			code: "404",
 			icon: IconSearchOff,
-			message: "This title may have been removed from TMDB, or the link is stale.",
+			message:
+				"This title may have been removed from TMDB, or the link is stale.",
 			title: "Title not found",
 		};
 	} else if (status === 502) {
@@ -61,7 +62,7 @@ export const RouteError = ({
 			title: "Taking too long",
 		};
 	}
-	
+
 	const Icon = content.icon;
 	const retry = () => {
 		if (reset) {
@@ -73,20 +74,20 @@ export const RouteError = ({
 
 	return (
 		<div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col items-center justify-center px-4 py-16 text-center">
-			<span className="flex size-16 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+			<span className="bg-destructive/10 text-destructive flex size-16 items-center justify-center rounded-full">
 				<Icon className="size-8" />
 			</span>
 
-			<p className="mt-6 text-7xl font-black tracking-tight text-foreground/15">
+			<p className="text-foreground/15 mt-6 text-7xl font-black tracking-tight">
 				{content.code}
 			</p>
 
 			<h1 className="-mt-4 text-2xl font-bold">{content.title}</h1>
 
-			<p className="mt-2 text-muted-foreground">{content.message}</p>
+			<p className="text-muted-foreground mt-2">{content.message}</p>
 
 			{content.hint ? (
-				<p className="mt-1 text-sm text-muted-foreground">{content.hint}</p>
+				<p className="text-muted-foreground mt-1 text-sm">{content.hint}</p>
 			) : null}
 
 			<div className="mt-6 flex items-center gap-3">
