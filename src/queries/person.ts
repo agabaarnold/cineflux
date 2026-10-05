@@ -71,7 +71,7 @@ export const fetchPersonTranslationsQueryOptions = (
 export const fetchPersonLatestQueryOptions = (
 	args: Parameters<typeof fetchPersonLatest>[0]
 ) =>
-	tmdbQueryOptions(tmdbKeys.person.latest(args.data), "lists", () =>
+	tmdbQueryOptions(tmdbKeys.person.latest(args.data), "volatile", () =>
 		fetchPersonLatest(args)
 	);
 
