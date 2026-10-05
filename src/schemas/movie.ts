@@ -101,23 +101,6 @@ export const movieDetailSchema = z.object({
 });
 export type MovieDetails = z.infer<typeof movieDetailSchema>;
 
-export type MovieAppendToResponseNamespace =
-	| "account_states"
-	| "alternative_titles"
-	| "changes"
-	| "credits"
-	| "external_ids"
-	| "images"
-	| "keywords"
-	| "lists"
-	| "recommendations"
-	| "release_dates"
-	| "reviews"
-	| "similar"
-	| "translations"
-	| "videos"
-	| "watch/providers";
-
 export const movieAppendToResponseSchema = z.enum([
 	"account_states",
 	"alternative_titles",
@@ -135,6 +118,9 @@ export const movieAppendToResponseSchema = z.enum([
 	"videos",
 	"watch/providers",
 ]);
+export type MovieAppendToResponseNamespace = z.infer<
+	typeof movieAppendToResponseSchema
+>;
 
 export const movieDetailsQueryParamsSchema = movieQueryParamsSchema.extend({
 	append_to_response: appendToResponseParamSchema(
