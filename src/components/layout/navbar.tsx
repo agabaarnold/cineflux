@@ -3,6 +3,7 @@ import {
 	IconHome,
 	IconMovie,
 	IconSearch,
+	IconSun,
 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
@@ -10,6 +11,7 @@ import type { LinkOptions } from "@tanstack/react-router";
 import { cn } from "cn";
 
 import { Logo } from "../shared/logo";
+import { Button } from "../ui/button";
 
 interface NavItemProps {
 	to: LinkOptions["to"];
@@ -22,7 +24,7 @@ const NavItem = ({ to, children, icon: Icon }: NavItemProps) => (
 		to={to}
 		className={cn(
 			"flex h-9 items-center gap-2 rounded-full px-3",
-			"text-muted-foreground text-sm font-medium",
+			"text-primary/75 text-sm font-medium",
 			"transition-colors duration-200"
 		)}
 		activeProps={{ className: "bg-primary text-secondary" }}
@@ -57,9 +59,19 @@ export const Navbar = () => (
 				</NavItem>
 			</div>
 
+			{/* Implement theming */}
+			<Button
+				className="bg-accent rounded-full p-2"
+				type="button"
+				variant="outline"
+			>
+				<IconSun />
+			</Button>
+
 			<Link
 				to="/search"
-				className="text-muted-foreground hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors"
+				className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors"
+				activeProps={{ className: "bg-primary text-secondary" }}
 			>
 				<IconSearch className="size-4" />
 			</Link>
