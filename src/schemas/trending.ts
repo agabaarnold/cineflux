@@ -1,9 +1,15 @@
 import { z } from "zod";
 
 import { paginatedSchema } from "./aggregate";
+import { timeWindowSchema } from "./common";
 import { movieSchema } from "./movie";
 import { personSchema } from "./person";
 import { tvSeriesSchema } from "./tv";
+
+export const trendingSchema = z.object({
+	time_window: timeWindowSchema,
+	language: z.string().min(2).optional(),
+});
 
 export const trendingMoviesSchema = movieSchema.extend({
 	media_type: z.literal("movie"),
