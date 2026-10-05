@@ -7,7 +7,6 @@ import {
 	videoResultsSchema,
 } from "./aggregate";
 import {
-	appendToResponseParamSchema,
 	changesSchema,
 	countrySchema,
 	creditsSchema,
@@ -120,15 +119,6 @@ export const movieAppendToResponseSchema = z.enum([
 ]);
 export type MovieAppendToResponseNamespace = z.infer<
 	typeof movieAppendToResponseSchema
->;
-
-export const movieDetailsQueryParamsSchema = movieQueryParamsSchema.extend({
-	append_to_response: appendToResponseParamSchema(
-		movieAppendToResponseSchema
-	).optional(),
-});
-export type MovieDetailsQueryParams = z.infer<
-	typeof movieDetailsQueryParamsSchema
 >;
 
 export const buildMovieAppendToResponse = (
