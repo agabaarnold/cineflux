@@ -68,9 +68,16 @@ export const fetchMovieAlternativeTitles = createServerFn({ method: "GET" })
 
 export const fetchMovieChanges = createServerFn({ method: "GET" })
 	.validator(
-		movieIdInputSchema.extend({
-			end_date: z.string().optional(),
-			start_date: z.string().optional(),
+		z.object({
+			id: idSchema,
+			end_date: z
+				.string()
+				.regex(/^\d{4}-\d{2}-\d{2}$/u)
+				.optional(),
+			start_date: z
+				.string()
+				.regex(/^\d{4}-\d{2}-\d{2}$/u)
+				.optional(),
 		})
 	)
 	.handler(({ data }) =>
