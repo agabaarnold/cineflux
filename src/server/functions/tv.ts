@@ -28,6 +28,7 @@ import {
 	tvScreenedTheatricallySchema,
 	tvSeasonCreditsSchema,
 	tvSeasonExternalIdsSchema,
+	TVSeriesDetailsSchema,
 	tvSeriesDetailsWithAppendSchema,
 	tvSeriesResultsSchema,
 	tvTranslationsSchema,
@@ -423,7 +424,7 @@ export const fetchTvTopRated = createServerFn({ method: "GET" })
 export const fetchTvLatest = createServerFn({ method: "GET" })
 	.validator(tvQueryParamsSchema.pick({ language: true }))
 	.handler(({ data }) =>
-		tmdbFetchValidated(`/tv/latest`, tvSeriesDetailsWithAppendSchema, {
+		tmdbFetchValidated(`/tv/latest`, TVSeriesDetailsSchema, {
 			params: { language: data.language },
 		})
 	);
