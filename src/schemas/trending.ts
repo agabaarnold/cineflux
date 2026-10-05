@@ -47,12 +47,9 @@ export const trendingPeopleResultsSchema =
 	paginatedSchema(trendingPeopleSchema);
 export type TrendingPeopleResults = z.infer<typeof trendingPeopleResultsSchema>;
 
-export const trendingTimeWindowSchema = z.enum(["day", "week"]);
-export type TrendingTimeWindow = z.infer<typeof trendingTimeWindowSchema>;
-
 export const trendingPathParamsSchema = z.object({
 	media_type: z.enum(["all", "movie", "tv", "person"]),
-	time_window: trendingTimeWindowSchema,
+	time_window: timeWindowSchema,
 });
 export type TrendingPathParams = z.infer<typeof trendingPathParamsSchema>;
 
