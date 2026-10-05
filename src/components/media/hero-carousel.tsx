@@ -3,12 +3,14 @@ import {
 	IconBookmark,
 	IconBookmarkFilled,
 	IconInfoCircle,
+	IconPlayerPauseFilled,
 	IconPlayerPlayFilled,
 	IconStarFilled,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
-import { useEffect, useState } from "react";
+import Autoplay from "embla-carousel-autoplay";
+import { useEffect, useRef, useState } from "react";
 
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import type { CarouselApi } from "../ui/carousel";
@@ -27,9 +29,11 @@ const Stars = ({ voteAverage }: { voteAverage: number }) => {
 	const filled = Math.round((voteAverage / 10) * 5);
 
 	return (
-		<fieldset
+		<span
 			aria-label={`Rated ${voteAverage.toFixed(1)} out of 10`}
 			className="m-0 flex items-center gap-0.5 border-0 p-0"
+			// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+			role="img"
 		>
 			{Array.from({ length: 5 }, (_, index) => (
 				<IconStarFilled
@@ -44,7 +48,7 @@ const Stars = ({ voteAverage }: { voteAverage: number }) => {
 			<span className="ml-2 text-sm font-semibold text-white">
 				{(voteAverage * 10).toFixed(1)}%
 			</span>
-		</fieldset>
+		</span>
 	);
 };
 
@@ -120,6 +124,17 @@ const Slide = ({ slide }: { slide: HeroSlide }) => {
 export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 	const [api, setApi] = useState<CarouselApi>();
 	const [current, setCurrent] = useState(0);
+	const [playing, setPlaying] = useState(true);
+	const autoplay = useRef<ReturnType<typeof Autoplay> | null>(null);
+	if (autoplay.current === null) {
+		// Autoplay is a factory, not a component; calling it here is correct.
+		// oxlint-disable-next-line react/capitalized-calls
+		autoplay.current = Autoplay({
+			delay: 6000,
+			stopOnInteraction: false,
+			stopOnMouseEnter: true,
+		});
+	}
 	const slides = items.filter((item) => item.backdrop !== null);
 
 	useEffect(() => {
@@ -127,13 +142,37 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 			return;
 		}
 
-		const onSelect = () => setCurrent(api.selectedScrollSnap());
+		const plugin = api.plugins().autoplay;
+		if (!plugin) {
+			return;
+		}
 
+		// Syncs local state with the external embla instance on (re)connect.
+		// oxlint-disable-next-line react/set-state-in-effect
+		setPlaying(plugin.isPlaying());
+		const onSelect = () => setCurrent(api.selectedScrollSnap());
+		const syncPlaying = () => setPlaying(plugin.isPlaying());
 		api.on("select", onSelect);
+		api.on("autoplay:play", syncPlaying);
+		api.on("autoplay:stop", syncPlaying);
 		return () => {
 			api.off("select", onSelect);
+			api.off("autoplay:play", syncPlaying);
+			api.off("autoplay:stop", syncPlaying);
 		};
 	}, [api]);
+
+	const togglePlaying = () => {
+		const plugin = api?.plugins()?.autoplay;
+		if (!plugin) {
+			return;
+		}
+		if (plugin.isPlaying()) {
+			plugin.stop();
+		} else {
+			plugin.play();
+		}
+	};
 
 	if (slides.length === 0) {
 		return null;
@@ -141,7 +180,13 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 
 	return (
 		<section aria-label="Featured" className="relative">
-			<Carousel opts={{ loop: true }} setApi={setApi}>
+			<Carousel
+				opts={{ loop: true }}
+				// Safe: lazy-initialized write-once above, never reassigned elsewhere.
+				// oxlint-disable-next-line react/refs
+				plugins={[autoplay.current]}
+				setApi={setApi}
+			>
 				<CarouselContent className="ml-0">
 					{slides.map((slide) => (
 						<CarouselItem className="basis-full pl-0" key={slide.id}>
@@ -166,6 +211,19 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 						type="button"
 					/>
 				))}
+
+				<button
+					aria-label={playing ? "Pause autoplay" : "Resume autoplay"}
+					className="mt-1 flex size-9 items-center justify-center rounded-full bg-black/50 text-white"
+					onClick={togglePlaying}
+					type="button"
+				>
+					{playing ? (
+						<IconPlayerPauseFilled className="size-4" />
+					) : (
+						<IconPlayerPlayFilled className="size-4" />
+					)}
+				</button>
 			</div>
 		</section>
 	);
