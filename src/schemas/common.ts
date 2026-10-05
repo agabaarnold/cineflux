@@ -5,6 +5,18 @@ export const idSchemaOptional = z.number().int().optional();
 export const nameSchema = z.string().min(1);
 export const countrySchema = z.string().length(2);
 
+const tmdbDateSchema = z.iso.date();
+
+export const dateOrEmptySchema = z.union([tmdbDateSchema, z.literal("")]);
+
+export const nullableDateOrEmptySchema = z.union([
+	tmdbDateSchema,
+	z.literal(""),
+	z.null(),
+]);
+
+export const screenMediaTypeSchema = z.enum(["movie", "tv"]);
+
 export const genreSchema = z.object({
 	id: idSchema,
 	name: nameSchema,
@@ -70,7 +82,7 @@ export const videoSchema = z.object({
 	name: z.string(),
 	key: z.string().min(1),
 	site: z.string(),
-	size: z.number().int(),
+	size: z.number().int().nonnegative(),
 	type: z.string(),
 	official: z.boolean(),
 	published_at: z.iso.datetime(),
@@ -113,8 +125,11 @@ export const reviewSchema = z.object({
 	url: z.url(),
 });
 
-export const mediaTypeSchema = z.enum(["movie", "tv"]);
+export const mediaTypeSchema = z.enum(["movie", "tv", "person"]);
 export type MediaType = z.infer<typeof mediaTypeSchema>;
+
+export const timeWindowSchema = z.enum(["day", "week"]);
+export type TimeWindow = z.infer<typeof timeWindowSchema>;
 
 export const networkSchema = z.object({
 	id: idSchema,
@@ -123,3 +138,68 @@ export const networkSchema = z.object({
 	origin_country: z.string(),
 });
 export type Network = z.infer<typeof networkSchema>;
+
+export const changeItemSchema = z.object({
+	id: z.union([z.number().int(), z.string().min(1)]),
+	action: z.string(),
+	time: z.string(),
+	iso_639_1: z.string().optional(),
+	iso_3166_1: z.string().optional(),
+	value: z.json().optional(),
+});
+export type ChangeItem = z.infer<typeof changeItemSchema>;
+
+export const changesSchema = z.object({
+	changes: z.array(
+		z.object({
+			key: z.string(),
+			items: z.array(changeItemSchema),
+		})
+	),
+});
+export type Changes = z.infer<typeof changesSchema>;
+
+export const watchProviderSchema = z.object({
+	logo_path: z.string().nullable().optional(),
+	provider_id: idSchema,
+	provider_name: z.string(),
+	display_priority: z.number().int().nonnegative(),
+});
+export type WatchProvider = z.infer<typeof watchProviderSchema>;
+
+export const watchProviderRegionSchema = z.object({
+	link: z.string().optional(),
+	flatrate: z.array(watchProviderSchema).optional(),
+	rent: z.array(watchProviderSchema).optional(),
+	buy: z.array(watchProviderSchema).optional(),
+	free: z.array(watchProviderSchema).optional(),
+	ads: z.array(watchProviderSchema).optional(),
+});
+export type WatchProviderRegion = z.infer<typeof watchProviderRegionSchema>;
+
+export const watchProvidersSchema = z.object({
+	id: idSchemaOptional,
+	results: z.record(z.string(), watchProviderRegionSchema),
+});
+export type WatchProviders = z.infer<typeof watchProvidersSchema>;
+
+export const tmdbListSummarySchema = z.object({
+	description: z.string(),
+	favorite_count: z.number().int().nonnegative(),
+	id: z.union([z.number().int(), z.string().min(1)]),
+	item_count: z.number().int().nonnegative(),
+	iso_639_1: z.string().optional(),
+	iso_3166_1: z.string().optional(),
+	list_type: z.string().optional(),
+	name: z.string(),
+	poster_path: z.string().nullable(),
+});
+export type TmdbListSummary = z.infer<typeof tmdbListSummarySchema>;
+
+export const tmdbListsSchema = z.object({
+	page: z.number().int().positive(),
+	results: z.array(tmdbListSummarySchema),
+	total_pages: z.number().int().nonnegative(),
+	total_results: z.number().int().nonnegative(),
+});
+export type TmdbLists = z.infer<typeof tmdbListsSchema>;

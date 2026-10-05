@@ -1,14 +1,25 @@
 import { z } from "zod";
 
-import { paginatedSchema } from "./aggregate";
 import {
+	imageResultsSchema,
+	paginatedSchema,
+	reviewsSchema,
+	videoResultsSchema,
+} from "./aggregate";
+import {
+	changesSchema,
 	countrySchema,
+	creditsSchema,
+	dateOrEmptySchema,
 	genreSchema,
 	idSchema,
+	idSchemaOptional,
 	nameSchema,
 	productionCompanySchema,
 	productionCountrySchema,
 	spokenLanguageSchema,
+	tmdbListsSchema,
+	watchProvidersSchema,
 } from "./common";
 
 export const movieQueryParamsSchema = z.object({
@@ -28,10 +39,7 @@ export const movieSchema = z.object({
 	overview: z.string(),
 	popularity: z.number().nonnegative(),
 	poster_path: z.string().nullable(),
-	release_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-	]),
+	release_date: dateOrEmptySchema,
 	softcore: z.boolean().default(false),
 	title: nameSchema,
 	video: z.boolean(),
@@ -78,10 +86,7 @@ export const movieDetailSchema = z.object({
 	poster_path: z.string().nullable(),
 	production_companies: z.array(productionCompanySchema),
 	production_countries: z.array(productionCountrySchema),
-	release_date: z.union([
-		z.string().regex(/^\d{4}-\d{2}-\d{2}$/u),
-		z.literal(""),
-	]),
+	release_date: dateOrEmptySchema,
 	revenue: z.number().int().nonnegative().nullable(),
 	runtime: z.number().int().nonnegative().nullable(),
 	softcore: z.boolean().default(false),
@@ -95,17 +100,132 @@ export const movieDetailSchema = z.object({
 });
 export type MovieDetails = z.infer<typeof movieDetailSchema>;
 
-export type MovieAppendToResponseNamespace =
-	| "alternative_titles"
-	| "changes"
-	| "credits"
-	| "external_ids"
-	| "images"
-	| "keywords"
-	| "recommendations"
-	| "release_dates"
-	| "reviews"
-	| "similar"
-	| "translations"
-	| "videos"
-	| "watch/providers";
+export const movieAppendToResponseSchema = z.enum([
+	"alternative_titles",
+	"changes",
+	"credits",
+	"external_ids",
+	"images",
+	"keywords",
+	"lists",
+	"recommendations",
+	"release_dates",
+	"reviews",
+	"similar",
+	"translations",
+	"videos",
+	"watch/providers",
+]);
+export type MovieAppendToResponseNamespace = z.infer<
+	typeof movieAppendToResponseSchema
+>;
+
+export const buildMovieAppendToResponse = (
+	namespaces: MovieAppendToResponseNamespace[]
+): string | undefined =>
+	namespaces.length === 0 ? undefined : [...new Set(namespaces)].join(",");
+
+// Appended namespaces listed below are validated. Other supported
+// namespaces must be valid JSON and pass through preserved.
+export const movieDetailsWithAppendSchema = movieDetailSchema
+	.extend({
+		credits: creditsSchema.optional(),
+		images: imageResultsSchema.optional(),
+		videos: videoResultsSchema.optional(),
+		reviews: reviewsSchema.optional(),
+		similar: movieResultsSchema.optional(),
+		recommendations: movieResultsSchema.optional(),
+	})
+	.catchall(z.json());
+export type MovieDetailsWithAppend = z.infer<
+	typeof movieDetailsWithAppendSchema
+>;
+
+export const movieAlternativeTitlesSchema = z.object({
+	id: idSchemaOptional,
+	titles: z.array(
+		z.object({
+			iso_3166_1: z.string(),
+			title: z.string(),
+			type: z.string().optional(),
+		})
+	),
+});
+export type MovieAlternativeTitles = z.infer<
+	typeof movieAlternativeTitlesSchema
+>;
+
+export const movieChangesSchema = changesSchema;
+export type MovieChanges = z.infer<typeof movieChangesSchema>;
+
+export const movieCreditsSchema = creditsSchema.extend({
+	id: idSchemaOptional,
+});
+export type MovieCredits = z.infer<typeof movieCreditsSchema>;
+
+export const movieExternalIdsSchema = z.object({
+	id: idSchemaOptional,
+	imdb_id: z.string().nullable().optional(),
+	wikidata_id: z.string().nullable().optional(),
+	facebook_id: z.string().nullable().optional(),
+	instagram_id: z.string().nullable().optional(),
+	twitter_id: z.string().nullable().optional(),
+});
+export type MovieExternalIds = z.infer<typeof movieExternalIdsSchema>;
+
+export const movieKeywordsSchema = z.object({
+	id: idSchemaOptional,
+	keywords: z.array(
+		z.object({
+			id: idSchema,
+			name: z.string(),
+		})
+	),
+});
+export type MovieKeywords = z.infer<typeof movieKeywordsSchema>;
+
+export const movieReleaseDatesSchema = z.object({
+	id: idSchemaOptional,
+	results: z.array(
+		z.object({
+			iso_3166_1: z.string(),
+			release_dates: z.array(
+				z.object({
+					certification: z.string(),
+					descriptors: z.array(z.string()),
+					iso_639_1: z.string(),
+					note: z.string(),
+					release_date: z.iso.datetime(),
+					type: z.number().int().nonnegative(),
+				})
+			),
+		})
+	),
+});
+export type MovieReleaseDates = z.infer<typeof movieReleaseDatesSchema>;
+
+export const movieTranslationsSchema = z.object({
+	id: idSchemaOptional,
+	translations: z.array(
+		z.object({
+			iso_3166_1: z.string(),
+			iso_639_1: z.string(),
+			name: z.string(),
+			english_name: z.string(),
+			data: z.object({
+				title: z.string().optional(),
+				overview: z.string().optional(),
+				homepage: z.string().nullable().optional(),
+				runtime: z.number().int().nonnegative().nullable().optional(),
+				tagline: z.string().nullable().optional(),
+			}),
+		})
+	),
+});
+export type MovieTranslations = z.infer<typeof movieTranslationsSchema>;
+
+export const movieWatchProvidersSchema = watchProvidersSchema;
+export type MovieWatchProviders = z.infer<typeof movieWatchProvidersSchema>;
+
+export const movieListsSchema = tmdbListsSchema;
+export type MovieLists = z.infer<typeof movieListsSchema>;
