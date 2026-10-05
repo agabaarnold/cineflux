@@ -140,7 +140,7 @@ export const networkSchema = z.object({
 export type Network = z.infer<typeof networkSchema>;
 
 export const changeItemSchema = z.object({
-	id: z.number().int(),
+	id: z.union([z.number().int(), z.string().min(1)]),
 	action: z.string(),
 	time: z.string(),
 	iso_639_1: z.string().optional(),
