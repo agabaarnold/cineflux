@@ -94,7 +94,7 @@ export const imageItemSchema = z.object({
 	aspect_ratio: z.number().positive(),
 	file_path: z.string().min(1),
 	height: z.number().int().positive(),
-	iso_639_1: z.string().nullable(),
+	iso_639_1: z.string().nullable().optional(),
 	vote_average: z.number().nonnegative(),
 	vote_count: z.number().nonnegative(),
 	width: z.number().int().positive(),
