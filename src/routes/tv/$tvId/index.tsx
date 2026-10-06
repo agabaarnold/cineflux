@@ -31,7 +31,11 @@ import type {
 	TvContentRatings,
 	TVSeriesDetailsWithAppend,
 } from "#/schemas/tv.ts";
-import { getBackdropUrl, getPosterUrl, getProfileUrl } from "#/server/tmdb/images.ts";
+import {
+	getBackdropUrl,
+	getPosterUrl,
+	getProfileUrl,
+} from "#/server/tmdb/images.ts";
 
 const APPEND_TO_RESPONSE = [
 	"credits",
@@ -228,7 +232,10 @@ function TvDetailsPage() {
 										details.networks.map((network) => network.name).join(", ")
 									),
 								},
-								{ label: "Writer(s)", value: detailValue(crew.writers.join(", ")) },
+								{
+									label: "Writer(s)",
+									value: detailValue(crew.writers.join(", ")),
+								},
 								{ label: "Certification", value: detailValue(certification) },
 								{
 									label: "Producer(s)",
@@ -240,12 +247,14 @@ function TvDetailsPage() {
 						<h3 className="mt-8 text-lg font-semibold">Actors</h3>
 						<div className="mt-3">
 							<CastRow
-								items={(details.credits?.cast ?? []).slice(0, 12).map((person) => ({
-									character: person.character,
-									id: person.id,
-									name: person.name,
-									profile: getProfileUrl(person.profile_path),
-								}))}
+								items={(details.credits?.cast ?? [])
+									.slice(0, 12)
+									.map((person) => ({
+										character: person.character,
+										id: person.id,
+										name: person.name,
+										profile: getProfileUrl(person.profile_path),
+									}))}
 							/>
 						</div>
 
@@ -268,7 +277,10 @@ function TvDetailsPage() {
 													alt={season.name}
 													className="aspect-2/3 w-full object-cover"
 													loading="lazy"
-													src={getPosterUrl(season.poster_path, "w342") ?? undefined}
+													src={
+														getPosterUrl(season.poster_path, "w342") ??
+														undefined
+													}
 												/>
 											) : (
 												<div className="bg-muted text-muted-foreground flex aspect-2/3 w-full items-center justify-center text-xs">
