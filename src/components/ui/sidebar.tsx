@@ -1,7 +1,5 @@
 "use client";
 
-// Single-use lazy state below intentionally omits the setter from the pair.
-// oxlint-disable react/hook-use-state
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { IconLayoutSidebar } from "@tabler/icons-react";
@@ -13,6 +11,7 @@ import {
 	useCallback,
 	useContext,
 	useEffect,
+	useId,
 	useMemo,
 	useState,
 } from "react";
@@ -65,7 +64,7 @@ const useSidebar = () => {
 };
 
 const SidebarProvider = ({
-	defaultOpen = true,
+	defaultOpen,
 	open: openProp,
 	onOpenChange: setOpenProp,
 	className,
@@ -82,7 +81,20 @@ const SidebarProvider = ({
 
 	// This is the internal state of the sidebar.
 	// We use openProp and setOpenProp for control from outside the component.
-	const [sidebarOpen, setSidebarOpen] = useState(defaultOpen);
+	// An explicitly supplied defaultOpen wins; otherwise the persisted
+	// cookie value is restored so the preference survives reloads.
+	const [sidebarOpen, setSidebarOpen] = useState(() => {
+		if (defaultOpen !== undefined) {
+			return defaultOpen;
+		}
+		if (typeof document === "undefined") {
+			return true;
+		}
+		const match = document.cookie.match(
+			/(?:^|; )sidebar_state=(?<value>[^;]*)/u
+		);
+		return match?.groups?.value !== "false";
+	});
 	const open = openProp ?? sidebarOpen;
 	const setOpen = useCallback(
 		(value: boolean | ((value: boolean) => boolean)) => {
@@ -202,13 +214,17 @@ const Sidebar = ({
 
 	if (isMobile) {
 		return (
-			<Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+			<Sheet open={openMobile} onOpenChange={setOpenMobile}>
 				<SheetContent
 					dir={dir}
 					data-sidebar="sidebar"
 					data-slot="sidebar"
 					data-mobile="true"
-					className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+					className={cn(
+						"bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden",
+						className
+					)}
+					{...props}
 					style={
 						// SAFETY: custom CSS variables are valid inline style keys at runtime; the assertion only widens the type for React.
 						{
@@ -438,6 +454,7 @@ const SidebarGroupAction = ({
 					"text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-2 focus-visible:ring-2 md:after:hidden [&>svg]:size-4 [&>svg]:shrink-0",
 					className
 				),
+				type: "button",
 			},
 			props
 		),
@@ -519,6 +536,7 @@ const SidebarMenuButton = ({
 		props: mergeProps<"button">(
 			{
 				className: cn(sidebarMenuButtonVariants({ variant, size }), className),
+				type: "button",
 			},
 			props
 		),
@@ -574,6 +592,7 @@ const SidebarMenuAction = ({
 						"peer-data-active/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 aria-expanded:opacity-100 md:opacity-0",
 					className
 				),
+				type: "button",
 			},
 			props
 		),
@@ -603,12 +622,16 @@ const SidebarMenuSkeleton = ({
 }: ComponentProps<"div"> & {
 	showIcon?: boolean;
 }) => {
-	// Random width between 50 to 90%, initialized once; the setter is intentionally unused.
-	// oxlint-disable-next-line sonarjs/no-unused-vars
-	const [width, _setWidth] = useState(
-		// oxlint-disable-next-line sonarjs/pseudo-random
-		() => `${Math.floor(Math.random() * 40) + 50}%`
-	);
+	// Skeleton width varies between 50 to 90%, derived from the stable
+	// instance id so server rendering and hydration produce the same width.
+	const instanceId = useId();
+	const width = useMemo(() => {
+		let hash = 0;
+		for (const char of instanceId) {
+			hash = (hash * 31 + (char.codePointAt(0) ?? 0)) % 100;
+		}
+		return `${50 + (hash % 41)}%`;
+	}, [instanceId]);
 
 	return (
 		<div
