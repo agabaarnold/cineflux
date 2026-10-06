@@ -1,3 +1,4 @@
+// oxlint-disable react/function-component-definition func-style
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
@@ -26,6 +27,35 @@ const popularTvOptions = fetchTvPopularQueryOptions({
 });
 const popularPeopleOptions = fetchPopularPeopleQueryOptions({
 	data: { language: "en-US", page: 1 },
+});
+
+export const Route = createFileRoute("/")({
+	validateSearch: z.object({ time_window: timeWindowSchema.default("day") }),
+	loaderDeps: ({ search }) => search,
+	loader: ({ context, deps }) =>
+		Promise.all([
+			context.queryClient.query({
+				...fetchTrendingQueryOptions({
+					data: {
+						language: "en-US",
+						media_type: "all",
+						time_window: deps.time_window,
+					},
+				}),
+				staleTime: "static",
+			}),
+			context.queryClient.query({
+				...popularMoviesOptions,
+				staleTime: "static",
+			}),
+			context.queryClient.query({ ...popularTvOptions, staleTime: "static" }),
+			context.queryClient.query({
+				...popularPeopleOptions,
+				staleTime: "static",
+			}),
+		]),
+	component: Home,
+	errorComponent: RouteError,
 });
 
 type TrendingRowItem = TrendingAllResults["results"][number];
@@ -66,7 +96,7 @@ const trendingImage = (item: TrendingRowItem) =>
 		? getProfileUrl(item.profile_path)
 		: getPosterUrl(item.poster_path);
 
-const Home = () => {
+function Home() {
 	const navigate = useNavigate();
 	const search = Route.useSearch();
 	const trendingOptions = fetchTrendingQueryOptions({
@@ -200,33 +230,4 @@ const Home = () => {
 			</div>
 		</div>
 	);
-};
-
-export const Route = createFileRoute("/")({
-	validateSearch: z.object({ time_window: timeWindowSchema.default("day") }),
-	loaderDeps: ({ search }) => search,
-	loader: ({ context, deps }) =>
-		Promise.all([
-			context.queryClient.query({
-				...fetchTrendingQueryOptions({
-					data: {
-						language: "en-US",
-						media_type: "all",
-						time_window: deps.time_window,
-					},
-				}),
-				staleTime: "static",
-			}),
-			context.queryClient.query({
-				...popularMoviesOptions,
-				staleTime: "static",
-			}),
-			context.queryClient.query({ ...popularTvOptions, staleTime: "static" }),
-			context.queryClient.query({
-				...popularPeopleOptions,
-				staleTime: "static",
-			}),
-		]),
-	component: Home,
-	errorComponent: RouteError,
-});
+}
