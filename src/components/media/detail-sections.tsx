@@ -120,7 +120,7 @@ export const ReviewsList = ({ reviews }: { reviews: ReviewItem[] }) => {
 							<span className="flex items-center gap-1 text-sm font-semibold">
 								<IconStarFilled
 									aria-hidden="true"
-									className="size-3.5 text-star"
+									className="text-star size-3.5"
 								/>
 								{review.rating.toFixed(1)}
 							</span>
