@@ -16,6 +16,7 @@ import {
 } from "#/components/media/detail-sections.tsx";
 import type { ReviewItem } from "#/components/media/detail-sections.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
+import { WatchProviders } from "#/components/media/watch-providers.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import {
 	Tabs,
@@ -26,6 +27,7 @@ import {
 import {
 	fetchTvContentRatingsQueryOptions,
 	fetchTvSeriesDetailsQueryOptions,
+	fetchTvWatchProvidersQueryOptions,
 } from "#/queries/tv.ts";
 import type {
 	TvContentRatings,
@@ -57,6 +59,9 @@ const detailOptions = (id: number) =>
 const contentRatingsOptions = (id: number) =>
 	fetchTvContentRatingsQueryOptions({ data: { id } });
 
+const providersOptions = (id: number) =>
+	fetchTvWatchProvidersQueryOptions({ data: { id } });
+
 const parseId = (value: string) => {
 	const id = Number(value);
 	if (!Number.isSafeInteger(id) || id <= 0) {
@@ -77,6 +82,7 @@ export const Route = createFileRoute("/tv/$tvId/")({
 				...contentRatingsOptions(id),
 				staleTime: "static",
 			}),
+			context.queryClient.query(providersOptions(id)),
 		]);
 	},
 	component: TvDetailsPage,
@@ -162,6 +168,7 @@ function TvDetailsPage() {
 	const id = parseId(tvId);
 	const { data: details } = useSuspenseQuery(detailOptions(id));
 	const { data: contentRatings } = useSuspenseQuery(contentRatingsOptions(id));
+	const { data: providers } = useSuspenseQuery(providersOptions(id));
 	const [tab, setTab] = useState("information");
 
 	const crew = getCrewGroups(details.credits?.crew);
@@ -243,6 +250,7 @@ function TvDetailsPage() {
 								},
 							]}
 						/>
+						<WatchProviders providers={providers} />
 
 						<h3 className="mt-8 text-lg font-semibold">Actors</h3>
 						<div className="mt-3">
