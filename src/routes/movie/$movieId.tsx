@@ -1,5 +1,5 @@
 // oxlint-disable react/function-component-definition func-style
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -25,6 +25,7 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "#/components/ui/tabs.tsx";
+import { fetchCollectionDetailsQueryOptions } from "#/queries/catalog.ts";
 import {
 	fetchMovieDetailsQueryOptions,
 	fetchMovieReleaseDatesQueryOptions,
@@ -155,12 +156,24 @@ function MovieDetailsPage() {
 	const { data: details } = useSuspenseQuery(detailOptions(id));
 	const { data: releaseDates } = useSuspenseQuery(releaseDatesOptions(id));
 	const { data: providers } = useSuspenseQuery(providersOptions(id));
+	const collectionId = details.belongs_to_collection?.id ?? null;
+	const { data: collection } = useQuery({
+		...fetchCollectionDetailsQueryOptions({
+			data: { id: collectionId ?? 0, language: "en-US" },
+		}),
+		enabled: collectionId !== null,
+	});
 	const [tab, setTab] = useState("information");
 
 	const crew = getCrewGroups(details.credits?.crew);
 	const certification = getUsCertification(releaseDates);
 	const trailerKey = getTrailerKey(details.videos);
 	const similar = getSimilarMovies(details);
+	// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
+	const franchise = [...(collection?.parts ?? [])]
+		// oxlint-disable-next-line unicorn/no-array-sort
+		.sort((a, b) => a.release_date.localeCompare(b.release_date))
+		.filter((part) => part.id !== id);
 	const reviews: ReviewItem[] = (details.reviews?.results ?? [])
 		.slice(0, 5)
 		.map((review) => ({
@@ -241,6 +254,26 @@ function MovieDetailsPage() {
 							]}
 						/>
 						<WatchProviders providers={providers} />
+						{franchise.length > 0 ? (
+							<div className="mt-8">
+								<MediaRow
+									items={franchise.map((movie) => ({
+										href: `/movie/${movie.id}`,
+										id: String(movie.id),
+										image: getPosterUrl(movie.poster_path),
+										mediaType: "movie",
+										overview: movie.overview,
+										stat: {
+											kind: "rating",
+											value: movie.vote_average,
+										} as const,
+										title: movie.title,
+										year: movie.release_date.slice(0, 4),
+									}))}
+									title={`More from ${collection?.name ?? "this collection"}`}
+								/>
+							</div>
+						) : null}
 
 						<h3 className="mt-8 text-lg font-semibold">Actors</h3>
 						<div className="mt-3">
