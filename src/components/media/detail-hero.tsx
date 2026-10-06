@@ -10,6 +10,7 @@ import {
 	IconStarFilled,
 	IconWorld,
 } from "@tabler/icons-react";
+import type { Icon } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -17,7 +18,7 @@ import { AspectRatio } from "#/components/ui/aspect-ratio.tsx";
 import { Badge } from "#/components/ui/badge.tsx";
 
 export interface DetailHeroMeta {
-	icon: "country" | "date" | "info" | "language" | "runtime";
+	icon: string;
 	label: string;
 	value: string;
 }
@@ -44,7 +45,7 @@ export interface DetailHeroProps {
 	year: string;
 }
 
-const metaIcons = {
+const metaIcons: Record<string, Icon> = {
 	country: IconMapPin,
 	date: IconCalendar,
 	info: IconInfoCircle,
@@ -154,10 +155,10 @@ export const DetailHero = ({
 						{meta.length > 0 ? (
 							<dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
 								{meta.map((item) => {
-									const Icon = metaIcons[item.icon];
+									const MetaIcon = metaIcons[item.icon] ?? IconInfoCircle;
 									return (
 										<div className="flex items-center gap-1.5" key={item.label}>
-											<Icon
+											<MetaIcon
 												aria-hidden="true"
 												className="size-4 text-white/40"
 											/>
@@ -201,7 +202,7 @@ export const DetailHero = ({
 							<span className="ml-1 flex items-center gap-1.5 text-sm text-white">
 								<IconStarFilled
 									aria-hidden="true"
-									className="size-4 text-amber-400"
+									className="size-4 text-star"
 								/>
 								<span className="font-semibold">{voteAverage.toFixed(1)}</span>
 								<span className="text-white/50">
