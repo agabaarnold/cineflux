@@ -27,12 +27,13 @@ export const CastRow = ({ items }: { items: CastMember[] }) => {
 	return (
 		<div className="flex gap-4 overflow-x-auto pb-2">
 			{items.map((member) => {
-				const href = "/person/" + member.id;
+				const personId = String(member.id);
 				return (
 					<Link
 						className="group block w-20 shrink-0 text-center"
 						key={member.id}
-						to={href}
+						params={{ personId }}
+						to="/person/$personId"
 					>
 						{member.profile ? (
 							<img
