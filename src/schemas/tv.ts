@@ -61,7 +61,7 @@ export const episodeSchema = z.object({
 	production_code: z.string().nullable().optional(),
 	runtime: z.number().int().nonnegative().nullable().optional(),
 	season_number: z.number().int().nonnegative(),
-	show_id: idSchema,
+	show_id: idSchema.optional(),
 	still_path: z.string().nullable(),
 	vote_average: z.number().nonnegative(),
 	vote_count: z.number().int().nonnegative(),
