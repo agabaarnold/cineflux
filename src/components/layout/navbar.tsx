@@ -4,7 +4,6 @@ import {
 	IconHome,
 	IconMovie,
 	IconSearch,
-	IconSun,
 	IconUsersGroup,
 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
@@ -13,7 +12,6 @@ import type { LinkOptions } from "@tanstack/react-router";
 import { cn } from "cn";
 
 import { Logo } from "../shared/logo";
-import { Button } from "../ui/button";
 
 interface NavItemProps {
 	to: LinkOptions["to"];
@@ -34,7 +32,7 @@ const NavItem = ({ to, children, icon: Icon }: NavItemProps) => (
 			className: "hover:bg-accent hover:text-accent-foreground",
 		}}
 	>
-		{Icon && <Icon className="size-4" />}
+		{Icon && <Icon aria-hidden="true" className="size-4" />}
 
 		<span>{children}</span>
 	</Link>
@@ -65,21 +63,13 @@ export const Navbar = () => (
 				</NavItem>
 			</div>
 
-			{/* Implement theming */}
-			<Button
-				className="bg-accent rounded-full p-2"
-				type="button"
-				variant="outline"
-			>
-				<IconSun />
-			</Button>
-
 			<Link
+				aria-label="Search"
 				to="/search"
 				className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors"
 				activeProps={{ className: "bg-primary text-secondary" }}
 			>
-				<IconSearch className="size-4" />
+				<IconSearch aria-hidden="true" className="size-4" />
 			</Link>
 
 			{/* Profile goes here */}
