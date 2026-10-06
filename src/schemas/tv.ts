@@ -157,6 +157,13 @@ export const TVSeriesDetailsSchema = z.object({
 });
 export type TVSeriesDetails = z.infer<typeof TVSeriesDetailsSchema>;
 
+export const tvCreditsSchema = z.object({
+	cast: z.array(castSchema.omit({ cast_id: true })),
+	crew: z.array(crewSchema),
+	id: idSchemaOptional,
+});
+export type TvCredits = z.infer<typeof tvCreditsSchema>;
+
 export const tvSeriesAppendToResponseSchema = z.enum([
 	"account_states",
 	"aggregate_credits",
@@ -189,7 +196,7 @@ export const buildTvAppendToResponse = (
 // Appended namespaces listed below are validated. Other supported
 // namespaces must be valid JSON and pass through preserved.
 export const tvSeriesDetailsWithAppendSchema = TVSeriesDetailsSchema.extend({
-	credits: creditsSchema.optional(),
+	credits: tvCreditsSchema.optional(),
 	images: imageResultsSchema.optional(),
 	videos: videoResultsSchema.optional(),
 	reviews: reviewsSchema.optional(),
@@ -227,11 +234,6 @@ export const tvContentRatingsSchema = z.object({
 	),
 });
 export type TvContentRatings = z.infer<typeof tvContentRatingsSchema>;
-
-export const tvCreditsSchema = creditsSchema.extend({
-	id: idSchemaOptional,
-});
-export type TvCredits = z.infer<typeof tvCreditsSchema>;
 
 const aggregateRoleSchema = z.object({
 	credit_id: z.string().min(1),
