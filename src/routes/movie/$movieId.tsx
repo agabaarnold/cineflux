@@ -31,8 +31,7 @@ import type {
 	MovieDetailsWithAppend,
 	MovieReleaseDates,
 } from "#/schemas/movie.ts";
-import { getBackdropUrl, getPosterUrl } from "#/server/tmdb/images.ts";
-import { getProfileUrl } from "#/server/tmdb/images.ts";
+import { getBackdropUrl, getPosterUrl, getProfileUrl } from "#/server/tmdb/images.ts";
 
 const APPEND_TO_RESPONSE = [
 	"credits",
