@@ -210,7 +210,7 @@ export const DetailHero = ({
 							<span className="ml-1 flex items-center gap-1.5 text-sm text-white">
 								<IconStarFilled
 									aria-hidden="true"
-									className="size-4 text-star"
+									className="text-star size-4"
 								/>
 								<span className="font-semibold">{voteAverage.toFixed(1)}</span>
 								<span className="text-white/50">
