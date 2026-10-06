@@ -22,6 +22,19 @@ export const formatFullDate = (value: string | null | undefined): string => {
 export const detailValue = (value: string): ReactNode =>
 	value || <span className="text-muted-foreground">Not available</span>;
 
+const usdFormatter = new Intl.NumberFormat("en-US", {
+	currency: "USD",
+	maximumFractionDigits: 0,
+	style: "currency",
+});
+
+export const formatCurrency = (value: number | null | undefined): string => {
+	if (value === null || value === undefined || value <= 0) {
+		return "";
+	}
+	return usdFormatter.format(value);
+};
+
 interface CrewEntry {
 	department: string;
 	job: string;
