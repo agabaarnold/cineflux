@@ -31,7 +31,11 @@ import type {
 	MovieDetailsWithAppend,
 	MovieReleaseDates,
 } from "#/schemas/movie.ts";
-import { getBackdropUrl, getPosterUrl, getProfileUrl } from "#/server/tmdb/images.ts";
+import {
+	getBackdropUrl,
+	getPosterUrl,
+	getProfileUrl,
+} from "#/server/tmdb/images.ts";
 
 const APPEND_TO_RESPONSE = [
 	"credits",
@@ -80,7 +84,8 @@ export const Route = createFileRoute("/movie/$movieId")({
 });
 
 const getUsCertification = (releaseDates: MovieReleaseDates): string =>
-	releaseDates.results.find((entry) => entry.iso_3166_1 === "US")
+	releaseDates.results
+		.find((entry) => entry.iso_3166_1 === "US")
 		?.release_dates.find((entry) => entry.certification !== "")
 		?.certification ?? "";
 
@@ -198,14 +203,20 @@ function MovieDetailsPage() {
 						<h2 className="text-xl font-semibold">Information</h2>
 						<InfoRows
 							rows={[
-								{ label: "Director(s)", value: detailValue(crew.directors.join(", ")) },
+								{
+									label: "Director(s)",
+									value: detailValue(crew.directors.join(", ")),
+								},
 								{
 									label: "Genre(s)",
 									value: detailValue(
 										details.genres.map((genre) => genre.name).join(", ")
 									),
 								},
-								{ label: "Writer(s)", value: detailValue(crew.writers.join(", ")) },
+								{
+									label: "Writer(s)",
+									value: detailValue(crew.writers.join(", ")),
+								},
 								{
 									label: "Producer(s)",
 									value: detailValue(crew.producers.join(", ")),
@@ -217,12 +228,14 @@ function MovieDetailsPage() {
 						<h3 className="mt-8 text-lg font-semibold">Actors</h3>
 						<div className="mt-3">
 							<CastRow
-								items={(details.credits?.cast ?? []).slice(0, 12).map((person) => ({
-									character: person.character,
-									id: person.id,
-									name: person.name,
-									profile: getProfileUrl(person.profile_path),
-								}))}
+								items={(details.credits?.cast ?? [])
+									.slice(0, 12)
+									.map((person) => ({
+										character: person.character,
+										id: person.id,
+										name: person.name,
+										profile: getProfileUrl(person.profile_path),
+									}))}
 							/>
 						</div>
 					</TabsContent>
