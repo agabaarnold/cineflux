@@ -53,4 +53,6 @@ const Button = ({
 	/>
 );
 
+// variant helpers are part of the public component API by shadcn convention.
+// oxlint-disable-next-line react-doctor/only-export-components
 export { Button, buttonVariants };

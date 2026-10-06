@@ -29,9 +29,15 @@ const SCOPE = "tmdb";
 const SUB = {
 	aggregateCredits: "aggregate-credits",
 	airingToday: "airing-today",
+	alternativeNames: "alternative-names",
 	alternativeTitles: "alternative-titles",
 	changes: "changes",
+	collection: "collection",
+	collections: "collections",
 	combinedCredits: "combined-credits",
+	companies: "companies",
+	company: "company",
+	configuration: "configuration",
 	contentRatings: "content-ratings",
 	credits: "credits",
 	details: "details",
@@ -40,12 +46,18 @@ const SUB = {
 	episodeGroups: "episode-groups",
 	externalIds: "external-ids",
 	images: "images",
+	keyword: "keyword",
 	keywords: "keywords",
 	latest: "latest",
 	lists: "lists",
 	movieCredits: "movie-credits",
+	movieGenres: "movie-genres",
+	movies: "movies",
+	multi: "multi",
+	network: "network",
 	nowPlaying: "now-playing",
 	onTheAir: "on-the-air",
+	people: "people",
 	popular: "popular",
 	query: "query",
 	recommendations: "recommendations",
@@ -57,14 +69,19 @@ const SUB = {
 	taggedImages: "tagged-images",
 	topRated: "top-rated",
 	translations: "translations",
+	tv: "tv",
 	tvCredits: "tv-credits",
+	tvGenres: "tv-genres",
 	upcoming: "upcoming",
 	videos: "videos",
 	watchProviders: "watch-providers",
 } as const;
 const DOMAIN = {
+	catalog: "catalog",
+	discover: "discover",
 	movie: "movie",
 	person: "person",
+	search: "search",
 	trending: "trending",
 	tv: "tv",
 } as const;
@@ -216,6 +233,80 @@ export const tmdbKeys = {
 			[SCOPE, DOMAIN.person, SUB.latest, clean(input)] as const,
 		popular: (input: KeyInput) =>
 			[SCOPE, DOMAIN.person, SUB.popular, clean(input)] as const,
+	},
+	search: {
+		movies: (input: KeyInput) =>
+			[SCOPE, DOMAIN.search, SUB.movies, clean(input)] as const,
+		tv: (input: KeyInput) =>
+			[SCOPE, DOMAIN.search, SUB.tv, clean(input)] as const,
+		people: (input: KeyInput) =>
+			[SCOPE, DOMAIN.search, SUB.people, clean(input)] as const,
+		multi: (input: KeyInput) =>
+			[SCOPE, DOMAIN.search, SUB.multi, clean(input)] as const,
+		collections: (input: KeyInput) =>
+			[SCOPE, DOMAIN.search, SUB.collections, clean(input)] as const,
+		companies: (input: KeyInput) =>
+			[SCOPE, DOMAIN.search, SUB.companies, clean(input)] as const,
+		keywords: (input: KeyInput) =>
+			[SCOPE, DOMAIN.search, SUB.keywords, clean(input)] as const,
+	},
+	discover: {
+		movies: (input: KeyInput) =>
+			[SCOPE, DOMAIN.discover, SUB.movies, clean(input)] as const,
+		tv: (input: KeyInput) =>
+			[SCOPE, DOMAIN.discover, SUB.tv, clean(input)] as const,
+	},
+	catalog: {
+		movieGenres: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.movieGenres, clean(input)] as const,
+		tvGenres: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.tvGenres, clean(input)] as const,
+		configuration: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.configuration, clean(input)] as const,
+		collectionDetails: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.collection, clean(input)] as const,
+		collectionImages: (input: KeyInput) =>
+			[
+				SCOPE,
+				DOMAIN.catalog,
+				SUB.collection,
+				SUB.images,
+				clean(input),
+			] as const,
+		collectionTranslations: (input: KeyInput) =>
+			[
+				SCOPE,
+				DOMAIN.catalog,
+				SUB.collection,
+				SUB.translations,
+				clean(input),
+			] as const,
+		companyDetails: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.company, clean(input)] as const,
+		companyAlternativeNames: (input: KeyInput) =>
+			[
+				SCOPE,
+				DOMAIN.catalog,
+				SUB.company,
+				SUB.alternativeNames,
+				clean(input),
+			] as const,
+		companyImages: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.company, SUB.images, clean(input)] as const,
+		networkDetails: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.network, clean(input)] as const,
+		networkAlternativeNames: (input: KeyInput) =>
+			[
+				SCOPE,
+				DOMAIN.catalog,
+				SUB.network,
+				SUB.alternativeNames,
+				clean(input),
+			] as const,
+		keywordDetails: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.keyword, clean(input)] as const,
+		keywordMovies: (input: KeyInput) =>
+			[SCOPE, DOMAIN.catalog, SUB.keyword, SUB.movies, clean(input)] as const,
 	},
 } as const;
 

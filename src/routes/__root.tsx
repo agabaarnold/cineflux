@@ -10,6 +10,9 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "react-hot-toast";
 
+import { Navbar } from "#/components/layout/navbar.tsx";
+import { TooltipProvider } from "#/components/ui/tooltip.tsx";
+
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -27,6 +30,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
+				name: "description",
+				content: "Discover movies, TV shows, and people.",
+			},
+			{
+				name: "theme-color",
+				content: "#6D25D9",
+			},
+			{
 				title: "CineFlux",
 			},
 		],
@@ -34,6 +45,35 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{
 				rel: "stylesheet",
 				href: appCss,
+			},
+			{
+				rel: "icon",
+				href: "/favicon.ico",
+			},
+			{
+				rel: "icon",
+				href: "/app-icon.svg",
+				type: "image/svg+xml",
+			},
+			{
+				rel: "icon",
+				href: "/favicon-32.png",
+				sizes: "32x32",
+				type: "image/png",
+			},
+			{
+				rel: "icon",
+				href: "/favicon-16.png",
+				sizes: "16x16",
+				type: "image/png",
+			},
+			{
+				rel: "apple-touch-icon",
+				href: "/apple-touch-icon-180.png",
+			},
+			{
+				rel: "manifest",
+				href: "/site.webmanifest",
 			},
 		],
 	}),
@@ -48,7 +88,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 
 			<body>
-				{children}
+				<TooltipProvider>
+					<Navbar />
+					{children}
+				</TooltipProvider>
 				<Toaster />
 
 				<TanStackDevtools
