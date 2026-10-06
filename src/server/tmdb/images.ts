@@ -60,6 +60,11 @@ export const getProfileUrl = (
 	size: ProfileSize = "w185"
 ): string | null => getImageUrl(path, size);
 
+export const getStillUrl = (
+	path: string | null | undefined,
+	size: StillSize = "w300"
+): string | null => getImageUrl(path, size);
+
 export const getLogoUrl = (
 	path: string | null | undefined,
 	size: LogoSize = "w185"
