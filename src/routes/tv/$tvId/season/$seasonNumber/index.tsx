@@ -179,7 +179,7 @@ function SeasonDetailsPage() {
 											<span>{formatFullDate(episode.air_date)}</span>
 										) : null}
 										{episode.runtime ? <span>{episode.runtime}m</span> : null}
-										<span className="flex items-center gap-1 font-semibold text-white">
+										<span className="text-foreground flex items-center gap-1 font-semibold">
 											<IconStarFilled
 												aria-hidden="true"
 												className="text-star size-3.5"
