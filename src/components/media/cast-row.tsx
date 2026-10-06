@@ -27,7 +27,7 @@ export const CastRow = ({ items }: { items: CastMember[] }) => {
 	return (
 		<div className="flex gap-4 overflow-x-auto pb-2">
 			{items.map((member) => {
-				const href: string = `/person/${member.id}`;
+				const href = "/person/" + member.id;
 				return (
 					<Link
 						className="group block w-20 shrink-0 text-center"
@@ -49,7 +49,7 @@ export const CastRow = ({ items }: { items: CastMember[] }) => {
 						<p className="mt-2 line-clamp-2 text-xs font-medium">
 							{member.name}
 						</p>
-						<p className="text-muted-foreground mt-0.5 truncate text-[11px]">
+						<p className="text-muted-foreground mt-0.5 truncate text-xs">
 							{member.character}
 						</p>
 					</Link>
