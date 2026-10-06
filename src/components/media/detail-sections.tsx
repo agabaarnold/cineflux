@@ -1,3 +1,6 @@
+// Shared, non-component helpers live alongside the detail sections below;
+// the file intentionally mixes helpers and components.
+// oxlint-disable react-doctor/only-export-components
 import { IconStarFilled } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
@@ -58,16 +61,18 @@ interface TrailerVideo {
 export const getTrailerKey = (
 	videos: { results: TrailerVideo[] } | undefined
 ): string | null => {
-	if (!videos) {
-		return null;
-	}
-	const trailer = videos.results.find(
+	const results = videos?.results ?? [];
+	const trailer = results.find(
 		(video) => video.site === "YouTube" && video.type === "Trailer"
 	);
 	if (trailer) {
 		return trailer.key;
 	}
-	return videos.results.find((video) => video.site === "YouTube")?.key ?? null;
+	const anyVideo = results.find((video) => video.site === "YouTube");
+	if (anyVideo) {
+		return anyVideo.key;
+	}
+	return null;
 };
 
 export const InfoRows = ({
@@ -111,7 +116,7 @@ export const ReviewsList = ({ reviews }: { reviews: ReviewItem[] }) => {
 				<li className="bg-card rounded-2xl border p-4" key={review.id}>
 					<div className="flex items-center gap-2">
 						<p className="font-semibold">{review.author}</p>
-						{review.rating !== null ? (
+						{review.rating === null ? null : (
 							<span className="flex items-center gap-1 text-sm font-semibold">
 								<IconStarFilled
 									aria-hidden="true"
@@ -119,7 +124,7 @@ export const ReviewsList = ({ reviews }: { reviews: ReviewItem[] }) => {
 								/>
 								{review.rating.toFixed(1)}
 							</span>
-						) : null}
+						)}
 						<span className="text-muted-foreground ml-auto text-xs">
 							{review.date}
 						</span>
