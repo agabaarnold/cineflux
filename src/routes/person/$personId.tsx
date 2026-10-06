@@ -60,8 +60,8 @@ function PersonDetailsPage() {
 	const { data: details } = useSuspenseQuery(detailOptions(id));
 
 	// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
-	// oxlint-disable-next-line unicorn/no-array-sort
 	const knownFor = [...(details.combined_credits?.cast ?? [])]
+		// oxlint-disable-next-line unicorn/no-array-sort
 		.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
 		.slice(0, 10);
 
