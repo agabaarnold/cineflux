@@ -45,12 +45,20 @@ export interface DetailHeroProps {
 	year: string;
 }
 
-const metaIcons: Record<string, Icon> = {
-	country: IconMapPin,
-	date: IconCalendar,
-	info: IconInfoCircle,
-	language: IconWorld,
-	runtime: IconClock,
+const iconFor = (name: string): Icon => {
+	if (name === "date") {
+		return IconCalendar;
+	}
+	if (name === "runtime") {
+		return IconClock;
+	}
+	if (name === "language") {
+		return IconWorld;
+	}
+	if (name === "country") {
+		return IconMapPin;
+	}
+	return IconInfoCircle;
 };
 
 export const DetailHero = ({
@@ -155,7 +163,7 @@ export const DetailHero = ({
 						{meta.length > 0 ? (
 							<dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
 								{meta.map((item) => {
-									const MetaIcon = metaIcons[item.icon] ?? IconInfoCircle;
+									const MetaIcon = iconFor(item.icon);
 									return (
 										<div className="flex items-center gap-1.5" key={item.label}>
 											<MetaIcon
