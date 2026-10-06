@@ -2,9 +2,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/people/")({
-	component: RouteComponent,
+	component: PeoplePage,
 });
 
-function RouteComponent() {
+function PeoplePage() {
 	return <div>Hello "/people/"!</div>;
 }
