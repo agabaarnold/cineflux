@@ -8,6 +8,7 @@ import { DetailHero } from "#/components/media/detail-hero.tsx";
 import type { DetailHeroMeta } from "#/components/media/detail-hero.tsx";
 import {
 	detailValue,
+	formatCurrency,
 	formatFullDate,
 	getCrewGroups,
 	getTrailerKey,
@@ -16,6 +17,7 @@ import {
 } from "#/components/media/detail-sections.tsx";
 import type { ReviewItem } from "#/components/media/detail-sections.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
+import { WatchProviders } from "#/components/media/watch-providers.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import {
 	Tabs,
@@ -26,6 +28,7 @@ import {
 import {
 	fetchMovieDetailsQueryOptions,
 	fetchMovieReleaseDatesQueryOptions,
+	fetchMovieWatchProvidersQueryOptions,
 } from "#/queries/movie.ts";
 import type {
 	MovieDetailsWithAppend,
@@ -57,6 +60,9 @@ const detailOptions = (id: number) =>
 const releaseDatesOptions = (id: number) =>
 	fetchMovieReleaseDatesQueryOptions({ data: { id } });
 
+const providersOptions = (id: number) =>
+	fetchMovieWatchProvidersQueryOptions({ data: { id } });
+
 const parseId = (value: string) => {
 	const id = Number(value);
 	if (!Number.isSafeInteger(id) || id <= 0) {
@@ -77,6 +83,7 @@ export const Route = createFileRoute("/movie/$movieId")({
 				...releaseDatesOptions(id),
 				staleTime: "static",
 			}),
+			context.queryClient.query(providersOptions(id)),
 		]);
 	},
 	component: MovieDetailsPage,
@@ -147,6 +154,7 @@ function MovieDetailsPage() {
 	const id = parseId(movieId);
 	const { data: details } = useSuspenseQuery(detailOptions(id));
 	const { data: releaseDates } = useSuspenseQuery(releaseDatesOptions(id));
+	const { data: providers } = useSuspenseQuery(providersOptions(id));
 	const [tab, setTab] = useState("information");
 
 	const crew = getCrewGroups(details.credits?.crew);
@@ -222,8 +230,17 @@ function MovieDetailsPage() {
 									value: detailValue(crew.producers.join(", ")),
 								},
 								{ label: "Certification", value: detailValue(certification) },
+								{
+									label: "Budget",
+									value: detailValue(formatCurrency(details.budget)),
+								},
+								{
+									label: "Revenue",
+									value: detailValue(formatCurrency(details.revenue)),
+								},
 							]}
 						/>
+						<WatchProviders providers={providers} />
 
 						<h3 className="mt-8 text-lg font-semibold">Actors</h3>
 						<div className="mt-3">
