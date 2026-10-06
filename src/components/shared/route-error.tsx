@@ -73,12 +73,12 @@ export const RouteError = ({
 	};
 
 	return (
-		<div className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col items-center justify-center px-4 py-16 text-center">
+		<div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center justify-center px-4 py-16 text-center">
 			<span className="bg-destructive/10 text-destructive flex size-16 items-center justify-center rounded-full">
 				<Icon className="size-8" />
 			</span>
 
-			<p className="text-foreground/15 mt-6 text-7xl font-black tracking-tight">
+			<p className="text-foreground/15 text-7xl font-black tracking-tight">
 				{content.code}
 			</p>
 
