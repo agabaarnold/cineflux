@@ -9,58 +9,75 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as MovieIndexRouteImport } from './routes/movie/index'
-import { Route as MovieMovieIdRouteImport } from './routes/movie/$movieId'
-import { Route as PeopleIndexRouteImport } from './routes/people/index'
-import { Route as PersonPersonIdRouteImport } from './routes/person/$personId'
-import { Route as SearchIndexRouteImport } from './routes/search/index'
-import { Route as TvIndexRouteImport } from './routes/tv/index'
-import { Route as TvTvIdRouteRouteImport } from './routes/tv/$tvId/route'
+import { Route as AppRouteRouteImport } from './routes/_app/route'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppMovieIndexRouteImport } from './routes/_app/movie/index'
+import { Route as AppMovieMovieIdRouteImport } from './routes/_app/movie/$movieId'
+import { Route as AppPeopleIndexRouteImport } from './routes/_app/people/index'
+import { Route as AppPersonPersonIdRouteImport } from './routes/_app/person/$personId'
+import { Route as AppSearchIndexRouteImport } from './routes/_app/search/index'
+import { Route as AppTvIndexRouteImport } from './routes/_app/tv/index'
+import { Route as AppTvTvIdRouteRouteImport } from './routes/_app/tv/$tvId/route'
+import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
+import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as TvTvIdIndexRouteImport } from './routes/tv/$tvId/index'
-import { Route as TvTvIdSeasonSeasonNumberRouteRouteImport } from './routes/tv/$tvId/season/$seasonNumber/route'
-import { Route as TvTvIdSeasonSeasonNumberIndexRouteImport } from './routes/tv/$tvId/season/$seasonNumber/index'
-import { Route as TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRouteImport } from './routes/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
+import { Route as AppTvTvIdIndexRouteImport } from './routes/_app/tv/$tvId/index'
+import { Route as AppTvTvIdSeasonSeasonNumberRouteRouteImport } from './routes/_app/tv/$tvId/season/$seasonNumber/route'
+import { Route as AppTvTvIdSeasonSeasonNumberIndexRouteImport } from './routes/_app/tv/$tvId/season/$seasonNumber/index'
+import { Route as AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRouteImport } from './routes/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
 
-const IndexRoute = IndexRouteImport.update({
+const AppRouteRoute = AppRouteRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
-const MovieIndexRoute = MovieIndexRouteImport.update({
+const AppMovieIndexRoute = AppMovieIndexRouteImport.update({
   id: '/movie/',
   path: '/movie/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
-const MovieMovieIdRoute = MovieMovieIdRouteImport.update({
+const AppMovieMovieIdRoute = AppMovieMovieIdRouteImport.update({
   id: '/movie/$movieId',
   path: '/movie/$movieId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
-const PeopleIndexRoute = PeopleIndexRouteImport.update({
+const AppPeopleIndexRoute = AppPeopleIndexRouteImport.update({
   id: '/people/',
   path: '/people/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
-const PersonPersonIdRoute = PersonPersonIdRouteImport.update({
+const AppPersonPersonIdRoute = AppPersonPersonIdRouteImport.update({
   id: '/person/$personId',
   path: '/person/$personId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
-const SearchIndexRoute = SearchIndexRouteImport.update({
+const AppSearchIndexRoute = AppSearchIndexRouteImport.update({
   id: '/search/',
   path: '/search/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
-const TvIndexRoute = TvIndexRouteImport.update({
+const AppTvIndexRoute = AppTvIndexRouteImport.update({
   id: '/tv/',
   path: '/tv/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
-const TvTvIdRouteRoute = TvTvIdRouteRouteImport.update({
+const AppTvTvIdRouteRoute = AppTvTvIdRouteRouteImport.update({
   id: '/tv/$tvId',
   path: '/tv/$tvId',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AuthSignInIndexRoute = AuthSignInIndexRouteImport.update({
+  id: '/_auth/sign-in/',
+  path: '/sign-in/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
+  id: '/_auth/sign-up/',
+  path: '/sign-up/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -68,73 +85,80 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TvTvIdIndexRoute = TvTvIdIndexRouteImport.update({
+const AppTvTvIdIndexRoute = AppTvTvIdIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => TvTvIdRouteRoute,
+  getParentRoute: () => AppTvTvIdRouteRoute,
 } as any)
-const TvTvIdSeasonSeasonNumberRouteRoute =
-  TvTvIdSeasonSeasonNumberRouteRouteImport.update({
+const AppTvTvIdSeasonSeasonNumberRouteRoute =
+  AppTvTvIdSeasonSeasonNumberRouteRouteImport.update({
     id: '/season/$seasonNumber',
     path: '/season/$seasonNumber',
-    getParentRoute: () => TvTvIdRouteRoute,
+    getParentRoute: () => AppTvTvIdRouteRoute,
   } as any)
-const TvTvIdSeasonSeasonNumberIndexRoute =
-  TvTvIdSeasonSeasonNumberIndexRouteImport.update({
+const AppTvTvIdSeasonSeasonNumberIndexRoute =
+  AppTvTvIdSeasonSeasonNumberIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => TvTvIdSeasonSeasonNumberRouteRoute,
+    getParentRoute: () => AppTvTvIdSeasonSeasonNumberRouteRoute,
   } as any)
-const TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute =
-  TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRouteImport.update({
+const AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute =
+  AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRouteImport.update({
     id: '/episode/$episodeNumber',
     path: '/episode/$episodeNumber',
-    getParentRoute: () => TvTvIdSeasonSeasonNumberRouteRoute,
+    getParentRoute: () => AppTvTvIdSeasonSeasonNumberRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/tv/$tvId': typeof TvTvIdRouteRouteWithChildren
-  '/movie/$movieId': typeof MovieMovieIdRoute
-  '/person/$personId': typeof PersonPersonIdRoute
-  '/movie/': typeof MovieIndexRoute
-  '/people/': typeof PeopleIndexRoute
-  '/search/': typeof SearchIndexRoute
-  '/tv/': typeof TvIndexRoute
+  '/': typeof AppIndexRoute
+  '/tv/$tvId': typeof AppTvTvIdRouteRouteWithChildren
+  '/movie/$movieId': typeof AppMovieMovieIdRoute
+  '/person/$personId': typeof AppPersonPersonIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/tv/$tvId/': typeof TvTvIdIndexRoute
-  '/tv/$tvId/season/$seasonNumber': typeof TvTvIdSeasonSeasonNumberRouteRouteWithChildren
-  '/tv/$tvId/season/$seasonNumber/': typeof TvTvIdSeasonSeasonNumberIndexRoute
-  '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
+  '/movie/': typeof AppMovieIndexRoute
+  '/people/': typeof AppPeopleIndexRoute
+  '/search/': typeof AppSearchIndexRoute
+  '/tv/': typeof AppTvIndexRoute
+  '/sign-in/': typeof AuthSignInIndexRoute
+  '/sign-up/': typeof AuthSignUpIndexRoute
+  '/tv/$tvId/': typeof AppTvTvIdIndexRoute
+  '/tv/$tvId/season/$seasonNumber': typeof AppTvTvIdSeasonSeasonNumberRouteRouteWithChildren
+  '/tv/$tvId/season/$seasonNumber/': typeof AppTvTvIdSeasonSeasonNumberIndexRoute
+  '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/movie/$movieId': typeof MovieMovieIdRoute
-  '/person/$personId': typeof PersonPersonIdRoute
-  '/movie': typeof MovieIndexRoute
-  '/people': typeof PeopleIndexRoute
-  '/search': typeof SearchIndexRoute
-  '/tv': typeof TvIndexRoute
+  '/': typeof AppIndexRoute
+  '/movie/$movieId': typeof AppMovieMovieIdRoute
+  '/person/$personId': typeof AppPersonPersonIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/tv/$tvId': typeof TvTvIdIndexRoute
-  '/tv/$tvId/season/$seasonNumber': typeof TvTvIdSeasonSeasonNumberIndexRoute
-  '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
+  '/movie': typeof AppMovieIndexRoute
+  '/people': typeof AppPeopleIndexRoute
+  '/search': typeof AppSearchIndexRoute
+  '/tv': typeof AppTvIndexRoute
+  '/sign-in': typeof AuthSignInIndexRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
+  '/tv/$tvId': typeof AppTvTvIdIndexRoute
+  '/tv/$tvId/season/$seasonNumber': typeof AppTvTvIdSeasonSeasonNumberIndexRoute
+  '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/tv/$tvId': typeof TvTvIdRouteRouteWithChildren
-  '/movie/$movieId': typeof MovieMovieIdRoute
-  '/person/$personId': typeof PersonPersonIdRoute
-  '/movie/': typeof MovieIndexRoute
-  '/people/': typeof PeopleIndexRoute
-  '/search/': typeof SearchIndexRoute
-  '/tv/': typeof TvIndexRoute
+  '/_app': typeof AppRouteRouteWithChildren
+  '/_app/': typeof AppIndexRoute
+  '/_app/tv/$tvId': typeof AppTvTvIdRouteRouteWithChildren
+  '/_app/movie/$movieId': typeof AppMovieMovieIdRoute
+  '/_app/person/$personId': typeof AppPersonPersonIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/tv/$tvId/': typeof TvTvIdIndexRoute
-  '/tv/$tvId/season/$seasonNumber': typeof TvTvIdSeasonSeasonNumberRouteRouteWithChildren
-  '/tv/$tvId/season/$seasonNumber/': typeof TvTvIdSeasonSeasonNumberIndexRoute
-  '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
+  '/_app/movie/': typeof AppMovieIndexRoute
+  '/_app/people/': typeof AppPeopleIndexRoute
+  '/_app/search/': typeof AppSearchIndexRoute
+  '/_app/tv/': typeof AppTvIndexRoute
+  '/_auth/sign-in/': typeof AuthSignInIndexRoute
+  '/_auth/sign-up/': typeof AuthSignUpIndexRoute
+  '/_app/tv/$tvId/': typeof AppTvTvIdIndexRoute
+  '/_app/tv/$tvId/season/$seasonNumber': typeof AppTvTvIdSeasonSeasonNumberRouteRouteWithChildren
+  '/_app/tv/$tvId/season/$seasonNumber/': typeof AppTvTvIdSeasonSeasonNumberIndexRoute
+  '/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,11 +167,13 @@ export interface FileRouteTypes {
     | '/tv/$tvId'
     | '/movie/$movieId'
     | '/person/$personId'
+    | '/api/auth/$'
     | '/movie/'
     | '/people/'
     | '/search/'
     | '/tv/'
-    | '/api/auth/$'
+    | '/sign-in/'
+    | '/sign-up/'
     | '/tv/$tvId/'
     | '/tv/$tvId/season/$seasonNumber'
     | '/tv/$tvId/season/$seasonNumber/'
@@ -157,99 +183,120 @@ export interface FileRouteTypes {
     | '/'
     | '/movie/$movieId'
     | '/person/$personId'
+    | '/api/auth/$'
     | '/movie'
     | '/people'
     | '/search'
     | '/tv'
-    | '/api/auth/$'
+    | '/sign-in'
+    | '/sign-up'
     | '/tv/$tvId'
     | '/tv/$tvId/season/$seasonNumber'
     | '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
   id:
     | '__root__'
-    | '/'
-    | '/tv/$tvId'
-    | '/movie/$movieId'
-    | '/person/$personId'
-    | '/movie/'
-    | '/people/'
-    | '/search/'
-    | '/tv/'
+    | '/_app'
+    | '/_app/'
+    | '/_app/tv/$tvId'
+    | '/_app/movie/$movieId'
+    | '/_app/person/$personId'
     | '/api/auth/$'
-    | '/tv/$tvId/'
-    | '/tv/$tvId/season/$seasonNumber'
-    | '/tv/$tvId/season/$seasonNumber/'
-    | '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
+    | '/_app/movie/'
+    | '/_app/people/'
+    | '/_app/search/'
+    | '/_app/tv/'
+    | '/_auth/sign-in/'
+    | '/_auth/sign-up/'
+    | '/_app/tv/$tvId/'
+    | '/_app/tv/$tvId/season/$seasonNumber'
+    | '/_app/tv/$tvId/season/$seasonNumber/'
+    | '/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  TvTvIdRouteRoute: typeof TvTvIdRouteRouteWithChildren
-  MovieMovieIdRoute: typeof MovieMovieIdRoute
-  PersonPersonIdRoute: typeof PersonPersonIdRoute
-  MovieIndexRoute: typeof MovieIndexRoute
-  PeopleIndexRoute: typeof PeopleIndexRoute
-  SearchIndexRoute: typeof SearchIndexRoute
-  TvIndexRoute: typeof TvIndexRoute
+  AppRouteRoute: typeof AppRouteRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  AuthSignInIndexRoute: typeof AuthSignInIndexRoute
+  AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
-    '/movie/': {
-      id: '/movie/'
+    '/_app/movie/': {
+      id: '/_app/movie/'
       path: '/movie'
       fullPath: '/movie/'
-      preLoaderRoute: typeof MovieIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppMovieIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
-    '/movie/$movieId': {
-      id: '/movie/$movieId'
+    '/_app/movie/$movieId': {
+      id: '/_app/movie/$movieId'
       path: '/movie/$movieId'
       fullPath: '/movie/$movieId'
-      preLoaderRoute: typeof MovieMovieIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppMovieMovieIdRouteImport
+      parentRoute: typeof AppRouteRoute
     }
-    '/people/': {
-      id: '/people/'
+    '/_app/people/': {
+      id: '/_app/people/'
       path: '/people'
       fullPath: '/people/'
-      preLoaderRoute: typeof PeopleIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPeopleIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
-    '/person/$personId': {
-      id: '/person/$personId'
+    '/_app/person/$personId': {
+      id: '/_app/person/$personId'
       path: '/person/$personId'
       fullPath: '/person/$personId'
-      preLoaderRoute: typeof PersonPersonIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPersonPersonIdRouteImport
+      parentRoute: typeof AppRouteRoute
     }
-    '/search/': {
-      id: '/search/'
+    '/_app/search/': {
+      id: '/_app/search/'
       path: '/search'
       fullPath: '/search/'
-      preLoaderRoute: typeof SearchIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppSearchIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
-    '/tv/': {
-      id: '/tv/'
+    '/_app/tv/': {
+      id: '/_app/tv/'
       path: '/tv'
       fullPath: '/tv/'
-      preLoaderRoute: typeof TvIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppTvIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
-    '/tv/$tvId': {
-      id: '/tv/$tvId'
+    '/_app/tv/$tvId': {
+      id: '/_app/tv/$tvId'
       path: '/tv/$tvId'
       fullPath: '/tv/$tvId'
-      preLoaderRoute: typeof TvTvIdRouteRouteImport
+      preLoaderRoute: typeof AppTvTvIdRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_auth/sign-in/': {
+      id: '/_auth/sign-in/'
+      path: '/sign-in'
+      fullPath: '/sign-in/'
+      preLoaderRoute: typeof AuthSignInIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/sign-up/': {
+      id: '/_auth/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up/'
+      preLoaderRoute: typeof AuthSignUpIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -259,79 +306,101 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tv/$tvId/': {
-      id: '/tv/$tvId/'
+    '/_app/tv/$tvId/': {
+      id: '/_app/tv/$tvId/'
       path: '/'
       fullPath: '/tv/$tvId/'
-      preLoaderRoute: typeof TvTvIdIndexRouteImport
-      parentRoute: typeof TvTvIdRouteRoute
+      preLoaderRoute: typeof AppTvTvIdIndexRouteImport
+      parentRoute: typeof AppTvTvIdRouteRoute
     }
-    '/tv/$tvId/season/$seasonNumber': {
-      id: '/tv/$tvId/season/$seasonNumber'
+    '/_app/tv/$tvId/season/$seasonNumber': {
+      id: '/_app/tv/$tvId/season/$seasonNumber'
       path: '/season/$seasonNumber'
       fullPath: '/tv/$tvId/season/$seasonNumber'
-      preLoaderRoute: typeof TvTvIdSeasonSeasonNumberRouteRouteImport
-      parentRoute: typeof TvTvIdRouteRoute
+      preLoaderRoute: typeof AppTvTvIdSeasonSeasonNumberRouteRouteImport
+      parentRoute: typeof AppTvTvIdRouteRoute
     }
-    '/tv/$tvId/season/$seasonNumber/': {
-      id: '/tv/$tvId/season/$seasonNumber/'
+    '/_app/tv/$tvId/season/$seasonNumber/': {
+      id: '/_app/tv/$tvId/season/$seasonNumber/'
       path: '/'
       fullPath: '/tv/$tvId/season/$seasonNumber/'
-      preLoaderRoute: typeof TvTvIdSeasonSeasonNumberIndexRouteImport
-      parentRoute: typeof TvTvIdSeasonSeasonNumberRouteRoute
+      preLoaderRoute: typeof AppTvTvIdSeasonSeasonNumberIndexRouteImport
+      parentRoute: typeof AppTvTvIdSeasonSeasonNumberRouteRoute
     }
-    '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': {
-      id: '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
+    '/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': {
+      id: '/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
       path: '/episode/$episodeNumber'
       fullPath: '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
-      preLoaderRoute: typeof TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRouteImport
-      parentRoute: typeof TvTvIdSeasonSeasonNumberRouteRoute
+      preLoaderRoute: typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRouteImport
+      parentRoute: typeof AppTvTvIdSeasonSeasonNumberRouteRoute
     }
   }
 }
 
-interface TvTvIdSeasonSeasonNumberRouteRouteChildren {
-  TvTvIdSeasonSeasonNumberIndexRoute: typeof TvTvIdSeasonSeasonNumberIndexRoute
-  TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute: typeof TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
+interface AppTvTvIdSeasonSeasonNumberRouteRouteChildren {
+  AppTvTvIdSeasonSeasonNumberIndexRoute: typeof AppTvTvIdSeasonSeasonNumberIndexRoute
+  AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute: typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
 }
 
-const TvTvIdSeasonSeasonNumberRouteRouteChildren: TvTvIdSeasonSeasonNumberRouteRouteChildren =
+const AppTvTvIdSeasonSeasonNumberRouteRouteChildren: AppTvTvIdSeasonSeasonNumberRouteRouteChildren =
   {
-    TvTvIdSeasonSeasonNumberIndexRoute: TvTvIdSeasonSeasonNumberIndexRoute,
-    TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute:
-      TvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute,
+    AppTvTvIdSeasonSeasonNumberIndexRoute:
+      AppTvTvIdSeasonSeasonNumberIndexRoute,
+    AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute:
+      AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute,
   }
 
-const TvTvIdSeasonSeasonNumberRouteRouteWithChildren =
-  TvTvIdSeasonSeasonNumberRouteRoute._addFileChildren(
-    TvTvIdSeasonSeasonNumberRouteRouteChildren,
+const AppTvTvIdSeasonSeasonNumberRouteRouteWithChildren =
+  AppTvTvIdSeasonSeasonNumberRouteRoute._addFileChildren(
+    AppTvTvIdSeasonSeasonNumberRouteRouteChildren,
   )
 
-interface TvTvIdRouteRouteChildren {
-  TvTvIdIndexRoute: typeof TvTvIdIndexRoute
-  TvTvIdSeasonSeasonNumberRouteRoute: typeof TvTvIdSeasonSeasonNumberRouteRouteWithChildren
+interface AppTvTvIdRouteRouteChildren {
+  AppTvTvIdIndexRoute: typeof AppTvTvIdIndexRoute
+  AppTvTvIdSeasonSeasonNumberRouteRoute: typeof AppTvTvIdSeasonSeasonNumberRouteRouteWithChildren
 }
 
-const TvTvIdRouteRouteChildren: TvTvIdRouteRouteChildren = {
-  TvTvIdIndexRoute: TvTvIdIndexRoute,
-  TvTvIdSeasonSeasonNumberRouteRoute:
-    TvTvIdSeasonSeasonNumberRouteRouteWithChildren,
+const AppTvTvIdRouteRouteChildren: AppTvTvIdRouteRouteChildren = {
+  AppTvTvIdIndexRoute: AppTvTvIdIndexRoute,
+  AppTvTvIdSeasonSeasonNumberRouteRoute:
+    AppTvTvIdSeasonSeasonNumberRouteRouteWithChildren,
 }
 
-const TvTvIdRouteRouteWithChildren = TvTvIdRouteRoute._addFileChildren(
-  TvTvIdRouteRouteChildren,
+const AppTvTvIdRouteRouteWithChildren = AppTvTvIdRouteRoute._addFileChildren(
+  AppTvTvIdRouteRouteChildren,
+)
+
+interface AppRouteRouteChildren {
+  AppIndexRoute: typeof AppIndexRoute
+  AppTvTvIdRouteRoute: typeof AppTvTvIdRouteRouteWithChildren
+  AppMovieMovieIdRoute: typeof AppMovieMovieIdRoute
+  AppPersonPersonIdRoute: typeof AppPersonPersonIdRoute
+  AppMovieIndexRoute: typeof AppMovieIndexRoute
+  AppPeopleIndexRoute: typeof AppPeopleIndexRoute
+  AppSearchIndexRoute: typeof AppSearchIndexRoute
+  AppTvIndexRoute: typeof AppTvIndexRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppIndexRoute: AppIndexRoute,
+  AppTvTvIdRouteRoute: AppTvTvIdRouteRouteWithChildren,
+  AppMovieMovieIdRoute: AppMovieMovieIdRoute,
+  AppPersonPersonIdRoute: AppPersonPersonIdRoute,
+  AppMovieIndexRoute: AppMovieIndexRoute,
+  AppPeopleIndexRoute: AppPeopleIndexRoute,
+  AppSearchIndexRoute: AppSearchIndexRoute,
+  AppTvIndexRoute: AppTvIndexRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  TvTvIdRouteRoute: TvTvIdRouteRouteWithChildren,
-  MovieMovieIdRoute: MovieMovieIdRoute,
-  PersonPersonIdRoute: PersonPersonIdRoute,
-  MovieIndexRoute: MovieIndexRoute,
-  PeopleIndexRoute: PeopleIndexRoute,
-  SearchIndexRoute: SearchIndexRoute,
-  TvIndexRoute: TvIndexRoute,
+  AppRouteRoute: AppRouteRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  AuthSignInIndexRoute: AuthSignInIndexRoute,
+  AuthSignUpIndexRoute: AuthSignUpIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
