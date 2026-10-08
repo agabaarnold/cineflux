@@ -79,9 +79,7 @@ function SeasonDetailsPage() {
 	const seasonNumber = parseSeasonNumber(seasonParam);
 	const { data: series } = useSuspenseQuery(seriesOptions(id));
 	const { data: season } = useSuspenseQuery(seasonOptions(id, seasonNumber));
-	const { data: credits } = useSuspenseQuery(
-		creditsOptions(id, seasonNumber)
-	);
+	const { data: credits } = useSuspenseQuery(creditsOptions(id, seasonNumber));
 
 	return (
 		<div className="mx-auto w-full max-w-7xl px-4 pt-24 pb-6">
