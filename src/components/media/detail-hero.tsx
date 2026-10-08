@@ -81,7 +81,7 @@ export const DetailHero = ({
 	voteCount,
 	year,
 }: DetailHeroProps) => {
-	const { saved, toggle } = useWatchlistItem(mediaType, mediaId);
+	const { isPending, saved, toggle } = useWatchlistItem(mediaType, mediaId);
 
 	return (
 		<section className="relative overflow-hidden">
@@ -196,11 +196,12 @@ export const DetailHero = ({
 							) : null}
 
 							<button
+								aria-busy={isPending}
 								aria-label={
 									saved ? "Remove from watchlist" : "Add to watchlist"
 								}
 								aria-pressed={saved}
-								className="flex size-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:bg-white/10"
+								className={`flex size-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:bg-white/10${isPending ? " opacity-70" : ""}`}
 								onClick={toggle}
 								type="button"
 							>
