@@ -102,6 +102,7 @@ function SearchPage() {
 						items={movies.slice(0, 10).map((movie) => ({
 							href: `/movie/${movie.id}`,
 							id: String(movie.id),
+							mediaId: movie.id,
 							image: getPosterUrl(movie.poster_path),
 							mediaType: "movie",
 							overview: movie.overview,
@@ -121,6 +122,7 @@ function SearchPage() {
 						items={shows.slice(0, 10).map((show) => ({
 							href: `/tv/${show.id}`,
 							id: String(show.id),
+							mediaId: show.id,
 							image: getPosterUrl(show.poster_path),
 							mediaType: "tv",
 							overview: show.overview,
@@ -140,6 +142,7 @@ function SearchPage() {
 						items={people.slice(0, 10).map((person) => ({
 							href: `/person/${person.id}`,
 							id: String(person.id),
+							mediaId: person.id,
 							image: getProfileUrl(person.profile_path),
 							mediaType: "person",
 							overview: person.known_for?.[0]?.overview ?? "",
