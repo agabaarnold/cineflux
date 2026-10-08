@@ -14,11 +14,14 @@ import { useEffect, useRef, useState } from "react";
 
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import type { CarouselApi } from "../ui/carousel";
+import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
 
 export interface HeroSlide {
 	id: string;
 	href: string;
 	backdrop: string | null;
+	mediaId: number;
+	mediaType: "movie" | "tv";
 	title: string;
 	overview: string;
 	voteAverage: number;
@@ -53,7 +56,7 @@ const Stars = ({ voteAverage }: { voteAverage: number }) => {
 };
 
 const Slide = ({ slide }: { slide: HeroSlide }) => {
-	const [saved, setSaved] = useState(false);
+	const { saved, toggle } = useWatchlistItem(slide.mediaType, slide.mediaId);
 
 	return (
 		<div className="relative h-full w-full">
@@ -98,7 +101,7 @@ const Slide = ({ slide }: { slide: HeroSlide }) => {
 						aria-label={saved ? "Remove from watchlist" : "Add to watchlist"}
 						aria-pressed={saved}
 						className="flex size-11 items-center justify-center rounded-full border border-white/40 text-white"
-						onClick={() => setSaved((previous) => !previous)}
+						onClick={toggle}
 						type="button"
 					>
 						{saved ? (
