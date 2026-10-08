@@ -57,7 +57,10 @@ const Stars = ({ voteAverage }: { voteAverage: number }) => {
 };
 
 const Slide = ({ slide }: { slide: HeroSlide }) => {
-	const { saved, toggle } = useWatchlistItem(slide.mediaType, slide.mediaId);
+	const { isPending, saved, toggle } = useWatchlistItem(
+		slide.mediaType,
+		slide.mediaId
+	);
 
 	return (
 		<div className="relative h-full w-full">
@@ -99,9 +102,10 @@ const Slide = ({ slide }: { slide: HeroSlide }) => {
 					</Link>
 
 					<button
+						aria-busy={isPending}
 						aria-label={saved ? "Remove from watchlist" : "Add to watchlist"}
 						aria-pressed={saved}
-						className="flex size-11 items-center justify-center rounded-full border border-white/40 text-white"
+						className={`flex size-11 items-center justify-center rounded-full border border-white/40 text-white${isPending ? " opacity-70" : ""}`}
 						onClick={toggle}
 						type="button"
 					>
