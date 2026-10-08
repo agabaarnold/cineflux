@@ -80,7 +80,7 @@ const trendingYear = (item: TrendingRowItem) => {
 	if (item.media_type === "tv") {
 		return (item.first_air_date ?? "").slice(0, 4);
 	}
-	return item.known_for_department;
+	return item.known_for_department ?? "";
 };
 
 const trendingStat = (item: TrendingRowItem) => {
@@ -222,7 +222,7 @@ function Home() {
 						overview: person.known_for?.[0]?.overview ?? "",
 						stat: { kind: "popularity", value: person.popularity } as const,
 						title: person.name,
-						year: person.known_for_department,
+						year: person.known_for_department ?? "",
 					}))}
 					title="Popular people"
 					href="/people"
