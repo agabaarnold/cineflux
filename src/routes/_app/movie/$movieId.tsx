@@ -1,6 +1,6 @@
 // oxlint-disable react/function-component-definition func-style
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { CastRow } from "#/components/media/cast-row.tsx";
@@ -8,6 +8,7 @@ import { DetailHero } from "#/components/media/detail-hero.tsx";
 import type { DetailHeroMeta } from "#/components/media/detail-hero.tsx";
 import {
 	detailValue,
+	formatCurrency,
 	formatFullDate,
 	getCrewGroups,
 	getTrailerKey,
@@ -24,15 +25,16 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "#/components/ui/tabs.tsx";
+import { fetchCollectionDetailsQueryOptions } from "#/queries/catalog.ts";
 import {
-	fetchTvContentRatingsQueryOptions,
-	fetchTvSeriesDetailsQueryOptions,
-	fetchTvWatchProvidersQueryOptions,
-} from "#/queries/tv.ts";
+	fetchMovieDetailsQueryOptions,
+	fetchMovieReleaseDatesQueryOptions,
+	fetchMovieWatchProvidersQueryOptions,
+} from "#/queries/movie.ts";
 import type {
-	TvContentRatings,
-	TVSeriesDetailsWithAppend,
-} from "#/schemas/tv.ts";
+	MovieDetailsWithAppend,
+	MovieReleaseDates,
+} from "#/schemas/movie.ts";
 import {
 	getBackdropUrl,
 	getPosterUrl,
@@ -48,7 +50,7 @@ const APPEND_TO_RESPONSE = [
 ] as const;
 
 const detailOptions = (id: number) =>
-	fetchTvSeriesDetailsQueryOptions({
+	fetchMovieDetailsQueryOptions({
 		data: {
 			append_to_response: [...APPEND_TO_RESPONSE],
 			id,
@@ -56,11 +58,11 @@ const detailOptions = (id: number) =>
 		},
 	});
 
-const contentRatingsOptions = (id: number) =>
-	fetchTvContentRatingsQueryOptions({ data: { id } });
+const releaseDatesOptions = (id: number) =>
+	fetchMovieReleaseDatesQueryOptions({ data: { id } });
 
 const providersOptions = (id: number) =>
-	fetchTvWatchProvidersQueryOptions({ data: { id } });
+	fetchMovieWatchProvidersQueryOptions({ data: { id } });
 
 const parseId = (value: string) => {
 	const id = Number(value);
@@ -70,79 +72,64 @@ const parseId = (value: string) => {
 	return id;
 };
 
-export const Route = createFileRoute("/tv/$tvId/")({
+export const Route = createFileRoute("/_app/movie/$movieId")({
 	loader: ({ context, params }) => {
-		const id = parseId(params.tvId);
+		const id = parseId(params.movieId);
 		return Promise.all([
 			context.queryClient.query({
 				...detailOptions(id),
 				staleTime: "static",
 			}),
 			context.queryClient.query({
-				...contentRatingsOptions(id),
+				...releaseDatesOptions(id),
 				staleTime: "static",
 			}),
 			context.queryClient.query(providersOptions(id)),
 		]);
 	},
-	component: TvDetailsPage,
+	component: MovieDetailsPage,
 	errorComponent: RouteError,
 });
 
-const getUsTvRating = (ratings: TvContentRatings): string =>
-	ratings.results.find((entry) => entry.iso_3166_1 === "US")?.rating ?? "";
+const getUsCertification = (releaseDates: MovieReleaseDates): string =>
+	releaseDates.results
+		.find((entry) => entry.iso_3166_1 === "US")
+		?.release_dates.find((entry) => entry.certification !== "")
+		?.certification ?? "";
 
-const getSimilarShows = (details: TVSeriesDetailsWithAppend) => {
+const getSimilarMovies = (details: MovieDetailsWithAppend) => {
 	if ((details.similar?.results.length ?? 0) > 0) {
 		return details.similar?.results ?? [];
 	}
 	return details.recommendations?.results ?? [];
 };
 
-const getTvByline = (
-	createdBy: { name: string }[],
-	directors: string[]
-): string | undefined => {
-	if (createdBy.length > 0) {
-		return `Created by ${createdBy.map((person) => person.name).join(", ")}`;
-	}
-	if (directors.length > 0) {
-		return `By ${directors.join(", ")}`;
-	}
-	return undefined;
-};
-
-const getSeasonsLabel = (seasons: number, episodes: number): string => {
-	if (seasons <= 0 && episodes <= 0) {
+const formatRuntime = (minutes: number | null): string => {
+	if (minutes === null || minutes <= 0) {
 		return "";
 	}
-	const seasonUnit = seasons === 1 ? "Season" : "Seasons";
-	const episodeUnit = episodes === 1 ? "Episode" : "Episodes";
-	return `${seasons} ${seasonUnit} · ${episodes} ${episodeUnit}`;
+	const hours = Math.floor(minutes / 60);
+	const rest = minutes % 60;
+	if (hours <= 0) {
+		return `${rest}m`;
+	}
+	return `${hours}h ${rest}m`;
 };
 
-const getTvMeta = (details: TVSeriesDetailsWithAppend): DetailHeroMeta[] => {
+const getMovieMeta = (details: MovieDetailsWithAppend): DetailHeroMeta[] => {
 	const meta: DetailHeroMeta[] = [];
-	if (details.first_air_date) {
+	if (details.release_date) {
 		meta.push({
 			icon: "date",
-			label: "First air date",
-			value: formatFullDate(details.first_air_date),
+			label: "Release date",
+			value: formatFullDate(details.release_date),
 		});
 	}
-	const seasonsLabel = getSeasonsLabel(
-		details.number_of_seasons,
-		details.number_of_episodes
-	);
-	if (seasonsLabel) {
-		meta.push({ icon: "info", label: "Seasons", value: seasonsLabel });
-	}
-	const [firstRuntime] = details.episode_run_time;
-	if (firstRuntime) {
+	if (details.runtime) {
 		meta.push({
 			icon: "runtime",
-			label: "Episode runtime",
-			value: `~${firstRuntime}m per episode`,
+			label: "Runtime",
+			value: formatRuntime(details.runtime),
 		});
 	}
 	if (details.original_language) {
@@ -163,18 +150,30 @@ const getTvMeta = (details: TVSeriesDetailsWithAppend): DetailHeroMeta[] => {
 	return meta;
 };
 
-function TvDetailsPage() {
-	const { tvId } = Route.useParams();
-	const id = parseId(tvId);
+function MovieDetailsPage() {
+	const { movieId } = Route.useParams();
+	const id = parseId(movieId);
 	const { data: details } = useSuspenseQuery(detailOptions(id));
-	const { data: contentRatings } = useSuspenseQuery(contentRatingsOptions(id));
+	const { data: releaseDates } = useSuspenseQuery(releaseDatesOptions(id));
 	const { data: providers } = useSuspenseQuery(providersOptions(id));
+	const collectionId = details.belongs_to_collection?.id ?? null;
+	const { data: collection } = useQuery({
+		...fetchCollectionDetailsQueryOptions({
+			data: { id: collectionId ?? 0, language: "en-US" },
+		}),
+		enabled: collectionId !== null,
+	});
 	const [tab, setTab] = useState("information");
 
 	const crew = getCrewGroups(details.credits?.crew);
-	const certification = getUsTvRating(contentRatings);
+	const certification = getUsCertification(releaseDates);
 	const trailerKey = getTrailerKey(details.videos);
-	const similar = getSimilarShows(details);
+	const similar = getSimilarMovies(details);
+	// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
+	const franchise = [...(collection?.parts ?? [])]
+		// oxlint-disable-next-line unicorn/no-array-sort
+		.sort((a, b) => a.release_date.localeCompare(b.release_date))
+		.filter((part) => part.id !== id);
 	const reviews: ReviewItem[] = (details.reviews?.results ?? [])
 		.slice(0, 5)
 		.map((review) => ({
@@ -190,21 +189,25 @@ function TvDetailsPage() {
 		<div className="flex flex-col">
 			<DetailHero
 				backdrop={getBackdropUrl(details.backdrop_path, "w1280")}
-				byline={getTvByline(details.created_by, crew.directors)}
+				byline={
+					crew.directors.length > 0
+						? `By ${crew.directors.join(", ")}`
+						: undefined
+				}
 				genres={details.genres}
-				meta={getTvMeta(details)}
+				meta={getMovieMeta(details)}
 				overview={details.overview}
 				poster={getPosterUrl(details.poster_path)}
-				sectionHref="/tv"
-				sectionLabel="TV Shows"
+				sectionHref="/movie"
+				sectionLabel="Movies"
 				tagline={details.tagline}
-				title={details.name}
+				title={details.title}
 				trailerUrl={
 					trailerKey ? `https://www.youtube.com/watch?v=${trailerKey}` : null
 				}
 				voteAverage={details.vote_average}
-				voteCount={details.vote_count ?? 0}
-				year={(details.first_air_date ?? "").slice(0, 4)}
+				voteCount={details.vote_count}
+				year={details.release_date.slice(0, 4)}
 			/>
 
 			<div className="mx-auto w-full max-w-7xl px-4 py-6">
@@ -214,7 +217,7 @@ function TvDetailsPage() {
 						<TabsTrigger value="reviews">
 							Reviews{reviews.length > 0 ? ` (${reviews.length})` : ""}
 						</TabsTrigger>
-						<TabsTrigger value="similar">Similar TV Shows</TabsTrigger>
+						<TabsTrigger value="similar">Similar Movies</TabsTrigger>
 					</TabsList>
 
 					<TabsContent className="mt-4" value="information">
@@ -222,10 +225,8 @@ function TvDetailsPage() {
 						<InfoRows
 							rows={[
 								{
-									label: "Creator(s)",
-									value: detailValue(
-										details.created_by.map((person) => person.name).join(", ")
-									),
+									label: "Director(s)",
+									value: detailValue(crew.directors.join(", ")),
 								},
 								{
 									label: "Genre(s)",
@@ -234,23 +235,45 @@ function TvDetailsPage() {
 									),
 								},
 								{
-									label: "Network(s)",
-									value: detailValue(
-										details.networks.map((network) => network.name).join(", ")
-									),
-								},
-								{
 									label: "Writer(s)",
 									value: detailValue(crew.writers.join(", ")),
 								},
-								{ label: "Certification", value: detailValue(certification) },
 								{
 									label: "Producer(s)",
 									value: detailValue(crew.producers.join(", ")),
 								},
+								{ label: "Certification", value: detailValue(certification) },
+								{
+									label: "Budget",
+									value: detailValue(formatCurrency(details.budget)),
+								},
+								{
+									label: "Revenue",
+									value: detailValue(formatCurrency(details.revenue)),
+								},
 							]}
 						/>
 						<WatchProviders providers={providers} />
+						{franchise.length > 0 ? (
+							<div className="mt-8">
+								<MediaRow
+									items={franchise.map((movie) => ({
+										href: `/movie/${movie.id}`,
+										id: String(movie.id),
+										image: getPosterUrl(movie.poster_path),
+										mediaType: "movie",
+										overview: movie.overview,
+										stat: {
+											kind: "rating",
+											value: movie.vote_average,
+										} as const,
+										title: movie.title,
+										year: movie.release_date.slice(0, 4),
+									}))}
+									title={`More from ${collection?.name ?? "this collection"}`}
+								/>
+							</div>
+						) : null}
 
 						<h3 className="mt-8 text-lg font-semibold">Actors</h3>
 						<div className="mt-3">
@@ -265,53 +288,6 @@ function TvDetailsPage() {
 									}))}
 							/>
 						</div>
-
-						{details.seasons.length > 0 ? (
-							<>
-								<h3 className="mt-8 text-lg font-semibold">Seasons</h3>
-								<div className="mt-3 flex gap-4 overflow-x-auto pb-2">
-									{details.seasons.map((season) => (
-										<Link
-											className="bg-card group w-44 shrink-0 overflow-hidden rounded-2xl border transition-transform duration-300 hover:scale-[1.03]"
-											key={season.id}
-											params={{
-												seasonNumber: String(season.season_number),
-												tvId,
-											}}
-											to="/tv/$tvId/season/$seasonNumber"
-										>
-											{season.poster_path ? (
-												<img
-													alt={season.name}
-													className="aspect-2/3 w-full object-cover"
-													loading="lazy"
-													src={
-														getPosterUrl(season.poster_path, "w342") ??
-														undefined
-													}
-												/>
-											) : (
-												<div className="bg-muted text-muted-foreground flex aspect-2/3 w-full items-center justify-center text-xs">
-													No image
-												</div>
-											)}
-											<div className="p-3">
-												<p className="truncate text-sm font-semibold group-hover:underline">
-													{season.name}
-												</p>
-												<p className="text-muted-foreground mt-0.5 text-xs">
-													{season.episode_count} episode
-													{season.episode_count === 1 ? "" : "s"}
-													{season.air_date
-														? ` · ${season.air_date.slice(0, 4)}`
-														: ""}
-												</p>
-											</div>
-										</Link>
-									))}
-								</div>
-							</>
-						) : null}
 					</TabsContent>
 
 					<TabsContent className="mt-4" value="reviews">
@@ -321,20 +297,20 @@ function TvDetailsPage() {
 
 					<TabsContent className="mt-4" value="similar">
 						<MediaRow
-							items={similar.slice(0, 10).map((show) => ({
-								href: `/tv/${show.id}`,
-								id: String(show.id),
-								image: getPosterUrl(show.poster_path),
-								mediaType: "tv",
-								overview: show.overview,
+							items={similar.slice(0, 10).map((movie) => ({
+								href: `/movie/${movie.id}`,
+								id: String(movie.id),
+								image: getPosterUrl(movie.poster_path),
+								mediaType: "movie",
+								overview: movie.overview,
 								stat: {
 									kind: "rating",
-									value: show.vote_average,
+									value: movie.vote_average,
 								} as const,
-								title: show.name,
-								year: (show.first_air_date ?? "").slice(0, 4),
+								title: movie.title,
+								year: movie.release_date.slice(0, 4),
 							}))}
-							title="Similar TV Shows"
+							title="Similar Movies"
 						/>
 					</TabsContent>
 				</Tabs>

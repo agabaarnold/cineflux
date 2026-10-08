@@ -31,7 +31,7 @@ const topRatedTvOptions = fetchTvTopRatedQueryOptions({
 	data: { language: "en-US", page: 1 },
 });
 
-export const Route = createFileRoute("/tv/")({
+export const Route = createFileRoute("/_app/tv/")({
 	validateSearch: z.object({ time_window: timeWindowSchema.default("day") }),
 	loaderDeps: ({ search }) => search,
 	loader: ({ context, deps }) =>

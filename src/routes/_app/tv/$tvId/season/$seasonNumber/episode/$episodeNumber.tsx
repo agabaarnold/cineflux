@@ -77,7 +77,7 @@ const parseEpisodeNumber = (value: string) => {
 };
 
 export const Route = createFileRoute(
-	"/tv/$tvId/season/$seasonNumber/episode/$episodeNumber"
+	"/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber"
 )({
 	loader: ({ context, params }) => {
 		const id = parseId(params.tvId);

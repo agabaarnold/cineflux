@@ -16,7 +16,7 @@ const popularPeopleOptions = fetchPopularPeopleQueryOptions({
 	data: { language: "en-US", page: 1 },
 });
 
-export const Route = createFileRoute("/people/")({
+export const Route = createFileRoute("/_app/people/")({
 	validateSearch: z.object({ time_window: timeWindowSchema.default("day") }),
 	loaderDeps: ({ search }) => search,
 	loader: ({ context, deps }) =>
