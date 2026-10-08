@@ -9,7 +9,8 @@ export const Route = createFileRoute("/_app")({
 		try {
 			const { user } = await fetchSession();
 			return { user };
-		} catch {
+		} catch (error) {
+			console.error("Failed to fetch session, continuing as guest:", error);
 			return { user: null };
 		}
 	},
