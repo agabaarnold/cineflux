@@ -94,6 +94,7 @@ function PeoplePage() {
 						href: `/person/${person.id}`,
 						id: `person-${person.id}`,
 						image: getProfileUrl(person.profile_path),
+						mediaId: person.id,
 						mediaType: "person",
 						overview: person.known_for?.[0]?.overview ?? "",
 						stat: { kind: "popularity", value: person.popularity } as const,
@@ -108,6 +109,7 @@ function PeoplePage() {
 				items={popular.results.slice(0, 10).map((person) => ({
 					href: `/person/${person.id}`,
 					id: String(person.id),
+					mediaId: person.id,
 					image: getProfileUrl(person.profile_path),
 					mediaType: "person",
 					overview: person.known_for?.[0]?.overview ?? "",
