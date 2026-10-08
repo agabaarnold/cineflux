@@ -95,6 +95,8 @@ function MoviesPage() {
 			backdrop: getBackdropUrl(movie.backdrop_path, "w1280"),
 			href: `/movie/${movie.id}`,
 			id: `movie-${movie.id}`,
+			mediaId: movie.id,
+			mediaType: "movie" as const,
 			meta: movie.release_date.slice(0, 4),
 			overview: movie.overview,
 			title: movie.title,
@@ -137,6 +139,7 @@ function MoviesPage() {
 								href: `/movie/${movie.id}`,
 								id: `movie-${movie.id}`,
 								image: getPosterUrl(movie.poster_path),
+								mediaId: movie.id,
 								mediaType: "movie",
 								overview: movie.overview,
 								stat: { kind: "rating", value: movie.vote_average } as const,
@@ -151,6 +154,7 @@ function MoviesPage() {
 					items={popular.results.slice(0, 10).map((movie) => ({
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
+						mediaId: movie.id,
 						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
 						overview: movie.overview,
@@ -165,6 +169,7 @@ function MoviesPage() {
 					items={nowPlaying.results.slice(0, 10).map((movie) => ({
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
+						mediaId: movie.id,
 						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
 						overview: movie.overview,
@@ -179,6 +184,7 @@ function MoviesPage() {
 					items={topRated.results.slice(0, 10).map((movie) => ({
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
+						mediaId: movie.id,
 						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
 						overview: movie.overview,
@@ -193,6 +199,7 @@ function MoviesPage() {
 					items={upcoming.results.slice(0, 10).map((movie) => ({
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
+						mediaId: movie.id,
 						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
 						overview: movie.overview,
