@@ -157,6 +157,7 @@ function PersonDetailsPage() {
 							href: isMovie ? `/movie/${credit.id}` : `/tv/${credit.id}`,
 							id: credit.credit_id,
 							image: getPosterUrl(credit.poster_path),
+							mediaId: credit.id,
 							mediaType: credit.media_type,
 							overview: credit.overview ?? "",
 							stat:
