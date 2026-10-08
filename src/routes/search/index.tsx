@@ -46,6 +46,10 @@ function SearchPage() {
 	const [value, setValue] = useState(search.query);
 
 	useEffect(() => {
+		setValue(search.query);
+	}, [search.query]);
+
+	useEffect(() => {
 		const trimmed = value.trim();
 		if (trimmed === search.query) {
 			return;
