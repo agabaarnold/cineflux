@@ -6,8 +6,12 @@ import { fetchSession } from "#/server/functions/auth.ts";
 
 export const Route = createFileRoute("/_app")({
 	beforeLoad: async () => {
-		const { user } = await fetchSession();
-		return { user };
+		try {
+			const { user } = await fetchSession();
+			return { user };
+		} catch {
+			return { user: null };
+		}
 	},
 	component: AppLayout,
 });
