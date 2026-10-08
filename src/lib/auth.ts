@@ -9,6 +9,14 @@ import { serverEnv } from "#/env/server.ts";
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = serverEnv;
 
+if (
+	(GOOGLE_CLIENT_ID === undefined) !== (GOOGLE_CLIENT_SECRET === undefined)
+) {
+	throw new Error(
+		"GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must either both be set or both be unset."
+	);
+}
+
 const googleCredentials =
 	GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET
 		? { clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET }
