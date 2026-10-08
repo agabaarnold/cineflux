@@ -5,9 +5,9 @@ import {
 	IconTrendingUp,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 
 import { AspectRatio } from "#/components/ui/aspect-ratio.tsx";
+import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
 
 export type CardStat =
 	| { kind: "popularity"; value: number }
@@ -29,6 +29,7 @@ const mediaTypeLabel = (mediaType: CardMediaType) => {
 export const MediaCard = ({
 	href,
 	image,
+	mediaId,
 	mediaType,
 	overview,
 	stat,
@@ -37,13 +38,14 @@ export const MediaCard = ({
 }: {
 	href: string;
 	image: string | null;
+	mediaId: number;
 	mediaType: CardMediaType;
 	overview: string;
 	stat: CardStat;
 	title: string;
 	year: string;
 }) => {
-	const [saved, setSaved] = useState(false);
+	const { saved, toggle } = useWatchlistItem(mediaType, mediaId);
 	return (
 		<div className="group w-44 shrink-0">
 			<div className="bg-card relative overflow-hidden rounded-2xl border transition-transform duration-300 group-hover:scale-[1.03] group-hover:shadow-lg">
@@ -92,7 +94,7 @@ export const MediaCard = ({
 					aria-label={saved ? "Remove from watchlist" : "Add to watchlist"}
 					aria-pressed={saved}
 					className="absolute top-2 right-2 flex size-9 items-center justify-center rounded-full bg-black/60 text-white"
-					onClick={() => setSaved((previous) => !previous)}
+					onClick={toggle}
 					type="button"
 				>
 					{saved ? (
