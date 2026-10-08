@@ -193,6 +193,8 @@ function TvDetailsPage() {
 				byline={getTvByline(details.created_by, crew.directors)}
 				genres={details.genres}
 				meta={getTvMeta(details)}
+				mediaId={id}
+				mediaType="tv"
 				overview={details.overview}
 				poster={getPosterUrl(details.poster_path)}
 				sectionHref="/tv"
@@ -324,6 +326,7 @@ function TvDetailsPage() {
 							items={similar.slice(0, 10).map((show) => ({
 								href: `/tv/${show.id}`,
 								id: String(show.id),
+								mediaId: show.id,
 								image: getPosterUrl(show.poster_path),
 								mediaType: "tv",
 								overview: show.overview,
