@@ -2,16 +2,28 @@
 import {
 	IconDeviceTv,
 	IconHome,
+	IconLogout,
 	IconMovie,
 	IconSearch,
 	IconUsersGroup,
 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { LinkOptions } from "@tanstack/react-router";
 import { cn } from "cn";
 
+import { authClient } from "#/lib/auth-client.ts";
+
 import { Logo } from "../shared/logo";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 interface NavItemProps {
 	to: LinkOptions["to"];
@@ -38,7 +50,67 @@ const NavItem = ({ to, children, icon: Icon }: NavItemProps) => (
 	</Link>
 );
 
-export const Navbar = () => (
+export interface NavbarUser {
+	email: string;
+	image: string | null;
+	name: string;
+}
+
+const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
+	const navigate = useNavigate();
+
+	if (!user) {
+		return (
+			<Link
+				className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-9 items-center rounded-full px-4 text-sm font-medium transition-colors"
+				to="/sign-in"
+			>
+				Sign in
+			</Link>
+		);
+	}
+
+	const initials = user.name
+		.split(" ")
+		.map((part) => part[0])
+		.slice(0, 2)
+		.join("")
+		.toUpperCase();
+
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger
+				aria-label="Profile menu"
+				className="rounded-full outline-none"
+			>
+				<Avatar size="sm">
+					{user.image ? <AvatarImage alt={user.name} src={user.image} /> : null}
+					<AvatarFallback>{initials || "?"}</AvatarFallback>
+				</Avatar>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" sideOffset={8}>
+				<DropdownMenuLabel>
+					<p className="text-foreground truncate text-sm font-semibold">
+						{user.name}
+					</p>
+					<p className="truncate text-xs">{user.email}</p>
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					onClick={async () => {
+						await authClient.signOut();
+						navigate({ to: "/" });
+					}}
+				>
+					<IconLogout aria-hidden="true" />
+					Sign out
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+};
+
+export const Navbar = ({ user }: { user: NavbarUser | null }) => (
 	<header className="pointer-events-none fixed inset-x-0 top-5 z-50 flex justify-center px-4">
 		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-2.5 rounded-full border p-1.5 shadow-2xl shadow-black/20 backdrop-blur-xl">
 			<Link to="/">
@@ -72,7 +144,7 @@ export const Navbar = () => (
 				<IconSearch aria-hidden="true" className="size-4" />
 			</Link>
 
-			{/* Profile goes here */}
+			<ProfileControl user={user} />
 		</nav>
 	</header>
 );
