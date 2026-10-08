@@ -5,12 +5,30 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 
 import { db } from "#/db";
 import { schema } from "#/db/schema";
+import { serverEnv } from "#/env/server.ts";
+
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = serverEnv;
+
+const googleCredentials =
+	GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET
+		? { clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET }
+		: undefined;
+
+export const isGoogleEnabled = googleCredentials !== undefined;
+
+const getSocialProviders = () => {
+	if (!googleCredentials) {
+		return {};
+	}
+	return { google: googleCredentials };
+};
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, { provider: "pg", schema, usePlural: true }),
 	emailAndPassword: {
 		enabled: true,
 	},
+	socialProviders: getSocialProviders(),
 	plugins: [haveIBeenPwned(), tanstackStartCookies()],
 });
 
