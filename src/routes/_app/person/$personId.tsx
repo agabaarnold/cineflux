@@ -27,7 +27,7 @@ const parseId = (value: string) => {
 	return id;
 };
 
-export const Route = createFileRoute("/person/$personId")({
+export const Route = createFileRoute("/_app/person/$personId")({
 	loader: ({ context, params }) => {
 		const id = parseId(params.personId);
 		return context.queryClient.query({
