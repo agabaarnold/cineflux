@@ -98,7 +98,7 @@ function PeoplePage() {
 						overview: person.known_for?.[0]?.overview ?? "",
 						stat: { kind: "popularity", value: person.popularity } as const,
 						title: person.name,
-						year: person.known_for_department,
+						year: person.known_for_department ?? "",
 					}))}
 					title=""
 				/>
@@ -113,7 +113,7 @@ function PeoplePage() {
 					overview: person.known_for?.[0]?.overview ?? "",
 					stat: { kind: "popularity", value: person.popularity } as const,
 					title: person.name,
-					year: person.known_for_department,
+					year: person.known_for_department ?? "",
 				}))}
 				title="Popular people"
 			/>
