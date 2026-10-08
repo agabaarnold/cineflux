@@ -2,7 +2,12 @@
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Link,
+	useNavigate,
+	useRouter,
+} from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
@@ -38,6 +43,7 @@ const handleGoogle = async () => {
 
 function SignUpPage() {
 	const navigate = useNavigate();
+	const router = useRouter();
 	const { data: session, isPending: sessionPending } = authClient.useSession();
 	const { data: providers } = useQuery(fetchAuthProvidersQueryOptions());
 
@@ -56,6 +62,7 @@ function SignUpPage() {
 				toast.error(error.message ?? "Something went wrong");
 				return;
 			}
+			await router.invalidate();
 			await navigate({ to: "/" });
 		},
 	});
