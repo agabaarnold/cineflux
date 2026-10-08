@@ -12,9 +12,10 @@ import { cn } from "cn";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 
+import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
+
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import type { CarouselApi } from "../ui/carousel";
-import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
 
 export interface HeroSlide {
 	id: string;
