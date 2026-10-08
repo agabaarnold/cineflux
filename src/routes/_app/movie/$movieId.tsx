@@ -72,7 +72,7 @@ const parseId = (value: string) => {
 	return id;
 };
 
-export const Route = createFileRoute("/movie/$movieId")({
+export const Route = createFileRoute("/_app/movie/$movieId")({
 	loader: ({ context, params }) => {
 		const id = parseId(params.movieId);
 		return Promise.all([
