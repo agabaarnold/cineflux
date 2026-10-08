@@ -31,7 +31,7 @@ const upcomingMoviesOptions = fetchUpcomingMoviesQueryOptions({
 	data: { language: "en-US", page: 1 },
 });
 
-export const Route = createFileRoute("/movie/")({
+export const Route = createFileRoute("/_app/movie/")({
 	validateSearch: z.object({ time_window: timeWindowSchema.default("day") }),
 	loaderDeps: ({ search }) => search,
 	loader: ({ context, deps }) =>
