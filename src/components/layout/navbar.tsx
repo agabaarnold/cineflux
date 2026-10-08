@@ -17,7 +17,6 @@ import { toast } from "react-hot-toast";
 import { authClient } from "#/lib/auth-client.ts";
 
 import { Logo } from "../shared/logo";
-import { MobileMenu } from "./mobile-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
 	DropdownMenu,
@@ -28,6 +27,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { MobileMenu } from "./mobile-menu";
 
 interface NavItemProps {
 	to: LinkOptions["to"];
