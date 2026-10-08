@@ -46,7 +46,10 @@ function SearchPage() {
 	const [value, setValue] = useState(search.query);
 
 	useEffect(() => {
-		setValue(search.query);
+		const syncFromUrl = () => {
+			setValue(search.query);
+		};
+		syncFromUrl();
 	}, [search.query]);
 
 	useEffect(() => {
