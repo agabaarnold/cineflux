@@ -50,7 +50,7 @@ const parseSeasonNumber = (value: string) => {
 	return seasonNumber;
 };
 
-export const Route = createFileRoute("/tv/$tvId/season/$seasonNumber/")({
+export const Route = createFileRoute("/_app/tv/$tvId/season/$seasonNumber/")({
 	loader: ({ context, params }) => {
 		const id = parseId(params.tvId);
 		const seasonNumber = parseSeasonNumber(params.seasonNumber);
