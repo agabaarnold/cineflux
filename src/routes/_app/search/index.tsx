@@ -22,7 +22,7 @@ const searchOptions = (query: string) =>
 		data: { language: "en-US", page: 1, query },
 	});
 
-export const Route = createFileRoute("/search/")({
+export const Route = createFileRoute("/_app/search/")({
 	validateSearch: z.object({ query: z.string().default("") }),
 	loaderDeps: ({ search }) => search,
 	loader: ({ context, deps }) => {
