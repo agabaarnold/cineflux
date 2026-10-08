@@ -9,7 +9,6 @@ import {
 import {
 	castSchema,
 	changesSchema,
-	creditsSchema,
 	crewSchema,
 	genreSchema,
 	idSchema,
@@ -396,7 +395,9 @@ export type TvWatchProviders = z.infer<typeof tvWatchProvidersSchema>;
 export const tvListsSchema = tmdbListsSchema;
 export type TvLists = z.infer<typeof tvListsSchema>;
 
-export const tvSeasonCreditsSchema = creditsSchema.extend({
+export const tvSeasonCreditsSchema = z.object({
+	cast: z.array(castSchema.omit({ cast_id: true })),
+	crew: z.array(crewSchema),
 	id: idSchemaOptional,
 });
 export type TvSeasonCredits = z.infer<typeof tvSeasonCreditsSchema>;
