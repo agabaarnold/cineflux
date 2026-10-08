@@ -78,7 +78,7 @@ function WatchlistPage() {
 	const { data: items, isPending: itemsPending } = useQuery({
 		queryFn: async () => {
 			const entries = await fetchWatchlist();
-			const detailed = await Promise.all(
+			const settled = await Promise.allSettled(
 				entries.map(async (entry) => {
 					if (entry.mediaType === "movie") {
 						const details = await fetchMovieDetails({
@@ -121,9 +121,11 @@ function WatchlistPage() {
 					};
 				})
 			);
-			return detailed.map(toRowItem);
+			return settled.flatMap((result) =>
+				result.status === "fulfilled" ? [toRowItem(result.value)] : []
+			);
 		},
-		queryKey: ["watchlist", "detailed"],
+		queryKey: ["watchlist", session?.user.id ?? "", "detailed"],
 		enabled: session !== null,
 	});
 
