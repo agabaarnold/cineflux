@@ -45,7 +45,7 @@ export const MediaCard = ({
 	title: string;
 	year: string;
 }) => {
-	const { saved, toggle } = useWatchlistItem(mediaType, mediaId);
+	const { isPending, saved, toggle } = useWatchlistItem(mediaType, mediaId);
 	return (
 		<div className="group w-44 shrink-0">
 			<div className="bg-card relative overflow-hidden rounded-2xl border transition-transform duration-300 group-hover:scale-[1.03] group-hover:shadow-lg">
@@ -91,9 +91,10 @@ export const MediaCard = ({
 					</div>
 				</Link>
 				<button
+					aria-busy={isPending}
 					aria-label={saved ? "Remove from watchlist" : "Add to watchlist"}
 					aria-pressed={saved}
-					className="absolute top-2 right-2 flex size-9 items-center justify-center rounded-full bg-black/60 text-white"
+					className={`absolute top-2 right-2 flex size-9 items-center justify-center rounded-full bg-black/60 text-white${isPending ? " opacity-70" : ""}`}
 					onClick={toggle}
 					type="button"
 				>
