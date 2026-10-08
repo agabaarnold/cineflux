@@ -74,7 +74,9 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 	}
 
 	const initials = user.name
-		.split(" ")
+		.trim()
+		.split(/\s+/u)
+		.filter((part) => part !== "")
 		.map((part) => part[0])
 		.slice(0, 2)
 		.join("")
