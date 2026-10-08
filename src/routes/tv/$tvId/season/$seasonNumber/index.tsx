@@ -3,15 +3,21 @@ import { IconStarFilled } from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 
+import { CastRow } from "#/components/media/cast-row.tsx";
 import { formatFullDate } from "#/components/media/detail-sections.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { AspectRatio } from "#/components/ui/aspect-ratio.tsx";
 import { Badge } from "#/components/ui/badge.tsx";
 import {
+	fetchTvSeasonCreditsQueryOptions,
 	fetchTvSeasonDetailsQueryOptions,
 	fetchTvSeriesDetailsQueryOptions,
 } from "#/queries/tv.ts";
-import { getPosterUrl, getStillUrl } from "#/server/tmdb/images.ts";
+import {
+	getPosterUrl,
+	getProfileUrl,
+	getStillUrl,
+} from "#/server/tmdb/images.ts";
 
 const seriesOptions = (id: number) =>
 	fetchTvSeriesDetailsQueryOptions({
@@ -20,6 +26,11 @@ const seriesOptions = (id: number) =>
 
 const seasonOptions = (id: number, seasonNumber: number) =>
 	fetchTvSeasonDetailsQueryOptions({
+		data: { id, language: "en-US", season_number: seasonNumber },
+	});
+
+const creditsOptions = (id: number, seasonNumber: number) =>
+	fetchTvSeasonCreditsQueryOptions({
 		data: { id, language: "en-US", season_number: seasonNumber },
 	});
 
@@ -52,6 +63,10 @@ export const Route = createFileRoute("/tv/$tvId/season/$seasonNumber/")({
 				...seasonOptions(id, seasonNumber),
 				staleTime: "static",
 			}),
+			context.queryClient.query({
+				...creditsOptions(id, seasonNumber),
+				staleTime: "static",
+			}),
 		]);
 	},
 	component: SeasonDetailsPage,
@@ -64,6 +79,7 @@ function SeasonDetailsPage() {
 	const seasonNumber = parseSeasonNumber(seasonParam);
 	const { data: series } = useSuspenseQuery(seriesOptions(id));
 	const { data: season } = useSuspenseQuery(seasonOptions(id, seasonNumber));
+	const { data: credits } = useSuspenseQuery(creditsOptions(id, seasonNumber));
 
 	return (
 		<div className="mx-auto w-full max-w-7xl px-4 pt-24 pb-6">
@@ -137,6 +153,22 @@ function SeasonDetailsPage() {
 					) : null}
 				</div>
 			</div>
+
+			{(credits?.cast.length ?? 0) > 0 ? (
+				<>
+					<h2 className="mt-10 text-xl font-semibold">Cast</h2>
+					<div className="mt-3">
+						<CastRow
+							items={(credits?.cast ?? []).slice(0, 12).map((person) => ({
+								character: person.character,
+								id: person.id,
+								name: person.name,
+								profile: getProfileUrl(person.profile_path),
+							}))}
+						/>
+					</div>
+				</>
+			) : null}
 
 			<h2 className="mt-10 text-xl font-semibold">Episodes</h2>
 			{season.episodes.length === 0 ? (

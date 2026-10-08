@@ -1,5 +1,5 @@
 // oxlint-disable react/function-component-definition func-style
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -8,6 +8,7 @@ import { DetailHero } from "#/components/media/detail-hero.tsx";
 import type { DetailHeroMeta } from "#/components/media/detail-hero.tsx";
 import {
 	detailValue,
+	formatCurrency,
 	formatFullDate,
 	getCrewGroups,
 	getTrailerKey,
@@ -16,6 +17,7 @@ import {
 } from "#/components/media/detail-sections.tsx";
 import type { ReviewItem } from "#/components/media/detail-sections.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
+import { WatchProviders } from "#/components/media/watch-providers.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import {
 	Tabs,
@@ -23,9 +25,11 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "#/components/ui/tabs.tsx";
+import { fetchCollectionDetailsQueryOptions } from "#/queries/catalog.ts";
 import {
 	fetchMovieDetailsQueryOptions,
 	fetchMovieReleaseDatesQueryOptions,
+	fetchMovieWatchProvidersQueryOptions,
 } from "#/queries/movie.ts";
 import type {
 	MovieDetailsWithAppend,
@@ -57,6 +61,9 @@ const detailOptions = (id: number) =>
 const releaseDatesOptions = (id: number) =>
 	fetchMovieReleaseDatesQueryOptions({ data: { id } });
 
+const providersOptions = (id: number) =>
+	fetchMovieWatchProvidersQueryOptions({ data: { id } });
+
 const parseId = (value: string) => {
 	const id = Number(value);
 	if (!Number.isSafeInteger(id) || id <= 0) {
@@ -77,6 +84,7 @@ export const Route = createFileRoute("/movie/$movieId")({
 				...releaseDatesOptions(id),
 				staleTime: "static",
 			}),
+			context.queryClient.query(providersOptions(id)),
 		]);
 	},
 	component: MovieDetailsPage,
@@ -147,12 +155,25 @@ function MovieDetailsPage() {
 	const id = parseId(movieId);
 	const { data: details } = useSuspenseQuery(detailOptions(id));
 	const { data: releaseDates } = useSuspenseQuery(releaseDatesOptions(id));
+	const { data: providers } = useSuspenseQuery(providersOptions(id));
+	const collectionId = details.belongs_to_collection?.id ?? null;
+	const { data: collection } = useQuery({
+		...fetchCollectionDetailsQueryOptions({
+			data: { id: collectionId ?? 0, language: "en-US" },
+		}),
+		enabled: collectionId !== null,
+	});
 	const [tab, setTab] = useState("information");
 
 	const crew = getCrewGroups(details.credits?.crew);
 	const certification = getUsCertification(releaseDates);
 	const trailerKey = getTrailerKey(details.videos);
 	const similar = getSimilarMovies(details);
+	// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
+	const franchise = [...(collection?.parts ?? [])]
+		// oxlint-disable-next-line unicorn/no-array-sort
+		.sort((a, b) => a.release_date.localeCompare(b.release_date))
+		.filter((part) => part.id !== id);
 	const reviews: ReviewItem[] = (details.reviews?.results ?? [])
 		.slice(0, 5)
 		.map((review) => ({
@@ -222,8 +243,37 @@ function MovieDetailsPage() {
 									value: detailValue(crew.producers.join(", ")),
 								},
 								{ label: "Certification", value: detailValue(certification) },
+								{
+									label: "Budget",
+									value: detailValue(formatCurrency(details.budget)),
+								},
+								{
+									label: "Revenue",
+									value: detailValue(formatCurrency(details.revenue)),
+								},
 							]}
 						/>
+						<WatchProviders providers={providers} />
+						{franchise.length > 0 ? (
+							<div className="mt-8">
+								<MediaRow
+									items={franchise.map((movie) => ({
+										href: `/movie/${movie.id}`,
+										id: String(movie.id),
+										image: getPosterUrl(movie.poster_path),
+										mediaType: "movie",
+										overview: movie.overview,
+										stat: {
+											kind: "rating",
+											value: movie.vote_average,
+										} as const,
+										title: movie.title,
+										year: movie.release_date.slice(0, 4),
+									}))}
+									title={`More from ${collection?.name ?? "this collection"}`}
+								/>
+							</div>
+						) : null}
 
 						<h3 className="mt-8 text-lg font-semibold">Actors</h3>
 						<div className="mt-3">

@@ -43,7 +43,7 @@ export const personSchema = z.object({
 	gender: z.number().int().nullable(),
 	id: idSchema,
 	known_for: z.array(knownForItemSchema).optional(),
-	known_for_department: z.string(),
+	known_for_department: z.string().nullable(),
 	name: z.string(),
 	original_name: z.string(),
 	popularity: z.number().nonnegative(),

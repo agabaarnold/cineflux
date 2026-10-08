@@ -1,4 +1,5 @@
 // oxlint-disable react/function-component-definition func-style
+import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 
@@ -6,12 +7,14 @@ import { CastRow } from "#/components/media/cast-row.tsx";
 import {
 	detailValue,
 	formatFullDate,
+	getTrailerKey,
 	InfoRows,
 } from "#/components/media/detail-sections.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Badge } from "#/components/ui/badge.tsx";
 import {
 	fetchTvEpisodeDetailsQueryOptions,
+	fetchTvEpisodeVideosQueryOptions,
 	fetchTvSeriesDetailsQueryOptions,
 } from "#/queries/tv.ts";
 import { getProfileUrl, getStillUrl } from "#/server/tmdb/images.ts";
@@ -27,6 +30,20 @@ const episodeOptions = (
 	episodeNumber: number
 ) =>
 	fetchTvEpisodeDetailsQueryOptions({
+		data: {
+			episode_number: episodeNumber,
+			id,
+			language: "en-US",
+			season_number: seasonNumber,
+		},
+	});
+
+const videosOptions = (
+	id: number,
+	seasonNumber: number,
+	episodeNumber: number
+) =>
+	fetchTvEpisodeVideosQueryOptions({
 		data: {
 			episode_number: episodeNumber,
 			id,
@@ -75,6 +92,10 @@ export const Route = createFileRoute(
 				...episodeOptions(id, seasonNumber, episodeNumber),
 				staleTime: "static",
 			}),
+			context.queryClient.query({
+				...videosOptions(id, seasonNumber, episodeNumber),
+				staleTime: "static",
+			}),
 		]);
 	},
 	component: EpisodeDetailsPage,
@@ -94,6 +115,10 @@ function EpisodeDetailsPage() {
 	const { data: episode } = useSuspenseQuery(
 		episodeOptions(id, seasonNumber, episodeNumber)
 	);
+	const { data: videos } = useSuspenseQuery(
+		videosOptions(id, seasonNumber, episodeNumber)
+	);
+	const trailerKey = getTrailerKey(videos);
 
 	const crew = episode.crew ?? [];
 	const directors: string[] = [];
@@ -169,6 +194,19 @@ function EpisodeDetailsPage() {
 					<p className="text-muted-foreground mt-3 leading-relaxed">
 						{episode.overview}
 					</p>
+				) : null}
+				{trailerKey ? (
+					<div className="mt-4">
+						<a
+							className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold transition-colors"
+							href={`https://www.youtube.com/watch?v=${trailerKey}`}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							<IconPlayerPlayFilled aria-hidden="true" className="size-4" />
+							Watch Trailer
+						</a>
+					</div>
 				) : null}
 			</div>
 

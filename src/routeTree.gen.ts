@@ -14,6 +14,7 @@ import { Route as MovieIndexRouteImport } from './routes/movie/index'
 import { Route as MovieMovieIdRouteImport } from './routes/movie/$movieId'
 import { Route as PeopleIndexRouteImport } from './routes/people/index'
 import { Route as PersonPersonIdRouteImport } from './routes/person/$personId'
+import { Route as SearchIndexRouteImport } from './routes/search/index'
 import { Route as TvIndexRouteImport } from './routes/tv/index'
 import { Route as TvTvIdRouteRouteImport } from './routes/tv/$tvId/route'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -45,6 +46,11 @@ const PeopleIndexRoute = PeopleIndexRouteImport.update({
 const PersonPersonIdRoute = PersonPersonIdRouteImport.update({
   id: '/person/$personId',
   path: '/person/$personId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchIndexRoute = SearchIndexRouteImport.update({
+  id: '/search/',
+  path: '/search/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TvIndexRoute = TvIndexRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/person/$personId': typeof PersonPersonIdRoute
   '/movie/': typeof MovieIndexRoute
   '/people/': typeof PeopleIndexRoute
+  '/search/': typeof SearchIndexRoute
   '/tv/': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/tv/$tvId/': typeof TvTvIdIndexRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/person/$personId': typeof PersonPersonIdRoute
   '/movie': typeof MovieIndexRoute
   '/people': typeof PeopleIndexRoute
+  '/search': typeof SearchIndexRoute
   '/tv': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/tv/$tvId': typeof TvTvIdIndexRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/person/$personId': typeof PersonPersonIdRoute
   '/movie/': typeof MovieIndexRoute
   '/people/': typeof PeopleIndexRoute
+  '/search/': typeof SearchIndexRoute
   '/tv/': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/tv/$tvId/': typeof TvTvIdIndexRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/person/$personId'
     | '/movie/'
     | '/people/'
+    | '/search/'
     | '/tv/'
     | '/api/auth/$'
     | '/tv/$tvId/'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/person/$personId'
     | '/movie'
     | '/people'
+    | '/search'
     | '/tv'
     | '/api/auth/$'
     | '/tv/$tvId'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/person/$personId'
     | '/movie/'
     | '/people/'
+    | '/search/'
     | '/tv/'
     | '/api/auth/$'
     | '/tv/$tvId/'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   PersonPersonIdRoute: typeof PersonPersonIdRoute
   MovieIndexRoute: typeof MovieIndexRoute
   PeopleIndexRoute: typeof PeopleIndexRoute
+  SearchIndexRoute: typeof SearchIndexRoute
   TvIndexRoute: typeof TvIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -216,6 +229,13 @@ declare module '@tanstack/react-router' {
       path: '/person/$personId'
       fullPath: '/person/$personId'
       preLoaderRoute: typeof PersonPersonIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search/': {
+      id: '/search/'
+      path: '/search'
+      fullPath: '/search/'
+      preLoaderRoute: typeof SearchIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tv/': {
@@ -309,6 +329,7 @@ const rootRouteChildren: RootRouteChildren = {
   PersonPersonIdRoute: PersonPersonIdRoute,
   MovieIndexRoute: MovieIndexRoute,
   PeopleIndexRoute: PeopleIndexRoute,
+  SearchIndexRoute: SearchIndexRoute,
   TvIndexRoute: TvIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

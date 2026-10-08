@@ -35,7 +35,7 @@ export interface DetailHeroProps {
 	meta: DetailHeroMeta[];
 	overview: string;
 	poster: string | null;
-	sectionHref: string;
+	sectionHref: "/movie" | "/tv";
 	sectionLabel: string;
 	tagline?: string | null;
 	title: string;
