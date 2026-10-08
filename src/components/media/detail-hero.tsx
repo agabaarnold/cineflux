@@ -12,10 +12,10 @@ import {
 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 
 import { AspectRatio } from "#/components/ui/aspect-ratio.tsx";
 import { Badge } from "#/components/ui/badge.tsx";
+import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
 
 export interface DetailHeroMeta {
 	icon: string;
@@ -33,6 +33,8 @@ export interface DetailHeroProps {
 	byline?: string;
 	genres: DetailHeroGenre[];
 	meta: DetailHeroMeta[];
+	mediaId: number;
+	mediaType: "movie" | "tv";
 	overview: string;
 	poster: string | null;
 	sectionHref: "/movie" | "/tv";
@@ -66,6 +68,8 @@ export const DetailHero = ({
 	byline,
 	genres,
 	meta,
+	mediaId,
+	mediaType,
 	overview,
 	poster,
 	sectionHref,
@@ -77,7 +81,7 @@ export const DetailHero = ({
 	voteCount,
 	year,
 }: DetailHeroProps) => {
-	const [saved, setSaved] = useState(false);
+	const { saved, toggle } = useWatchlistItem(mediaType, mediaId);
 
 	return (
 		<section className="relative overflow-hidden">
@@ -197,7 +201,7 @@ export const DetailHero = ({
 								}
 								aria-pressed={saved}
 								className="flex size-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:bg-white/10"
-								onClick={() => setSaved((previous) => !previous)}
+								onClick={toggle}
 								type="button"
 							>
 								{saved ? (
