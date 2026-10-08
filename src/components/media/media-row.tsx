@@ -10,6 +10,7 @@ export interface RowItem {
 	href: string;
 	id: string;
 	image: string | null;
+	mediaId: number;
 	mediaType: CardMediaType;
 	overview: string;
 	stat: CardStat;
@@ -47,6 +48,7 @@ export const MediaRow = ({
 					href={item.href}
 					image={item.image}
 					key={item.id}
+					mediaId={item.mediaId}
 					mediaType={item.mediaType}
 					overview={item.overview}
 					stat={item.stat}

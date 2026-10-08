@@ -12,6 +12,10 @@ export const relations = defineRelations(schema, (r) => ({
 			from: r.users.id,
 			to: r.accounts.userId,
 		}),
+		watchlist: r.many.watchlist({
+			from: r.users.id,
+			to: r.watchlist.userId,
+		}),
 	},
 	sessions: {
 		user: r.one.users({
@@ -22,6 +26,12 @@ export const relations = defineRelations(schema, (r) => ({
 	accounts: {
 		user: r.one.users({
 			from: r.accounts.userId,
+			to: r.users.id,
+		}),
+	},
+	watchlist: {
+		user: r.one.users({
+			from: r.watchlist.userId,
 			to: r.users.id,
 		}),
 	},

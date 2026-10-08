@@ -196,6 +196,8 @@ function MovieDetailsPage() {
 				}
 				genres={details.genres}
 				meta={getMovieMeta(details)}
+				mediaId={id}
+				mediaType="movie"
 				overview={details.overview}
 				poster={getPosterUrl(details.poster_path)}
 				sectionHref="/movie"
@@ -260,6 +262,7 @@ function MovieDetailsPage() {
 									items={franchise.map((movie) => ({
 										href: `/movie/${movie.id}`,
 										id: String(movie.id),
+										mediaId: movie.id,
 										image: getPosterUrl(movie.poster_path),
 										mediaType: "movie",
 										overview: movie.overview,
@@ -300,6 +303,7 @@ function MovieDetailsPage() {
 							items={similar.slice(0, 10).map((movie) => ({
 								href: `/movie/${movie.id}`,
 								id: String(movie.id),
+								mediaId: movie.id,
 								image: getPosterUrl(movie.poster_path),
 								mediaType: "movie",
 								overview: movie.overview,

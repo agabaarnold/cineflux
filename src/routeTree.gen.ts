@@ -19,6 +19,7 @@ import { Route as AppPersonPersonIdRouteImport } from './routes/_app/person/$per
 import { Route as AppSearchIndexRouteImport } from './routes/_app/search/index'
 import { Route as AppTvIndexRouteImport } from './routes/_app/tv/index'
 import { Route as AppTvTvIdRouteRouteImport } from './routes/_app/tv/$tvId/route'
+import { Route as AppWatchlistIndexRouteImport } from './routes/_app/watchlist/index'
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -75,6 +76,11 @@ const AppTvTvIdRouteRoute = AppTvTvIdRouteRouteImport.update({
   path: '/tv/$tvId',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppWatchlistIndexRoute = AppWatchlistIndexRouteImport.update({
+  id: '/watchlist/',
+  path: '/watchlist/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AuthSignInIndexRoute = AuthSignInIndexRouteImport.update({
   id: '/sign-in/',
   path: '/sign-in/',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/people/': typeof AppPeopleIndexRoute
   '/search/': typeof AppSearchIndexRoute
   '/tv/': typeof AppTvIndexRoute
+  '/watchlist/': typeof AppWatchlistIndexRoute
   '/sign-in/': typeof AuthSignInIndexRoute
   '/sign-up/': typeof AuthSignUpIndexRoute
   '/tv/$tvId/': typeof AppTvTvIdIndexRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/people': typeof AppPeopleIndexRoute
   '/search': typeof AppSearchIndexRoute
   '/tv': typeof AppTvIndexRoute
+  '/watchlist': typeof AppWatchlistIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/tv/$tvId': typeof AppTvTvIdIndexRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/search/': typeof AppSearchIndexRoute
   '/_app/tv/': typeof AppTvIndexRoute
+  '/_app/watchlist/': typeof AppWatchlistIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/_app/tv/$tvId/': typeof AppTvTvIdIndexRoute
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/people/'
     | '/search/'
     | '/tv/'
+    | '/watchlist/'
     | '/sign-in/'
     | '/sign-up/'
     | '/tv/$tvId/'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/people'
     | '/search'
     | '/tv'
+    | '/watchlist'
     | '/sign-in'
     | '/sign-up'
     | '/tv/$tvId'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/_app/people/'
     | '/_app/search/'
     | '/_app/tv/'
+    | '/_app/watchlist/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
     | '/_app/tv/$tvId/'
@@ -296,6 +308,13 @@ declare module '@tanstack/react-router' {
       path: '/tv/$tvId'
       fullPath: '/tv/$tvId'
       preLoaderRoute: typeof AppTvTvIdRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/watchlist/': {
+      id: '/_app/watchlist/'
+      path: '/watchlist'
+      fullPath: '/watchlist/'
+      preLoaderRoute: typeof AppWatchlistIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_auth/sign-in/': {
@@ -392,6 +411,7 @@ interface AppRouteRouteChildren {
   AppPeopleIndexRoute: typeof AppPeopleIndexRoute
   AppSearchIndexRoute: typeof AppSearchIndexRoute
   AppTvIndexRoute: typeof AppTvIndexRoute
+  AppWatchlistIndexRoute: typeof AppWatchlistIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -403,6 +423,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppPeopleIndexRoute: AppPeopleIndexRoute,
   AppSearchIndexRoute: AppSearchIndexRoute,
   AppTvIndexRoute: AppTvIndexRoute,
+  AppWatchlistIndexRoute: AppWatchlistIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

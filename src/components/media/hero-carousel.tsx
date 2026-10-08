@@ -12,6 +12,8 @@ import { cn } from "cn";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 
+import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
+
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import type { CarouselApi } from "../ui/carousel";
 
@@ -19,6 +21,8 @@ export interface HeroSlide {
 	id: string;
 	href: string;
 	backdrop: string | null;
+	mediaId: number;
+	mediaType: "movie" | "tv";
 	title: string;
 	overview: string;
 	voteAverage: number;
@@ -53,7 +57,10 @@ const Stars = ({ voteAverage }: { voteAverage: number }) => {
 };
 
 const Slide = ({ slide }: { slide: HeroSlide }) => {
-	const [saved, setSaved] = useState(false);
+	const { isPending, saved, toggle } = useWatchlistItem(
+		slide.mediaType,
+		slide.mediaId
+	);
 
 	return (
 		<div className="relative h-full w-full">
@@ -95,10 +102,11 @@ const Slide = ({ slide }: { slide: HeroSlide }) => {
 					</Link>
 
 					<button
+						aria-busy={isPending}
 						aria-label={saved ? "Remove from watchlist" : "Add to watchlist"}
 						aria-pressed={saved}
-						className="flex size-11 items-center justify-center rounded-full border border-white/40 text-white"
-						onClick={() => setSaved((previous) => !previous)}
+						className={`flex size-11 items-center justify-center rounded-full border border-white/40 text-white${isPending ? " opacity-70" : ""}`}
+						onClick={toggle}
 						type="button"
 					>
 						{saved ? (

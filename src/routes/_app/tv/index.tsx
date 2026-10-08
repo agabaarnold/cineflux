@@ -95,6 +95,8 @@ function TVShowsPage() {
 			backdrop: getBackdropUrl(show.backdrop_path, "w1280"),
 			href: `/tv/${show.id}`,
 			id: `tv-${show.id}`,
+			mediaId: show.id,
+			mediaType: "tv" as const,
 			meta: (show.first_air_date ?? "").slice(0, 4),
 			overview: show.overview,
 			title: show.name,
@@ -137,6 +139,7 @@ function TVShowsPage() {
 								href: `/tv/${show.id}`,
 								id: `tv-${show.id}`,
 								image: getPosterUrl(show.poster_path),
+								mediaId: show.id,
 								mediaType: "tv",
 								overview: show.overview,
 								stat: { kind: "rating", value: show.vote_average } as const,
@@ -151,6 +154,7 @@ function TVShowsPage() {
 					items={popular.results.slice(0, 10).map((show) => ({
 						href: `/tv/${show.id}`,
 						id: String(show.id),
+						mediaId: show.id,
 						image: getPosterUrl(show.poster_path),
 						mediaType: "tv",
 						overview: show.overview,
@@ -165,6 +169,7 @@ function TVShowsPage() {
 					items={airingToday.results.slice(0, 10).map((show) => ({
 						href: `/tv/${show.id}`,
 						id: String(show.id),
+						mediaId: show.id,
 						image: getPosterUrl(show.poster_path),
 						mediaType: "tv",
 						overview: show.overview,
@@ -179,6 +184,7 @@ function TVShowsPage() {
 					items={onTheAir.results.slice(0, 10).map((show) => ({
 						href: `/tv/${show.id}`,
 						id: String(show.id),
+						mediaId: show.id,
 						image: getPosterUrl(show.poster_path),
 						mediaType: "tv",
 						overview: show.overview,
@@ -193,6 +199,7 @@ function TVShowsPage() {
 					items={topRated.results.slice(0, 10).map((show) => ({
 						href: `/tv/${show.id}`,
 						id: String(show.id),
+						mediaId: show.id,
 						image: getPosterUrl(show.poster_path),
 						mediaType: "tv",
 						overview: show.overview,

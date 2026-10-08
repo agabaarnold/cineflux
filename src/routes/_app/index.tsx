@@ -125,6 +125,8 @@ function Home() {
 			href:
 				item.media_type === "movie" ? `/movie/${item.id}` : `/tv/${item.id}`,
 			backdrop: getBackdropUrl(item?.backdrop_path, "w1280"),
+			mediaId: item.id,
+			mediaType: item.media_type,
 			title: item.media_type === "movie" ? item.title : item.name,
 			overview: item.overview,
 			voteAverage: item.vote_average,
@@ -170,6 +172,7 @@ function Home() {
 								href: trendingHref(item),
 								id: `${item.media_type}-${item.id}`,
 								image: trendingImage(item),
+								mediaId: item.id,
 								mediaType: item.media_type,
 								overview:
 									item.media_type === "person"
@@ -187,6 +190,7 @@ function Home() {
 					items={movies.results.slice(0, 10).map((movie) => ({
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
+						mediaId: movie.id,
 						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
 						overview: movie.overview,
@@ -202,6 +206,7 @@ function Home() {
 					items={shows.results.slice(0, 10).map((show) => ({
 						href: `/tv/${show.id}`,
 						id: String(show.id),
+						mediaId: show.id,
 						image: getPosterUrl(show.poster_path),
 						mediaType: "tv",
 						overview: show.overview,
@@ -217,6 +222,7 @@ function Home() {
 					items={people.results.slice(0, 10).map((person) => ({
 						href: `/person/${person.id}`,
 						id: String(person.id),
+						mediaId: person.id,
 						image: getProfileUrl(person.profile_path),
 						mediaType: "person",
 						overview: person.known_for?.[0]?.overview ?? "",

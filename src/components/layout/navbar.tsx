@@ -1,5 +1,6 @@
 // oxlint-disable shadcn/no-restyle
 import {
+	IconBookmark,
 	IconDeviceTv,
 	IconHome,
 	IconLogout,
@@ -26,6 +27,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { MobileMenu } from "./mobile-menu";
 
 interface NavItemProps {
 	to: LinkOptions["to"];
@@ -106,6 +108,14 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
+					onClick={() => {
+						navigate({ to: "/watchlist" });
+					}}
+				>
+					<IconBookmark aria-hidden="true" />
+					My watchlist
+				</DropdownMenuItem>
+				<DropdownMenuItem
 					onClick={async () => {
 						const { error } = await authClient.signOut();
 						if (error) {
@@ -127,6 +137,7 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 export const Navbar = ({ user }: { user: NavbarUser | null }) => (
 	<header className="pointer-events-none fixed inset-x-0 top-5 z-50 flex justify-center px-4">
 		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-2.5 rounded-full border p-1.5 shadow-2xl shadow-black/20 backdrop-blur-xl">
+			<MobileMenu user={user} />
 			<Link to="/">
 				<Logo className="size-10" />
 			</Link>
