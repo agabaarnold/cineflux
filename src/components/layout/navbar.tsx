@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
@@ -81,20 +82,24 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				aria-label="Profile menu"
-				className="rounded-full outline-none"
+				className="ring-foreground/15 hover:ring-foreground/30 rounded-full ring-1 transition outline-none"
 			>
-				<Avatar size="sm">
+				<Avatar>
 					{user.image ? <AvatarImage alt={user.name} src={user.image} /> : null}
-					<AvatarFallback>{initials || "?"}</AvatarFallback>
+					<AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+						{initials || "?"}
+					</AvatarFallback>
 				</Avatar>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" sideOffset={8}>
-				<DropdownMenuLabel>
-					<p className="text-foreground truncate text-sm font-semibold">
-						{user.name}
-					</p>
-					<p className="truncate text-xs">{user.email}</p>
-				</DropdownMenuLabel>
+				<DropdownMenuGroup>
+					<DropdownMenuLabel>
+						<p className="text-foreground truncate text-sm font-semibold">
+							{user.name}
+						</p>
+						<p className="truncate text-xs">{user.email}</p>
+					</DropdownMenuLabel>
+				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={async () => {
