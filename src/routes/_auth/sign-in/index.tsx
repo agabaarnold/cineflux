@@ -1,5 +1,4 @@
 // oxlint-disable react/function-component-definition func-style
-import { IconBrandGoogle } from "@tabler/icons-react";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -8,10 +7,10 @@ import {
 	useNavigate,
 	useRouter,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 
+import { GoogleSignInButton } from "#/components/auth/google-button.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Button } from "#/components/ui/button.tsx";
 import { Input } from "#/components/ui/input.tsx";
@@ -30,27 +29,10 @@ const signInSchema = z.object({
 	password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-const handleGoogle = async () => {
-	const { error } = await authClient.signIn.social({
-		callbackURL: "/",
-		provider: "google",
-	});
-	if (error) {
-		toast.error(error.message ?? "Something went wrong");
-	}
-};
-
 function SignInPage() {
 	const navigate = useNavigate();
 	const router = useRouter();
-	const { data: session, isPending: sessionPending } = authClient.useSession();
 	const { data: providers } = useQuery(fetchAuthProvidersQueryOptions());
-
-	useEffect(() => {
-		if (!sessionPending && session) {
-			navigate({ to: "/" });
-		}
-	}, [sessionPending, session, navigate]);
 
 	const form = useForm({
 		defaultValues: { email: "", password: "" },
@@ -147,15 +129,7 @@ function SignInPage() {
 					<div className="text-muted-foreground my-4 text-center text-xs">
 						or
 					</div>
-					<Button
-						className="w-full"
-						onClick={handleGoogle}
-						type="button"
-						variant="outline"
-					>
-						<IconBrandGoogle aria-hidden="true" className="size-4" />
-						Continue with Google
-					</Button>
+					<GoogleSignInButton />
 				</>
 			) : null}
 
