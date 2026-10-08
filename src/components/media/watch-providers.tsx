@@ -110,7 +110,7 @@ export const WatchProviders = ({
 					</>
 				) : null}
 			</p>
-			<div className="mt-3 grid gap-x-12 gap-y-3 md:grid-cols-2">
+			<dl className="mt-3 grid gap-x-12 gap-y-3 md:grid-cols-2">
 				{visibleGroups.map((group) => (
 					<div className="flex gap-4" key={group.key}>
 						<dt className="text-muted-foreground w-32 shrink-0 text-sm">
@@ -140,7 +140,7 @@ export const WatchProviders = ({
 						</dd>
 					</div>
 				))}
-			</div>
+			</dl>
 		</div>
 	);
 };
