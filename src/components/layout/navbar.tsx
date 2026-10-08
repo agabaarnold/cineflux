@@ -8,9 +8,10 @@ import {
 	IconUsersGroup,
 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import type { LinkOptions } from "@tanstack/react-router";
 import { cn } from "cn";
+import { toast } from "react-hot-toast";
 
 import { authClient } from "#/lib/auth-client.ts";
 
@@ -59,6 +60,7 @@ export interface NavbarUser {
 
 const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 	const navigate = useNavigate();
+	const router = useRouter();
 
 	if (!user) {
 		return (
@@ -103,8 +105,13 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={async () => {
-						await authClient.signOut();
-						navigate({ to: "/" });
+						const { error } = await authClient.signOut();
+						if (error) {
+							toast.error(error.message ?? "Something went wrong");
+							return;
+						}
+						await router.invalidate();
+						await navigate({ to: "/" });
 					}}
 				>
 					<IconLogout aria-hidden="true" />
