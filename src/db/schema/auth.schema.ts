@@ -24,7 +24,7 @@ export const sessions = pgTable(
 		updatedAt: timestamp("updated_at")
 			.defaultNow()
 			// @__PURE__ marks the update hook as side-effect-free for bundlers.
-		.$onUpdate(() => new Date())
+			.$onUpdate(() => new Date())
 			.notNull(),
 		ipAddress: text("ip_address"),
 		userAgent: text("user_agent"),
@@ -55,7 +55,7 @@ export const accounts = pgTable(
 		updatedAt: timestamp("updated_at")
 			.defaultNow()
 			// @__PURE__ marks the update hook as side-effect-free for bundlers.
-		.$onUpdate(() => new Date())
+			.$onUpdate(() => new Date())
 			.notNull(),
 	},
 	(table) => [index("accounts_userId_idx").on(table.userId)]
@@ -72,7 +72,7 @@ export const verifications = pgTable(
 		updatedAt: timestamp("updated_at")
 			.defaultNow()
 			// @__PURE__ marks the update hook as side-effect-free for bundlers.
-		.$onUpdate(() => new Date())
+			.$onUpdate(() => new Date())
 			.notNull(),
 	},
 	(table) => [index("verifications_identifier_idx").on(table.identifier)]

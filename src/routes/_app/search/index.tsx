@@ -13,9 +13,9 @@ import {
 	InputGroupAddon,
 	InputGroupInput,
 } from "#/components/ui/input-group.tsx";
-import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { Input } from "#/components/ui/input.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
+import { pageHead, pageTitle } from "#/lib/seo.ts";
 import {
 	searchMoviesQueryOptions,
 	searchMultiQueryOptions,
@@ -242,7 +242,11 @@ function useTypedSearch(
 	type: SearchType,
 	year: number | undefined
 ) {
-	const base = { language: "en-US", page: 1, query: query === "" ? " " : query };
+	const base = {
+		language: "en-US",
+		page: 1,
+		query: query === "" ? " " : query,
+	};
 	const multiQuery = useQuery({
 		...searchMultiQueryOptions({ data: base }),
 		enabled: query !== "" && type === "all",
