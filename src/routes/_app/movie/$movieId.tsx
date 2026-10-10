@@ -25,6 +25,7 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "#/components/ui/tabs.tsx";
+import { pageHead, pageTitle, truncateDescription } from "#/lib/seo.ts";
 import { fetchCollectionDetailsQueryOptions } from "#/queries/catalog.ts";
 import {
 	fetchMovieDetailsQueryOptions,
@@ -89,6 +90,27 @@ export const Route = createFileRoute("/_app/movie/$movieId")({
 	},
 	component: MovieDetailsPage,
 	errorComponent: RouteError,
+	head: ({ loaderData }) => {
+		const [details] = loaderData ?? [];
+		if (!details) {
+			return pageHead({
+				description: "Movie details, cast, and reviews on CineFlux.",
+				title: pageTitle("Movie"),
+			});
+		}
+		const year = details.release_date.slice(0, 4);
+		const name = year ? `${details.title} (${year})` : details.title;
+		return pageHead({
+			description: truncateDescription(
+				details.overview,
+				`${name} — details, cast, reviews, and where to watch on CineFlux.`
+			),
+			image:
+				getPosterUrl(details.poster_path, "w780") ??
+				getBackdropUrl(details.backdrop_path),
+			title: pageTitle(name),
+		});
+	},
 });
 
 const getUsCertification = (releaseDates: MovieReleaseDates): string =>
