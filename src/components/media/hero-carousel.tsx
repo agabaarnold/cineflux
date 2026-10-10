@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
 
@@ -193,24 +194,20 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 		}
 	};
 
+	const onSlideKeyDown = (event: KeyboardEvent) => {
+		if (event.key === "ArrowLeft") {
+			api?.scrollPrev();
+		} else if (event.key === "ArrowRight") {
+			api?.scrollNext();
+		}
+	};
+
 	if (slides.length === 0) {
 		return null;
 	}
 
 	return (
-		// Arrow keys supplement the dot buttons below, which keep full keyboard access.
-		// oxlint-disable-next-line jsx-a11y(no-noninteractive-element-interactions)
-		<section
-			aria-label="Featured"
-			className="relative"
-			onKeyDown={(event) => {
-				if (event.key === "ArrowLeft") {
-					api?.scrollPrev();
-				} else if (event.key === "ArrowRight") {
-					api?.scrollNext();
-				}
-			}}
-		>
+		<section aria-label="Featured" className="relative">
 			<Carousel
 				opts={{ loop: true }}
 				// Safe: lazy-initialized write-once above, never reassigned elsewhere.
@@ -239,6 +236,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 						)}
 						key={slide.id}
 						onClick={() => api?.scrollTo(index)}
+						onKeyDown={onSlideKeyDown}
 						type="button"
 					/>
 				))}
@@ -247,6 +245,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 					aria-label={playing ? "Pause autoplay" : "Resume autoplay"}
 					className="mt-1 flex size-9 items-center justify-center rounded-full bg-black/50 text-white"
 					onClick={togglePlaying}
+					onKeyDown={onSlideKeyDown}
 					type="button"
 				>
 					{playing ? (
