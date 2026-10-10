@@ -37,6 +37,18 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "#6D25D9",
 			},
 			{
+				content: "CineFlux",
+				property: "og:site_name",
+			},
+			{
+				content: "website",
+				property: "og:type",
+			},
+			{
+				content: "summary",
+				name: "twitter:card",
+			},
+			{
 				title: "CineFlux",
 			},
 		],
