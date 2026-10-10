@@ -107,7 +107,7 @@ export const Route = createFileRoute("/_app/tv/$tvId/")({
 			image:
 				getPosterUrl(details.poster_path, "w780") ??
 				getBackdropUrl(details.backdrop_path),
-			path: `/tv/${params.tvId}`,
+			path: `/tv/${details.id}`,
 			title: pageTitle(name),
 		});
 	},

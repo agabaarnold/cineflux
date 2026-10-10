@@ -158,14 +158,19 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 		if (!api) {
 			return;
 		}
-		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-			api.plugins().autoplay?.stop();
-		}
-
 		const plugin = api.plugins().autoplay;
 		if (!plugin) {
 			return;
 		}
+
+		const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const stopForReducedMotion = () => {
+			if (motionQuery.matches) {
+				plugin.stop();
+			}
+		};
+		stopForReducedMotion();
+		motionQuery.addEventListener("change", stopForReducedMotion);
 
 		// Syncs local state with the external embla instance on (re)connect.
 		// oxlint-disable-next-line react/set-state-in-effect
@@ -176,6 +181,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 		api.on("autoplay:play", syncPlaying);
 		api.on("autoplay:stop", syncPlaying);
 		return () => {
+			motionQuery.removeEventListener("change", stopForReducedMotion);
 			api.off("select", onSelect);
 			api.off("autoplay:play", syncPlaying);
 			api.off("autoplay:stop", syncPlaying);

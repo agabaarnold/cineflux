@@ -90,7 +90,7 @@ export const Route = createFileRoute("/_app/tv/$tvId/season/$seasonNumber/")({
 			image:
 				getPosterUrl(season.poster_path, "w780") ??
 				getPosterUrl(series.poster_path, "w780"),
-			path: `/tv/${params.tvId}/season/${params.seasonNumber}`,
+			path: `/tv/${series.id}/season/${season.season_number}`,
 			title: pageTitle(name),
 		});
 	},

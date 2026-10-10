@@ -123,7 +123,7 @@ export const Route = createFileRoute(
 			image:
 				getStillUrl(episode.still_path, "original") ??
 				getPosterUrl(series.poster_path, "w780"),
-			path: `/tv/${params.tvId}/season/${params.seasonNumber}/episode/${params.episodeNumber}`,
+			path: `/tv/${series.id}/season/${episode.season_number}/episode/${episode.episode_number}`,
 			title: pageTitle(name),
 		});
 	},

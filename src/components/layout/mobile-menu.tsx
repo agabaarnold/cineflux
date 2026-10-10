@@ -50,7 +50,7 @@ export const MobileMenu = ({ user }: { user: NavbarUser | null }) => {
 					<SheetHeader>
 						<SheetTitle>
 							<span className="flex items-center gap-2">
-								<Logo className="size-7" />
+								<Logo aria-hidden="true" className="size-7" />
 								CineFlux
 							</span>
 						</SheetTitle>

@@ -52,7 +52,7 @@ export const Route = createFileRoute("/_app/person/$personId")({
 				`Movies and TV shows featuring ${loaderData.name} on CineFlux.`
 			),
 			image: getProfileUrl(loaderData.profile_path, "h632"),
-			path: `/person/${params.personId}`,
+			path: `/person/${loaderData.id}`,
 			title: pageTitle(loaderData.name),
 		});
 	},
