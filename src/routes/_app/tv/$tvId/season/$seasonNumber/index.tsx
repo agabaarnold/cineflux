@@ -8,6 +8,7 @@ import { formatFullDate } from "#/components/media/detail-sections.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { AspectRatio } from "#/components/ui/aspect-ratio.tsx";
 import { Badge } from "#/components/ui/badge.tsx";
+import { pageHead, pageTitle, truncateDescription } from "#/lib/seo.ts";
 import {
 	fetchTvSeasonCreditsQueryOptions,
 	fetchTvSeasonDetailsQueryOptions,
@@ -71,6 +72,28 @@ export const Route = createFileRoute("/_app/tv/$tvId/season/$seasonNumber/")({
 	},
 	component: SeasonDetailsPage,
 	errorComponent: RouteError,
+	head: ({ loaderData, params }) => {
+		const [series, season] = loaderData ?? [];
+		if (!series || !season) {
+			return pageHead({
+				description: "TV season details and episodes on CineFlux.",
+				path: `/tv/${params.tvId}/season/${params.seasonNumber}`,
+				title: pageTitle("Season"),
+			});
+		}
+		const name = `${series.name} Season ${season.season_number}`;
+		return pageHead({
+			description: truncateDescription(
+				season.overview,
+				`${name} — episodes and cast on CineFlux.`
+			),
+			image:
+				getPosterUrl(season.poster_path, "w780") ??
+				getPosterUrl(series.poster_path, "w780"),
+			path: `/tv/${series.id}/season/${season.season_number}`,
+			title: pageTitle(name),
+		});
+	},
 });
 
 function SeasonDetailsPage() {
@@ -112,6 +135,7 @@ function SeasonDetailsPage() {
 								<img
 									alt={season.name}
 									className="h-full w-full object-cover"
+									decoding="async"
 									src={getPosterUrl(season.poster_path) ?? undefined}
 								/>
 							) : (
@@ -193,6 +217,7 @@ function SeasonDetailsPage() {
 										<img
 											alt=""
 											className="aspect-video w-full object-cover"
+											decoding="async"
 											loading="lazy"
 											src={getStillUrl(episode.still_path) ?? undefined}
 										/>

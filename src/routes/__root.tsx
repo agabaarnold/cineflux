@@ -37,10 +37,26 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "#6D25D9",
 			},
 			{
+				content: "CineFlux",
+				property: "og:site_name",
+			},
+			{
+				content: "website",
+				property: "og:type",
+			},
+			{
+				content: "summary",
+				name: "twitter:card",
+			},
+			{
 				title: "CineFlux",
 			},
 		],
 		links: [
+			{
+				rel: "preconnect",
+				href: "https://image.tmdb.org",
+			},
 			{
 				rel: "stylesheet",
 				href: appCss,
@@ -87,6 +103,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 
 			<body>
+				<a
+					className="bg-primary text-primary-foreground absolute top-4 left-4 z-60 -translate-y-40 rounded-full px-4 py-2 text-sm font-medium transition-transform focus:translate-y-0"
+					href="#main-content"
+				>
+					Skip to content
+				</a>
 				<TooltipProvider>{children}</TooltipProvider>
 				<Toaster />
 

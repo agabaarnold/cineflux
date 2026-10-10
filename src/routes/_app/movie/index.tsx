@@ -7,6 +7,7 @@ import { HeroCarousel } from "#/components/media/hero-carousel.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
+import { pageHead, pageTitle } from "#/lib/seo.ts";
 import {
 	fetchNowPlayingMoviesQueryOptions,
 	fetchPopularMoviesQueryOptions,
@@ -65,6 +66,13 @@ export const Route = createFileRoute("/_app/movie/")({
 		]),
 	component: MoviesPage,
 	errorComponent: RouteError,
+	head: () =>
+		pageHead({
+			description:
+				"Browse popular, top-rated, and upcoming movies on CineFlux.",
+			path: "/movie",
+			title: pageTitle("Movies"),
+		}),
 });
 
 function MoviesPage() {
@@ -106,6 +114,7 @@ function MoviesPage() {
 
 	return (
 		<div className="flex flex-col">
+			<h1 className="sr-only">Movies</h1>
 			<HeroCarousel items={heroItems} />
 
 			<div className="mx-auto w-full max-w-7xl space-y-10 px-4 py-6">

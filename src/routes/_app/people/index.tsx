@@ -6,6 +6,7 @@ import { z } from "zod";
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
+import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { fetchPopularPeopleQueryOptions } from "#/queries/person.ts";
 import { fetchTrendingQueryOptions } from "#/queries/trending.ts";
 import { timeWindowSchema } from "#/schemas/common.ts";
@@ -38,6 +39,12 @@ export const Route = createFileRoute("/_app/people/")({
 		]),
 	component: PeoplePage,
 	errorComponent: RouteError,
+	head: () =>
+		pageHead({
+			description: "Discover popular actors, directors, and creators on CineFlux.",
+			path: "/people",
+			title: pageTitle("People"),
+		}),
 });
 
 function PeoplePage() {

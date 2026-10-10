@@ -7,6 +7,7 @@ import { HeroCarousel } from "#/components/media/hero-carousel.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
+import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { fetchTrendingQueryOptions } from "#/queries/trending.ts";
 import {
 	fetchTvAiringTodayQueryOptions,
@@ -65,6 +66,12 @@ export const Route = createFileRoute("/_app/tv/")({
 		]),
 	component: TVShowsPage,
 	errorComponent: RouteError,
+	head: () =>
+		pageHead({
+			description: "Browse popular, top-rated, and airing TV shows on CineFlux.",
+			path: "/tv",
+			title: pageTitle("TV Shows"),
+		}),
 });
 
 function TVShowsPage() {
@@ -106,6 +113,7 @@ function TVShowsPage() {
 
 	return (
 		<div className="flex flex-col">
+			<h1 className="sr-only">TV Shows</h1>
 			<HeroCarousel items={heroItems} />
 
 			<div className="mx-auto w-full max-w-7xl space-y-10 px-4 py-6">

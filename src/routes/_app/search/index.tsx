@@ -13,6 +13,7 @@ import {
 	InputGroupAddon,
 	InputGroupInput,
 } from "#/components/ui/input-group.tsx";
+import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { searchMultiQueryOptions } from "#/queries/search.ts";
 import type { TrendingAll } from "#/schemas/trending.ts";
 import { getPosterUrl, getProfileUrl } from "#/server/tmdb/images.ts";
@@ -34,6 +35,12 @@ export const Route = createFileRoute("/_app/search/")({
 	},
 	component: SearchPage,
 	errorComponent: RouteError,
+	head: () =>
+		pageHead({
+			description: "Search movies, TV shows, and people on CineFlux.",
+			path: "/search",
+			title: pageTitle("Search"),
+		}),
 });
 
 type MultiMovie = Extract<TrendingAll, { media_type: "movie" }>;

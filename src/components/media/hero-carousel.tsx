@@ -11,6 +11,7 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
 
@@ -56,7 +57,13 @@ const Stars = ({ voteAverage }: { voteAverage: number }) => {
 	);
 };
 
-const Slide = ({ slide }: { slide: HeroSlide }) => {
+const Slide = ({
+	priority,
+	slide,
+}: {
+	priority?: boolean;
+	slide: HeroSlide;
+}) => {
 	const { isPending, saved, toggle } = useWatchlistItem(
 		slide.mediaType,
 		slide.mediaId
@@ -68,8 +75,10 @@ const Slide = ({ slide }: { slide: HeroSlide }) => {
 				<img
 					alt=""
 					className="absolute inset-0 h-full w-full object-cover"
-					src={slide.backdrop}
+					decoding="async"
+					fetchPriority={priority ? "high" : undefined}
 					loading="eager"
+					src={slide.backdrop}
 				/>
 			) : null}
 
@@ -149,11 +158,19 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 		if (!api) {
 			return;
 		}
-
 		const plugin = api.plugins().autoplay;
 		if (!plugin) {
 			return;
 		}
+
+		const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const stopForReducedMotion = () => {
+			if (motionQuery.matches) {
+				plugin.stop();
+			}
+		};
+		stopForReducedMotion();
+		motionQuery.addEventListener("change", stopForReducedMotion);
 
 		// Syncs local state with the external embla instance on (re)connect.
 		// oxlint-disable-next-line react/set-state-in-effect
@@ -164,6 +181,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 		api.on("autoplay:play", syncPlaying);
 		api.on("autoplay:stop", syncPlaying);
 		return () => {
+			motionQuery.removeEventListener("change", stopForReducedMotion);
 			api.off("select", onSelect);
 			api.off("autoplay:play", syncPlaying);
 			api.off("autoplay:stop", syncPlaying);
@@ -182,6 +200,14 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 		}
 	};
 
+	const onSlideKeyDown = (event: KeyboardEvent) => {
+		if (event.key === "ArrowLeft") {
+			api?.scrollPrev();
+		} else if (event.key === "ArrowRight") {
+			api?.scrollNext();
+		}
+	};
+
 	if (slides.length === 0) {
 		return null;
 	}
@@ -196,10 +222,10 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 				setApi={setApi}
 			>
 				<CarouselContent className="ml-0">
-					{slides.map((slide) => (
+					{slides.map((slide, index) => (
 						<CarouselItem className="basis-full pl-0" key={slide.id}>
 							<div className="h-[80vh] max-h-180 min-h-120">
-								<Slide slide={slide} />
+								<Slide priority={index === 0} slide={slide} />
 							</div>
 						</CarouselItem>
 					))}
@@ -216,6 +242,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 						)}
 						key={slide.id}
 						onClick={() => api?.scrollTo(index)}
+						onKeyDown={onSlideKeyDown}
 						type="button"
 					/>
 				))}
@@ -224,6 +251,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 					aria-label={playing ? "Pause autoplay" : "Resume autoplay"}
 					className="mt-1 flex size-9 items-center justify-center rounded-full bg-black/50 text-white"
 					onClick={togglePlaying}
+					onKeyDown={onSlideKeyDown}
 					type="button"
 				>
 					{playing ? (

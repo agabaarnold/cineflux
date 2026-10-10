@@ -42,6 +42,11 @@ export const useWatchlistItem = (mediaType: CardMediaType, mediaId: number) => {
 			}
 			toast.error(error.message ?? "Something went wrong");
 		},
+		onSuccess: (_data, currentlySaved) => {
+			toast.success(
+				currentlySaved ? "Removed from watchlist" : "Saved to watchlist"
+			);
+		},
 		onMutate: async (currentlySaved: boolean) => {
 			await queryClient.cancelQueries({ queryKey: ["watchlist", userId] });
 			const previous = queryClient.getQueryData<WatchlistEntries>([

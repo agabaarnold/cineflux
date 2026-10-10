@@ -39,6 +39,7 @@ export const CastRow = ({ items }: { items: CastMember[] }) => {
 							<img
 								alt={member.name}
 								className="size-20 rounded-full object-cover transition-transform group-hover:scale-105"
+								decoding="async"
 								loading="lazy"
 								src={member.profile}
 							/>
