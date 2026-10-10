@@ -198,11 +198,11 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 	}
 
 	return (
+		// Arrow keys supplement the dot buttons below, which keep full keyboard access.
+		// oxlint-disable-next-line jsx-a11y(no-noninteractive-element-interactions)
 		<section
 			aria-label="Featured"
 			className="relative"
-			// Arrow keys supplement the dot buttons below, which keep full keyboard access.
-			// oxlint-disable jsx-a11y(no-noninteractive-element-interactions)
 			onKeyDown={(event) => {
 				if (event.key === "ArrowLeft") {
 					api?.scrollPrev();
