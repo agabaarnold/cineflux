@@ -28,4 +28,6 @@ jobs:
 
       - run: pnpm exec tsc --noEmit
 
+      - run: pnpm exec ultracite check
+
       - run: pnpm test
