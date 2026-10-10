@@ -18,6 +18,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "#/components/ui/sheet.tsx";
+import { Logo } from "../shared/logo";
 
 const menuLinks = [
 	{ icon: IconHome, label: "Home", to: "/" },
@@ -47,7 +48,12 @@ export const MobileMenu = ({ user }: { user: NavbarUser | null }) => {
 				</SheetTrigger>
 				<SheetContent side="left">
 					<SheetHeader>
-						<SheetTitle>Browse</SheetTitle>
+						<SheetTitle>
+							<span className="flex items-center gap-2">
+								<Logo className="size-7" />
+								CineFlux
+							</span>
+						</SheetTitle>
 					</SheetHeader>
 					<nav className="flex flex-col gap-1 px-4" aria-label="Mobile">
 						{menuLinks.map((link) => (
