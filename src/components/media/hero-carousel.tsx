@@ -157,6 +157,9 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 		if (!api) {
 			return;
 		}
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			api.plugins().autoplay?.stop();
+		}
 
 		const plugin = api.plugins().autoplay;
 		if (!plugin) {
@@ -195,7 +198,19 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 	}
 
 	return (
-		<section aria-label="Featured" className="relative">
+		<section
+			aria-label="Featured"
+			className="relative"
+			// Arrow keys supplement the dot buttons below, which keep full keyboard access.
+			// oxlint-disable jsx-a11y(no-noninteractive-element-interactions)
+			onKeyDown={(event) => {
+				if (event.key === "ArrowLeft") {
+					api?.scrollPrev();
+				} else if (event.key === "ArrowRight") {
+					api?.scrollNext();
+				}
+			}}
+		>
 			<Carousel
 				opts={{ loop: true }}
 				// Safe: lazy-initialized write-once above, never reassigned elsewhere.
