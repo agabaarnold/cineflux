@@ -135,6 +135,7 @@ function SeasonDetailsPage() {
 								<img
 									alt={season.name}
 									className="h-full w-full object-cover"
+									decoding="async"
 									src={getPosterUrl(season.poster_path) ?? undefined}
 								/>
 							) : (
@@ -216,6 +217,7 @@ function SeasonDetailsPage() {
 										<img
 											alt=""
 											className="aspect-video w-full object-cover"
+											decoding="async"
 											loading="lazy"
 											src={getStillUrl(episode.still_path) ?? undefined}
 										/>

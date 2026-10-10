@@ -114,6 +114,7 @@ function PersonDetailsPage() {
 								<img
 									alt={details.name}
 									className="h-full w-full object-cover"
+									decoding="async"
 									src={getProfileUrl(details.profile_path, "h632") ?? undefined}
 								/>
 							) : (

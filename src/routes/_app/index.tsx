@@ -147,6 +147,7 @@ function Home() {
 
 	return (
 		<div className="flex flex-col">
+			<h1 className="sr-only">Discover movies, TV shows, and people</h1>
 			<HeroCarousel items={heroItems} />
 
 			<div className="mx-auto w-full max-w-7xl space-y-10 px-4 py-6">

@@ -310,6 +310,7 @@ function TvDetailsPage() {
 												<img
 													alt={season.name}
 													className="aspect-2/3 w-full object-cover"
+													decoding="async"
 													loading="lazy"
 													src={
 														getPosterUrl(season.poster_path, "w342") ??

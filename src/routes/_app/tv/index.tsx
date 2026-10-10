@@ -113,6 +113,7 @@ function TVShowsPage() {
 
 	return (
 		<div className="flex flex-col">
+			<h1 className="sr-only">TV Shows</h1>
 			<HeroCarousel items={heroItems} />
 
 			<div className="mx-auto w-full max-w-7xl space-y-10 px-4 py-6">

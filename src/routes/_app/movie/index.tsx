@@ -114,6 +114,7 @@ function MoviesPage() {
 
 	return (
 		<div className="flex flex-col">
+			<h1 className="sr-only">Movies</h1>
 			<HeroCarousel items={heroItems} />
 
 			<div className="mx-auto w-full max-w-7xl space-y-10 px-4 py-6">

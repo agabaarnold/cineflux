@@ -22,7 +22,9 @@ function AppLayout() {
 	return (
 		<>
 			<Navbar user={user} />
-			<Outlet />
+			<main id="main-content">
+				<Outlet />
+			</main>
 		</>
 	);
 }

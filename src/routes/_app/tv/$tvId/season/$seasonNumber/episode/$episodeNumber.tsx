@@ -195,6 +195,7 @@ function EpisodeDetailsPage() {
 					<img
 						alt=""
 						className="aspect-video w-full object-cover"
+						decoding="async"
 						src={getStillUrl(episode.still_path, "original") ?? undefined}
 					/>
 				</div>
