@@ -1,7 +1,6 @@
-// SAFETY: vite/client types index all env keys as `any`; this only narrows
-// to the documented string-or-missing shape, and every consumer handles
-// `undefined` by omitting canonical tags.
-const RAW_SITE_URL = import.meta.env.VITE_SITE_URL as string | undefined;
+import { clientEnv } from "#/env/client.ts";
+
+const RAW_SITE_URL = clientEnv.VITE_SITE_URL;
 
 export const siteUrl = RAW_SITE_URL?.endsWith("/")
 	? RAW_SITE_URL.slice(0, -1)
