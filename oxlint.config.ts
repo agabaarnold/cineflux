@@ -22,4 +22,13 @@ export default defineConfig({
   ignorePatterns: core.ignorePatterns,
   jsPlugins: [...jsPlugins.jsPlugins, ...shadcn.jsPlugins],
   settings: jsPluginSettings,
+  overrides: [
+    {
+      // TanStack Start requires uppercase HTTP method names for server handlers.
+      files: ["src/routes/api/auth/$.ts"],
+      rules: {
+        "sonarjs/function-name": "off",
+      },
+    },
+  ],
 });

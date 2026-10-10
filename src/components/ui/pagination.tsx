@@ -37,6 +37,7 @@ type PaginationLinkProps = {
 	ComponentProps<"a">;
 
 const PaginationLink = ({
+	children,
 	className,
 	isActive,
 	size = "icon",
@@ -54,7 +55,9 @@ const PaginationLink = ({
 			})
 		)}
 		{...props}
-	/>
+	>
+		{children}
+	</a>
 );
 
 const PaginationPrevious = ({
