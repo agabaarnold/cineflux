@@ -38,10 +38,11 @@ export const Route = createFileRoute("/_app/person/$personId")({
 	},
 	component: PersonDetailsPage,
 	errorComponent: RouteError,
-	head: ({ loaderData }) => {
+	head: ({ loaderData, params }) => {
 		if (!loaderData) {
 			return pageHead({
 				description: "Actor and creator details on CineFlux.",
+				path: `/person/${params.personId}`,
 				title: pageTitle("Person"),
 			});
 		}
@@ -51,6 +52,7 @@ export const Route = createFileRoute("/_app/person/$personId")({
 				`Movies and TV shows featuring ${loaderData.name} on CineFlux.`
 			),
 			image: getProfileUrl(loaderData.profile_path, "h632"),
+			path: `/person/${params.personId}`,
 			title: pageTitle(loaderData.name),
 		});
 	},

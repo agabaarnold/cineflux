@@ -90,11 +90,12 @@ export const Route = createFileRoute("/_app/movie/$movieId")({
 	},
 	component: MovieDetailsPage,
 	errorComponent: RouteError,
-	head: ({ loaderData }) => {
+	head: ({ loaderData, params }) => {
 		const [details] = loaderData ?? [];
 		if (!details) {
 			return pageHead({
 				description: "Movie details, cast, and reviews on CineFlux.",
+				path: `/movie/${params.movieId}`,
 				title: pageTitle("Movie"),
 			});
 		}
@@ -108,6 +109,7 @@ export const Route = createFileRoute("/_app/movie/$movieId")({
 			image:
 				getPosterUrl(details.poster_path, "w780") ??
 				getBackdropUrl(details.backdrop_path),
+			path: `/movie/${params.movieId}`,
 			title: pageTitle(name),
 		});
 	},

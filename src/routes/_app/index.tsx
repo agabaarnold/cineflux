@@ -7,6 +7,7 @@ import { HeroCarousel } from "#/components/media/hero-carousel.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
+import { pageHead } from "#/lib/seo.ts";
 import { fetchPopularMoviesQueryOptions } from "#/queries/movie.ts";
 import { fetchPopularPeopleQueryOptions } from "#/queries/person.ts";
 import { fetchTrendingQueryOptions } from "#/queries/trending.ts";
@@ -56,6 +57,13 @@ export const Route = createFileRoute("/_app/")({
 		]),
 	component: Home,
 	errorComponent: RouteError,
+	head: () =>
+		pageHead({
+			description:
+				"Discover trending movies, TV shows, and people on CineFlux.",
+			path: "/",
+			title: "CineFlux",
+		}),
 });
 
 type TrendingRowItem = TrendingAllResults["results"][number];

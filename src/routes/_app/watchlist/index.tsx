@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_app/watchlist/")({
 	head: () =>
 		pageHead({
 			description: "Your saved movies, TV shows, and people on CineFlux.",
+			path: "/watchlist",
 			title: pageTitle("My Watchlist"),
 		}),
 	component: WatchlistPage,

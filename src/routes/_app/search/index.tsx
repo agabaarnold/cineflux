@@ -38,6 +38,7 @@ export const Route = createFileRoute("/_app/search/")({
 	head: () =>
 		pageHead({
 			description: "Search movies, TV shows, and people on CineFlux.",
+			path: "/search",
 			title: pageTitle("Search"),
 		}),
 });

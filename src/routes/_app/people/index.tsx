@@ -42,6 +42,7 @@ export const Route = createFileRoute("/_app/people/")({
 	head: () =>
 		pageHead({
 			description: "Discover popular actors, directors, and creators on CineFlux.",
+			path: "/people",
 			title: pageTitle("People"),
 		}),
 });

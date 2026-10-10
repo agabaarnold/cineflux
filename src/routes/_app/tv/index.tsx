@@ -69,6 +69,7 @@ export const Route = createFileRoute("/_app/tv/")({
 	head: () =>
 		pageHead({
 			description: "Browse popular, top-rated, and airing TV shows on CineFlux.",
+			path: "/tv",
 			title: pageTitle("TV Shows"),
 		}),
 });

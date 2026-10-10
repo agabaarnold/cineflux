@@ -24,6 +24,7 @@ export const Route = createFileRoute("/_auth/sign-up/")({
 	head: () =>
 		pageHead({
 			description: "Create a CineFlux account to sync your watchlist.",
+			path: "/sign-up",
 			title: pageTitle("Sign Up"),
 		}),
 	component: SignUpPage,

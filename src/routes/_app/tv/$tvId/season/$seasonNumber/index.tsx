@@ -72,11 +72,12 @@ export const Route = createFileRoute("/_app/tv/$tvId/season/$seasonNumber/")({
 	},
 	component: SeasonDetailsPage,
 	errorComponent: RouteError,
-	head: ({ loaderData }) => {
+	head: ({ loaderData, params }) => {
 		const [series, season] = loaderData ?? [];
 		if (!series || !season) {
 			return pageHead({
 				description: "TV season details and episodes on CineFlux.",
+				path: `/tv/${params.tvId}/season/${params.seasonNumber}`,
 				title: pageTitle("Season"),
 			});
 		}
@@ -89,6 +90,7 @@ export const Route = createFileRoute("/_app/tv/$tvId/season/$seasonNumber/")({
 			image:
 				getPosterUrl(season.poster_path, "w780") ??
 				getPosterUrl(series.poster_path, "w780"),
+			path: `/tv/${params.tvId}/season/${params.seasonNumber}`,
 			title: pageTitle(name),
 		});
 	},

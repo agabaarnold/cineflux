@@ -110,6 +110,7 @@ export const Route = createFileRoute(
 		if (!series || !episode) {
 			return pageHead({
 				description: "TV episode details and cast on CineFlux.",
+				path: `/tv/${params.tvId}/season/${params.seasonNumber}/episode/${params.episodeNumber}`,
 				title: pageTitle("Episode"),
 			});
 		}
@@ -122,6 +123,7 @@ export const Route = createFileRoute(
 			image:
 				getStillUrl(episode.still_path, "original") ??
 				getPosterUrl(series.poster_path, "w780"),
+			path: `/tv/${params.tvId}/season/${params.seasonNumber}/episode/${params.episodeNumber}`,
 			title: pageTitle(name),
 		});
 	},
