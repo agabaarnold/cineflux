@@ -54,6 +54,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 		links: [
 			{
+				rel: "preconnect",
+				href: "https://image.tmdb.org",
+			},
+			{
 				rel: "stylesheet",
 				href: appCss,
 			},
@@ -99,6 +103,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 
 			<body>
+				<a
+					className="absolute -top-24 left-4 z-[60] rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all focus:top-4"
+					href="#main-content"
+				>
+					Skip to content
+				</a>
 				<TooltipProvider>{children}</TooltipProvider>
 				<Toaster />
 
