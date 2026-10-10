@@ -68,7 +68,8 @@ export const Route = createFileRoute("/_app/tv/")({
 	errorComponent: RouteError,
 	head: () =>
 		pageHead({
-			description: "Browse popular, top-rated, and airing TV shows on CineFlux.",
+			description:
+				"Browse popular, top-rated, and airing TV shows on CineFlux.",
 			path: "/tv",
 			title: pageTitle("TV Shows"),
 		}),

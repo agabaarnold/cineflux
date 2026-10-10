@@ -63,13 +63,14 @@ const signIn = () => {
 
 describe("useWatchlistItem", () => {
 	it("adds an unsaved title with an optimistic flip and success toast", async () => {
-		const { addToWatchlist, fetchWatchlist } = await import(
-			"#/server/functions/watchlist.ts"
-		);
+		const { addToWatchlist, fetchWatchlist } =
+			await import("#/server/functions/watchlist.ts");
 		const { toast } = await import("react-hot-toast");
 		const store: { mediaId: number; mediaType: "movie" | "person" | "tv" }[] =
 			[];
-		vi.mocked(fetchWatchlist).mockImplementation(() => Promise.resolve([...store]));
+		vi.mocked(fetchWatchlist).mockImplementation(() =>
+			Promise.resolve([...store])
+		);
 		vi.mocked(addToWatchlist).mockImplementation(({ data }) => {
 			store.push(data);
 			return Promise.resolve({ ok: true });
@@ -89,19 +90,19 @@ describe("useWatchlistItem", () => {
 		expect(vi.mocked(addToWatchlist)).toHaveBeenCalledWith({
 			data: { mediaId: 550, mediaType: "movie" },
 		});
-		expect(vi.mocked(toast.success)).toHaveBeenCalledWith(
-			"Saved to watchlist"
-		);
+		expect(vi.mocked(toast.success)).toHaveBeenCalledWith("Saved to watchlist");
 	});
 
 	it("removes a saved title", async () => {
-		const { fetchWatchlist, removeFromWatchlist } = await import(
-			"#/server/functions/watchlist.ts"
-		);
+		const { fetchWatchlist, removeFromWatchlist } =
+			await import("#/server/functions/watchlist.ts");
 		const { toast } = await import("react-hot-toast");
-		const store: { mediaId: number; mediaType: "movie" | "person" | "tv" }[] =
-			[{ mediaId: 550, mediaType: "movie" }];
-		vi.mocked(fetchWatchlist).mockImplementation(() => Promise.resolve([...store]));
+		const store: { mediaId: number; mediaType: "movie" | "person" | "tv" }[] = [
+			{ mediaId: 550, mediaType: "movie" },
+		];
+		vi.mocked(fetchWatchlist).mockImplementation(() =>
+			Promise.resolve([...store])
+		);
 		vi.mocked(removeFromWatchlist).mockImplementation(({ data }) => {
 			const index = store.findIndex(
 				(item) =>
@@ -133,9 +134,8 @@ describe("useWatchlistItem", () => {
 	});
 
 	it("rolls back the optimistic flip and toasts on error", async () => {
-		const { addToWatchlist, fetchWatchlist } = await import(
-			"#/server/functions/watchlist.ts"
-		);
+		const { addToWatchlist, fetchWatchlist } =
+			await import("#/server/functions/watchlist.ts");
 		const { toast } = await import("react-hot-toast");
 		vi.mocked(fetchWatchlist).mockResolvedValue([]);
 		vi.mocked(addToWatchlist).mockRejectedValue(new Error("Nope"));
@@ -157,9 +157,8 @@ describe("useWatchlistItem", () => {
 	});
 
 	it("redirects guests to sign-in without mutating", async () => {
-		const { addToWatchlist, fetchWatchlist } = await import(
-			"#/server/functions/watchlist.ts"
-		);
+		const { addToWatchlist, fetchWatchlist } =
+			await import("#/server/functions/watchlist.ts");
 		vi.mocked(fetchWatchlist).mockResolvedValue([]);
 
 		const { result } = renderHook(() => useWatchlistItem("movie", 550), {

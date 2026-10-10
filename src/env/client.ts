@@ -9,9 +9,7 @@ export const clientEnv = createEnv({
 			.refine(
 				(value) => {
 					const parsed = new URL(value);
-					return (
-						parsed.pathname === "/" && !parsed.search && !parsed.hash
-					);
+					return parsed.pathname === "/" && !parsed.search && !parsed.hash;
 				},
 				{
 					message:

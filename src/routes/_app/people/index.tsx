@@ -41,7 +41,8 @@ export const Route = createFileRoute("/_app/people/")({
 	errorComponent: RouteError,
 	head: () =>
 		pageHead({
-			description: "Discover popular actors, directors, and creators on CineFlux.",
+			description:
+				"Discover popular actors, directors, and creators on CineFlux.",
 			path: "/people",
 			title: pageTitle("People"),
 		}),

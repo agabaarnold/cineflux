@@ -30,7 +30,6 @@ If you prefer not to use Tailwind CSS:
 3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
 4. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
 
-
 ## Deploy with Nitro
 
 This project uses Nitro as a generic server adapter, so it can run on any Node-compatible host.
@@ -43,7 +42,6 @@ node dist/server/index.mjs
 The build output is a self-contained Node server. To deploy, push the `dist/` directory to your host (Render, Fly.io, your own VPS, etc.) and run the server command above.
 
 For host-specific presets (Vercel, Netlify, Cloudflare, AWS Lambda, etc.) and tuning, see https://v3.nitro.build/deploy.
-
 
 ## Setting up Better Auth
 
@@ -65,10 +63,10 @@ import { betterAuth } from "better-auth";
 import { Pool } from "pg";
 
 export const auth = betterAuth({
-  database: new Pool({
-    connectionString: process.env.DATABASE_URL,
-  }),
-  // ... rest of config
+	database: new Pool({
+		connectionString: process.env.DATABASE_URL,
+	}),
+	// ... rest of config
 });
 ```
 
@@ -77,7 +75,6 @@ Then run migrations:
 ```bash
 pnpm dlx @better-auth/cli migrate
 ```
-
 
 ## T3Env
 
@@ -92,11 +89,6 @@ import { env } from "#/env";
 
 console.log(env.VITE_APP_TITLE);
 ```
-
-
-
-
-
 
 ## Routing
 
@@ -135,34 +127,34 @@ In the File Based Routing setup the layout is located in `src/routes/__root.tsx`
 Here is an example layout that includes a header:
 
 ```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
+	head: () => ({
+		meta: [
+			{ charSet: "utf-8" },
+			{ name: "viewport", content: "width=device-width, initial-scale=1" },
+			{ title: "My App" },
+		],
+	}),
+	shellComponent: ({ children }) => (
+		<html lang="en">
+			<head>
+				<HeadContent />
+			</head>
+			<body>
+				<header>
+					<nav>
+						<Link to="/">Home</Link>
+						<Link to="/about">About</Link>
+					</nav>
+				</header>
+				{children}
+				<Scripts />
+			</body>
+		</html>
+	),
+});
 ```
 
 More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
@@ -172,23 +164,23 @@ More information on layouts can be found in the [Layouts documentation](https://
 TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
 
 ```tsx
-import { createServerFn } from '@tanstack/react-start'
+import { createServerFn } from "@tanstack/react-start";
 
 const getServerTime = createServerFn({
-  method: 'GET',
+	method: "GET",
 }).handler(async () => {
-  return new Date().toISOString()
-})
+	return new Date().toISOString();
+});
 
 // Use in a component
 function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
+	const [time, setTime] = useState("");
+
+	useEffect(() => {
+		getServerTime().then(setTime);
+	}, []);
+
+	return <div>Server time: {time}</div>;
 }
 ```
 
@@ -197,16 +189,16 @@ function MyComponent() {
 You can create API routes by using the `server` property in your route definitions:
 
 ```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
+import { createFileRoute } from "@tanstack/react-router";
+import { json } from "@tanstack/react-start";
 
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
+export const Route = createFileRoute("/api/hello")({
+	server: {
+		handlers: {
+			GET: () => json({ message: "Hello, World!" }),
+		},
+	},
+});
 ```
 
 ## Data Fetching
@@ -216,31 +208,29 @@ There are multiple ways to fetch data in your application. You can use TanStack 
 For example:
 
 ```tsx
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
+export const Route = createFileRoute("/people")({
+	loader: async () => {
+		const response = await fetch("https://swapi.dev/api/people");
+		return response.json();
+	},
+	component: PeopleComponent,
+});
 
 function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
+	const data = Route.useLoaderData();
+	return (
+		<ul>
+			{data.results.map((person) => (
+				<li key={person.name}>{person.name}</li>
+			))}
+		</ul>
+	);
 }
 ```
 
 Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-
 
 # Learn More
 

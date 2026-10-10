@@ -1,5 +1,9 @@
 // oxlint-disable react/function-component-definition func-style
-import { IconChevronLeft, IconChevronRight, IconPlayerPlayFilled } from "@tabler/icons-react";
+import {
+	IconChevronLeft,
+	IconChevronRight,
+	IconPlayerPlayFilled,
+} from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 
@@ -272,8 +276,8 @@ function EpisodeDetailsPage() {
 						}}
 						to="/tv/$tvId/season/$seasonNumber/episode/$episodeNumber"
 					>
-						<IconChevronLeft aria-hidden="true" className="size-4" />
-						E{previousEpisode.episode_number}
+						<IconChevronLeft aria-hidden="true" className="size-4" />E
+						{previousEpisode.episode_number}
 					</Link>
 				) : (
 					<span />
