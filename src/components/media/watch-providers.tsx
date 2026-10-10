@@ -123,6 +123,7 @@ export const WatchProviders = ({
 									<img
 										alt={provider.provider_name}
 										className="size-10 rounded-lg border object-cover"
+										decoding="async"
 										key={provider.provider_id}
 										loading="lazy"
 										src={logo}
