@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { RowItem } from "#/components/media/media-row.tsx";
-import { sortItems } from "#/routes/_app/watchlist/sort.ts";
+import { sortItems } from "#/lib/watchlist-sort.ts";
 
 const item = (overrides: Partial<RowItem>): RowItem => ({
 	href: "/movie/1",

@@ -28,6 +28,7 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { MobileMenu } from "./mobile-menu";
+import { ThemeToggle } from "./theme-toggle";
 
 interface NavItemProps {
 	to: LinkOptions["to"];
@@ -168,6 +169,8 @@ export const Navbar = ({ user }: { user: NavbarUser | null }) => (
 			>
 				<IconSearch aria-hidden="true" className="size-4" />
 			</Link>
+
+			<ThemeToggle />
 
 			<ProfileControl user={user} />
 		</nav>
