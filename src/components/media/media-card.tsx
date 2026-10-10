@@ -56,6 +56,8 @@ export const MediaCard = ({
 								<img
 									alt={title}
 									className="h-full w-full object-cover"
+									decoding="async"
+									loading="lazy"
 									src={image}
 								/>
 							) : (

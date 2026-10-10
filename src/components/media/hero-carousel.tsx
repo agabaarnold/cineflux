@@ -56,7 +56,13 @@ const Stars = ({ voteAverage }: { voteAverage: number }) => {
 	);
 };
 
-const Slide = ({ slide }: { slide: HeroSlide }) => {
+const Slide = ({
+	priority,
+	slide,
+}: {
+	priority?: boolean;
+	slide: HeroSlide;
+}) => {
 	const { isPending, saved, toggle } = useWatchlistItem(
 		slide.mediaType,
 		slide.mediaId
@@ -68,8 +74,10 @@ const Slide = ({ slide }: { slide: HeroSlide }) => {
 				<img
 					alt=""
 					className="absolute inset-0 h-full w-full object-cover"
-					src={slide.backdrop}
+					decoding="async"
+					fetchPriority={priority ? "high" : undefined}
 					loading="eager"
+					src={slide.backdrop}
 				/>
 			) : null}
 
@@ -196,10 +204,10 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 				setApi={setApi}
 			>
 				<CarouselContent className="ml-0">
-					{slides.map((slide) => (
+					{slides.map((slide, index) => (
 						<CarouselItem className="basis-full pl-0" key={slide.id}>
 							<div className="h-[80vh] max-h-180 min-h-120">
-								<Slide slide={slide} />
+								<Slide priority={index === 0} slide={slide} />
 							</div>
 						</CarouselItem>
 					))}

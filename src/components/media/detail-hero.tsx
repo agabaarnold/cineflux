@@ -89,6 +89,8 @@ export const DetailHero = ({
 				<img
 					alt=""
 					className="absolute inset-0 h-full w-full object-cover"
+					decoding="async"
+					fetchPriority="high"
 					src={backdrop}
 				/>
 			) : (
