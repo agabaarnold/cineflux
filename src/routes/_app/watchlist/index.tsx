@@ -10,6 +10,8 @@ import type { RowItem } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
 import { authClient } from "#/lib/auth-client.ts";
+import type { WatchlistSortKey } from "#/routes/_app/watchlist/sort.ts";
+import { sortItems } from "#/routes/_app/watchlist/sort.ts";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { fetchMovieDetails } from "#/server/functions/movie.ts";
 import { fetchPersonDetails } from "#/server/functions/person.ts";
@@ -83,34 +85,13 @@ const toRowItem = (
 	};
 };
 
-type SortKey = "recent" | "rating" | "title" | "year";
-
 type WatchlistEntries = Awaited<ReturnType<typeof fetchWatchlist>>;
-
-const sortItems = (items: RowItem[], sort: SortKey): RowItem[] => {
-	if (sort === "rating") {
-		// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
-		// oxlint-disable-next-line unicorn/no-array-sort
-		return [...items].sort((a, b) => (b.stat?.value ?? 0) - (a.stat?.value ?? 0));
-	}
-	if (sort === "title") {
-		// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
-		// oxlint-disable-next-line unicorn/no-array-sort
-		return [...items].sort((a, b) => a.title.localeCompare(b.title));
-	}
-	if (sort === "year") {
-		// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
-		// oxlint-disable-next-line unicorn/no-array-sort
-		return [...items].sort((a, b) => (Number(b.year) || 0) - (Number(a.year) || 0));
-	}
-	return items;
-};
 
 function WatchlistPage() {
 	const { data: session, isPending: sessionPending } = authClient.useSession();
 	const queryClient = useQueryClient();
 	const userId = session?.user.id ?? "";
-	const [sort, setSort] = useState<SortKey>("recent");
+	const [sort, setSort] = useState<WatchlistSortKey>("recent");
 	const { data: items, isPending: itemsPending } = useQuery({
 		queryFn: async () => {
 			const cached = queryClient.getQueryData<WatchlistEntries>([
@@ -245,7 +226,7 @@ function WatchlistPage() {
 				<Tabs
 					onValueChange={(value) =>
 						// SAFETY: the only triggers carry the sort values defined below.
-						setSort(value as SortKey)
+						setSort(value as WatchlistSortKey)
 					}
 					value={sort}
 				>
