@@ -13,7 +13,6 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 import type { NavbarUser } from "#/components/layout/navbar.tsx";
-import { useTheme } from "#/hooks/use-theme.tsx";
 import {
 	Sheet,
 	SheetContent,
@@ -21,6 +20,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "#/components/ui/sheet.tsx";
+import { useTheme } from "#/hooks/use-theme.tsx";
 
 import { Logo } from "../shared/logo";
 

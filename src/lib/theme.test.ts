@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { THEME_INIT_SCRIPT, THEME_STORAGE_KEY, resolveTheme } from "#/lib/theme.ts";
+import {
+	THEME_INIT_SCRIPT,
+	THEME_STORAGE_KEY,
+	resolveTheme,
+} from "#/lib/theme.ts";
 
 describe("resolveTheme", () => {
 	it("defaults to dark for missing or unexpected values", () => {

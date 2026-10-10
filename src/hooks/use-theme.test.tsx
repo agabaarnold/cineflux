@@ -2,8 +2,8 @@ import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import type { Theme } from "#/lib/theme.ts";
 import { ThemeProvider, useTheme } from "#/hooks/use-theme.tsx";
+import type { Theme } from "#/lib/theme.ts";
 import { THEME_STORAGE_KEY } from "#/lib/theme.ts";
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
