@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { db } from "#/db";
@@ -30,6 +30,11 @@ const requireTestDatabase = (): void => {
 	}
 };
 
+const resetWatchlist = () =>
+	db
+		.delete(watchlist)
+		.where(inArray(watchlist.userId, [TEST_USER_ID, OTHER_USER_ID]));
+
 const resetUsers = async () => {
 	await db.delete(users).where(eq(users.id, TEST_USER_ID));
 	await db.delete(users).where(eq(users.id, OTHER_USER_ID));
@@ -46,7 +51,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("watchlist store", () => {
 	});
 
 	it("adds an entry and fetches it back", async () => {
-		await db.delete(watchlist);
+		await resetWatchlist();
 
 		await addWatchlistEntry(TEST_USER_ID, { mediaId: 550, mediaType: "movie" });
 		const entries = await getWatchlistEntries(TEST_USER_ID);
@@ -55,7 +60,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("watchlist store", () => {
 	});
 
 	it("ignores duplicate adds", async () => {
-		await db.delete(watchlist);
+		await resetWatchlist();
 
 		await addWatchlistEntry(TEST_USER_ID, { mediaId: 550, mediaType: "movie" });
 		await addWatchlistEntry(TEST_USER_ID, { mediaId: 550, mediaType: "movie" });
@@ -65,7 +70,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("watchlist store", () => {
 	});
 
 	it("lists newest entries first", async () => {
-		await db.delete(watchlist);
+		await resetWatchlist();
 
 		await db.insert(watchlist).values({
 			createdAt: new Date(Date.now() - OLDER_MS),
@@ -80,7 +85,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("watchlist store", () => {
 	});
 
 	it("scopes entries and removals to the owning user", async () => {
-		await db.delete(watchlist);
+		await resetWatchlist();
 		await addWatchlistEntry(TEST_USER_ID, { mediaId: 550, mediaType: "movie" });
 		await addWatchlistEntry(OTHER_USER_ID, {
 			mediaId: 550,
@@ -99,7 +104,7 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("watchlist store", () => {
 	});
 
 	it("removing a missing entry is a no-op", async () => {
-		await db.delete(watchlist);
+		await resetWatchlist();
 
 		await removeWatchlistEntry(TEST_USER_ID, {
 			mediaId: 999,
