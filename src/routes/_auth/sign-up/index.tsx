@@ -17,9 +17,15 @@ import { Input } from "#/components/ui/input.tsx";
 import { Label } from "#/components/ui/label.tsx";
 import { authClient } from "#/lib/auth-client.ts";
 import { getFieldMessage } from "#/lib/forms.ts";
+import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { fetchAuthProvidersQueryOptions } from "#/queries/auth.ts";
 
 export const Route = createFileRoute("/_auth/sign-up/")({
+	head: () =>
+		pageHead({
+			description: "Create a CineFlux account to sync your watchlist.",
+			title: pageTitle("Sign Up"),
+		}),
 	component: SignUpPage,
 	errorComponent: RouteError,
 });

@@ -24,6 +24,7 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "#/components/ui/tabs.tsx";
+import { pageHead, pageTitle, truncateDescription } from "#/lib/seo.ts";
 import {
 	fetchTvContentRatingsQueryOptions,
 	fetchTvSeriesDetailsQueryOptions,
@@ -87,6 +88,27 @@ export const Route = createFileRoute("/_app/tv/$tvId/")({
 	},
 	component: TvDetailsPage,
 	errorComponent: RouteError,
+	head: ({ loaderData }) => {
+		const [details] = loaderData ?? [];
+		if (!details) {
+			return pageHead({
+				description: "TV show details, cast, and reviews on CineFlux.",
+				title: pageTitle("TV Show"),
+			});
+		}
+		const year = (details.first_air_date ?? "").slice(0, 4);
+		const name = year ? `${details.name} (${year})` : details.name;
+		return pageHead({
+			description: truncateDescription(
+				details.overview,
+				`${name} — details, cast, reviews, and where to watch on CineFlux.`
+			),
+			image:
+				getPosterUrl(details.poster_path, "w780") ??
+				getBackdropUrl(details.backdrop_path),
+			title: pageTitle(name),
+		});
+	},
 });
 
 const getUsTvRating = (ratings: TvContentRatings): string =>

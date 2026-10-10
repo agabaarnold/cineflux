@@ -7,6 +7,7 @@ import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { AspectRatio } from "#/components/ui/aspect-ratio.tsx";
 import { Badge } from "#/components/ui/badge.tsx";
+import { pageHead, pageTitle, truncateDescription } from "#/lib/seo.ts";
 import { fetchPersonDetailsQueryOptions } from "#/queries/person.ts";
 import { getPosterUrl, getProfileUrl } from "#/server/tmdb/images.ts";
 
@@ -37,6 +38,22 @@ export const Route = createFileRoute("/_app/person/$personId")({
 	},
 	component: PersonDetailsPage,
 	errorComponent: RouteError,
+	head: ({ loaderData }) => {
+		if (!loaderData) {
+			return pageHead({
+				description: "Actor and creator details on CineFlux.",
+				title: pageTitle("Person"),
+			});
+		}
+		return pageHead({
+			description: truncateDescription(
+				loaderData.biography,
+				`Movies and TV shows featuring ${loaderData.name} on CineFlux.`
+			),
+			image: getProfileUrl(loaderData.profile_path, "h632"),
+			title: pageTitle(loaderData.name),
+		});
+	},
 });
 
 const formatDate = (value: string | null | undefined) => {

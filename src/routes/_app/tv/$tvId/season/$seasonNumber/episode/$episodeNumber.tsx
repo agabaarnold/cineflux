@@ -12,12 +12,17 @@ import {
 } from "#/components/media/detail-sections.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Badge } from "#/components/ui/badge.tsx";
+import { pageHead, pageTitle, truncateDescription } from "#/lib/seo.ts";
 import {
 	fetchTvEpisodeDetailsQueryOptions,
 	fetchTvEpisodeVideosQueryOptions,
 	fetchTvSeriesDetailsQueryOptions,
 } from "#/queries/tv.ts";
-import { getProfileUrl, getStillUrl } from "#/server/tmdb/images.ts";
+import {
+	getPosterUrl,
+	getProfileUrl,
+	getStillUrl,
+} from "#/server/tmdb/images.ts";
 
 const seriesOptions = (id: number) =>
 	fetchTvSeriesDetailsQueryOptions({
@@ -100,6 +105,26 @@ export const Route = createFileRoute(
 	},
 	component: EpisodeDetailsPage,
 	errorComponent: RouteError,
+	head: ({ loaderData, params }) => {
+		const [series, episode] = loaderData ?? [];
+		if (!series || !episode) {
+			return pageHead({
+				description: "TV episode details and cast on CineFlux.",
+				title: pageTitle("Episode"),
+			});
+		}
+		const name = `${series.name} S${params.seasonNumber} E${params.episodeNumber}: ${episode.name}`;
+		return pageHead({
+			description: truncateDescription(
+				episode.overview,
+				`${name} — details and cast on CineFlux.`
+			),
+			image:
+				getStillUrl(episode.still_path, "original") ??
+				getPosterUrl(series.poster_path, "w780"),
+			title: pageTitle(name),
+		});
+	},
 });
 
 function EpisodeDetailsPage() {

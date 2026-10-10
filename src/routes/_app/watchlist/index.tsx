@@ -7,6 +7,7 @@ import { MediaRow } from "#/components/media/media-row.tsx";
 import type { RowItem } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { authClient } from "#/lib/auth-client.ts";
+import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { fetchMovieDetails } from "#/server/functions/movie.ts";
 import { fetchPersonDetails } from "#/server/functions/person.ts";
 import { fetchTvSeriesDetails } from "#/server/functions/tv.ts";
@@ -14,6 +15,11 @@ import { fetchWatchlist } from "#/server/functions/watchlist.ts";
 import { getPosterUrl, getProfileUrl } from "#/server/tmdb/images.ts";
 
 export const Route = createFileRoute("/_app/watchlist/")({
+	head: () =>
+		pageHead({
+			description: "Your saved movies, TV shows, and people on CineFlux.",
+			title: pageTitle("My Watchlist"),
+		}),
 	component: WatchlistPage,
 	errorComponent: RouteError,
 });
