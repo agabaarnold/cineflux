@@ -1,11 +1,14 @@
 // oxlint-disable react/function-component-definition func-style
-import { useQuery } from "@tanstack/react-query";
+import { IconBookmark } from "@tabler/icons-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { MediaRow } from "#/components/media/media-row.tsx";
 import type { RowItem } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
+import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
 import { authClient } from "#/lib/auth-client.ts";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { fetchMovieDetails } from "#/server/functions/movie.ts";
@@ -80,11 +83,41 @@ const toRowItem = (
 	};
 };
 
+type SortKey = "recent" | "rating" | "title" | "year";
+
+type WatchlistEntries = Awaited<ReturnType<typeof fetchWatchlist>>;
+
+const sortItems = (items: RowItem[], sort: SortKey): RowItem[] => {
+	if (sort === "rating") {
+		// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
+		// oxlint-disable-next-line unicorn/no-array-sort
+		return [...items].sort((a, b) => (b.stat?.value ?? 0) - (a.stat?.value ?? 0));
+	}
+	if (sort === "title") {
+		// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
+		// oxlint-disable-next-line unicorn/no-array-sort
+		return [...items].sort((a, b) => a.title.localeCompare(b.title));
+	}
+	if (sort === "year") {
+		// SAFETY: spread creates a fresh copy, so in-place sort cannot mutate cached query data.
+		// oxlint-disable-next-line unicorn/no-array-sort
+		return [...items].sort((a, b) => (Number(b.year) || 0) - (Number(a.year) || 0));
+	}
+	return items;
+};
+
 function WatchlistPage() {
 	const { data: session, isPending: sessionPending } = authClient.useSession();
+	const queryClient = useQueryClient();
+	const userId = session?.user.id ?? "";
+	const [sort, setSort] = useState<SortKey>("recent");
 	const { data: items, isPending: itemsPending } = useQuery({
 		queryFn: async () => {
-			const entries = await fetchWatchlist();
+			const cached = queryClient.getQueryData<WatchlistEntries>([
+				"watchlist",
+				userId,
+			]);
+			const entries = cached ?? (await fetchWatchlist());
 			const settled = await Promise.allSettled(
 				entries.map(async (entry) => {
 					if (entry.mediaType === "movie") {
@@ -132,9 +165,21 @@ function WatchlistPage() {
 				result.status === "fulfilled" ? [toRowItem(result.value)] : []
 			);
 		},
-		queryKey: ["watchlist", session?.user.id ?? "", "detailed"],
+		queryKey: ["watchlist", userId, "detailed"],
 		enabled: session !== null,
 	});
+	const rows = items ?? [];
+	const movies = rows.filter((item) => item.mediaType === "movie");
+	const shows = rows.filter((item) => item.mediaType === "tv");
+	const people = rows.filter((item) => item.mediaType === "person");
+	const sorted = useMemo(
+		() => ({
+			movies: sortItems(movies, sort),
+			people: sortItems(people, sort),
+			shows: sortItems(shows, sort),
+		}),
+		[movies, people, shows, sort]
+	);
 
 	if (!sessionPending && !session) {
 		return (
@@ -153,11 +198,6 @@ function WatchlistPage() {
 		);
 	}
 
-	const rows = items ?? [];
-	const movies = rows.filter((item) => item.mediaType === "movie");
-	const shows = rows.filter((item) => item.mediaType === "tv");
-	const people = rows.filter((item) => item.mediaType === "person");
-
 	const unit = rows.length === 1 ? "title" : "titles";
 	const summary =
 		rows.length === 0
@@ -169,16 +209,62 @@ function WatchlistPage() {
 		body = <p className="text-muted-foreground text-sm">Loading your list…</p>;
 	} else if (rows.length === 0) {
 		body = (
-			<p className="text-muted-foreground text-sm">
-				Nothing saved yet. Tap the bookmark on any title to add it here.
-			</p>
+			<div className="flex flex-col items-center rounded-2xl border border-dashed px-6 py-16 text-center">
+				<span className="bg-muted flex size-12 items-center justify-center rounded-full">
+					<IconBookmark aria-hidden="true" className="size-6" />
+				</span>
+				<h2 className="mt-4 text-xl font-semibold">Nothing saved yet</h2>
+				<p className="text-muted-foreground mt-1 max-w-sm text-sm">
+					Tap the bookmark on any movie, show, or person to build your list.
+				</p>
+				<div className="mt-6 flex flex-wrap justify-center gap-2">
+					<Link
+						className="hover:bg-accent hover:text-accent-foreground flex h-9 items-center rounded-full border px-4 text-sm font-medium transition-colors"
+						to="/movie"
+					>
+						Browse movies
+					</Link>
+					<Link
+						className="hover:bg-accent hover:text-accent-foreground flex h-9 items-center rounded-full border px-4 text-sm font-medium transition-colors"
+						to="/tv"
+					>
+						Browse TV shows
+					</Link>
+					<Link
+						className="hover:bg-accent hover:text-accent-foreground flex h-9 items-center rounded-full border px-4 text-sm font-medium transition-colors"
+						to="/people"
+					>
+						Browse people
+					</Link>
+				</div>
+			</div>
 		);
 	} else {
 		body = (
 			<>
-				{movies.length > 0 ? <MediaRow items={movies} title="Movies" /> : null}
-				{shows.length > 0 ? <MediaRow items={shows} title="TV Shows" /> : null}
-				{people.length > 0 ? <MediaRow items={people} title="People" /> : null}
+				<Tabs
+					onValueChange={(value) =>
+						// SAFETY: the only triggers carry the sort values defined below.
+						setSort(value as SortKey)
+					}
+					value={sort}
+				>
+					<TabsList variant="line">
+						<TabsTrigger value="recent">Recently added</TabsTrigger>
+						<TabsTrigger value="title">Title A–Z</TabsTrigger>
+						<TabsTrigger value="rating">Top rated</TabsTrigger>
+						<TabsTrigger value="year">Newest</TabsTrigger>
+					</TabsList>
+				</Tabs>
+				{sorted.movies.length > 0 ? (
+					<MediaRow items={sorted.movies} title="Movies" />
+				) : null}
+				{sorted.shows.length > 0 ? (
+					<MediaRow items={sorted.shows} title="TV Shows" />
+				) : null}
+				{sorted.people.length > 0 ? (
+					<MediaRow items={sorted.people} title="People" />
+				) : null}
 			</>
 		);
 	}
