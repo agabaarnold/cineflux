@@ -11,6 +11,8 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "react-hot-toast";
 
 import { TooltipProvider } from "#/components/ui/tooltip.tsx";
+import { ThemeProvider } from "#/hooks/use-theme.tsx";
+import { THEME_INIT_SCRIPT } from "#/lib/theme.ts";
 
 import appCss from "../styles.css?url";
 
@@ -91,13 +93,18 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				href: "/site.webmanifest",
 			},
 		],
+		scripts: [
+			{
+				children: THEME_INIT_SCRIPT,
+			},
+		],
 	}),
 	shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="en" className="dark" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 			</head>
@@ -109,7 +116,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				>
 					Skip to content
 				</a>
-				<TooltipProvider>{children}</TooltipProvider>
+				<ThemeProvider>
+					<TooltipProvider>{children}</TooltipProvider>
+				</ThemeProvider>
 				<Toaster />
 
 				<TanStackDevtools

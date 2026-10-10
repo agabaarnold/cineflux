@@ -3,8 +3,10 @@ import {
 	IconDeviceTv,
 	IconHome,
 	IconMenu2,
+	IconMoon,
 	IconMovie,
 	IconSearch,
+	IconSun,
 	IconUsersGroup,
 } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
@@ -18,6 +20,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "#/components/ui/sheet.tsx";
+import { useTheme } from "#/hooks/use-theme.tsx";
 
 import { Logo } from "../shared/logo";
 
@@ -32,6 +35,8 @@ const menuLinks = [
 export const MobileMenu = ({ user }: { user: NavbarUser | null }) => {
 	const [open, setOpen] = useState(false);
 	const close = () => setOpen(false);
+	const { theme, toggle } = useTheme();
+	const dark = theme === "dark";
 
 	return (
 		<div className="sm:hidden">
@@ -86,6 +91,19 @@ export const MobileMenu = ({ user }: { user: NavbarUser | null }) => {
 								Sign in
 							</Link>
 						)}
+						<button
+							aria-pressed={dark}
+							className="hover:bg-accent hover:text-accent-foreground flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors"
+							onClick={toggle}
+							type="button"
+						>
+							{dark ? (
+								<IconSun aria-hidden="true" className="size-4" />
+							) : (
+								<IconMoon aria-hidden="true" className="size-4" />
+							)}
+							{dark ? "Light mode" : "Dark mode"}
+						</button>
 					</nav>
 				</SheetContent>
 			</Sheet>
