@@ -125,6 +125,7 @@ export const DetailHero = ({
 									<img
 										alt={title}
 										className="h-full w-full object-cover"
+										decoding="async"
 										src={poster}
 									/>
 								) : (
