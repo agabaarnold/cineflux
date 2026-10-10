@@ -1,5 +1,5 @@
 // oxlint-disable react/function-component-definition func-style
-import { IconPlayerPlayFilled } from "@tabler/icons-react";
+import { IconChevronLeft, IconChevronRight, IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 
@@ -16,6 +16,7 @@ import { pageHead, pageTitle, truncateDescription } from "#/lib/seo.ts";
 import {
 	fetchTvEpisodeDetailsQueryOptions,
 	fetchTvEpisodeVideosQueryOptions,
+	fetchTvSeasonDetailsQueryOptions,
 	fetchTvSeriesDetailsQueryOptions,
 } from "#/queries/tv.ts";
 import {
@@ -27,6 +28,11 @@ import {
 const seriesOptions = (id: number) =>
 	fetchTvSeriesDetailsQueryOptions({
 		data: { id, language: "en-US" },
+	});
+
+const seasonOptions = (id: number, seasonNumber: number) =>
+	fetchTvSeasonDetailsQueryOptions({
+		data: { id, language: "en-US", season_number: seasonNumber },
 	});
 
 const episodeOptions = (
@@ -101,6 +107,10 @@ export const Route = createFileRoute(
 				...videosOptions(id, seasonNumber, episodeNumber),
 				staleTime: "static",
 			}),
+			context.queryClient.query({
+				...seasonOptions(id, seasonNumber),
+				staleTime: "static",
+			}),
 		]);
 	},
 	component: EpisodeDetailsPage,
@@ -145,6 +155,15 @@ function EpisodeDetailsPage() {
 	const { data: videos } = useSuspenseQuery(
 		videosOptions(id, seasonNumber, episodeNumber)
 	);
+	const { data: season } = useSuspenseQuery(seasonOptions(id, seasonNumber));
+	const previousEpisode =
+		season.episodes.find(
+			(item) => item.episode_number === episode.episode_number - 1
+		) ?? null;
+	const nextEpisode =
+		season.episodes.find(
+			(item) => item.episode_number === episode.episode_number + 1
+		) ?? null;
 	const trailerKey = getTrailerKey(videos);
 
 	const crew = episode.crew ?? [];
@@ -237,6 +256,46 @@ function EpisodeDetailsPage() {
 					</div>
 				) : null}
 			</div>
+
+			<nav
+				aria-label="Episodes"
+				className="mt-6 flex items-center justify-between gap-2"
+			>
+				{previousEpisode ? (
+					<Link
+						aria-label={`Previous episode: ${previousEpisode.name}`}
+						className="hover:bg-accent hover:text-accent-foreground flex h-9 items-center gap-1 rounded-full border px-4 text-sm font-medium transition-colors"
+						params={{
+							episodeNumber: String(previousEpisode.episode_number),
+							seasonNumber: String(season.season_number),
+							tvId: String(series.id),
+						}}
+						to="/tv/$tvId/season/$seasonNumber/episode/$episodeNumber"
+					>
+						<IconChevronLeft aria-hidden="true" className="size-4" />
+						E{previousEpisode.episode_number}
+					</Link>
+				) : (
+					<span />
+				)}
+				{nextEpisode ? (
+					<Link
+						aria-label={`Next episode: ${nextEpisode.name}`}
+						className="hover:bg-accent hover:text-accent-foreground flex h-9 items-center gap-1 rounded-full border px-4 text-sm font-medium transition-colors"
+						params={{
+							episodeNumber: String(nextEpisode.episode_number),
+							seasonNumber: String(season.season_number),
+							tvId: String(series.id),
+						}}
+						to="/tv/$tvId/season/$seasonNumber/episode/$episodeNumber"
+					>
+						E{nextEpisode.episode_number}
+						<IconChevronRight aria-hidden="true" className="size-4" />
+					</Link>
+				) : (
+					<span />
+				)}
+			</nav>
 
 			<div className="mt-6 max-w-3xl">
 				<h2 className="text-xl font-semibold">Information</h2>
