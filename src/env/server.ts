@@ -11,7 +11,6 @@ export const serverEnv = createEnv({
 		NODE_ENV: z
 			.enum(["development", "production", "test"])
 			.default("development"),
-		TMDB_API_KEY: z.string().min(1),
 		TMDB_READ_ACCESS_TOKEN: z.string().min(1),
 		TMDB_BASE_URL: z.url(),
 	},

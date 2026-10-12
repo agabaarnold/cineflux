@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index f3e86621c46df053c31aeb46e906f5b1d09aaaa3..d4509eacfc6339f8da5750939500c755bcc23f2d 100644
+--- a/package.json
++++ b/package.json
+@@ -32,9 +32,6 @@
+     },
+     "./package.json": "./package.json"
+   },
+-  "bin": {
+-    "intent": "./bin/intent.js"
+-  },
+   "sideEffects": false,
+   "engines": {
+     "node": ">=18"
