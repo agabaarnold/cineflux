@@ -19,7 +19,7 @@ export default defineConfig({
 		antiSlop,
 		jsPlugins,
 	],
-	ignorePatterns: core.ignorePatterns,
+	ignorePatterns: [...core.ignorePatterns, "src/routeTree.gen.ts"],
 	jsPlugins: [...jsPlugins.jsPlugins, ...shadcn.jsPlugins],
 	settings: jsPluginSettings,
 	overrides: [
