@@ -1,23 +1,18 @@
 // oxlint-disable react/function-component-definition func-style
 import { IconBookmark } from "@tabler/icons-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { MediaRow } from "#/components/media/media-row.tsx";
-import type { RowItem } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
 import { authClient } from "#/lib/auth-client.ts";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
 import type { WatchlistSortKey } from "#/lib/watchlist-sort.ts";
 import { sortItems } from "#/lib/watchlist-sort.ts";
-import { fetchMovieDetails } from "#/server/functions/movie.ts";
-import { fetchPersonDetails } from "#/server/functions/person.ts";
-import { fetchTvSeriesDetails } from "#/server/functions/tv.ts";
-import { fetchWatchlist } from "#/server/functions/watchlist.ts";
-import { getPosterUrl, getProfileUrl } from "#/server/tmdb/images.ts";
+import { watchlistDetailsQueryOptions } from "#/queries/watchlist.ts";
 
 export const Route = createFileRoute("/_app/watchlist/")({
 	head: () =>
@@ -30,125 +25,13 @@ export const Route = createFileRoute("/_app/watchlist/")({
 	errorComponent: RouteError,
 });
 
-const toRowItem = (
-	entry:
-		| {
-				kind: "movie";
-				id: number;
-				image: string | null;
-				overview: string;
-				title: string;
-				year: string;
-				rating: number;
-		  }
-		| {
-				kind: "tv";
-				id: number;
-				image: string | null;
-				overview: string;
-				title: string;
-				year: string;
-				rating: number;
-		  }
-		| {
-				kind: "person";
-				id: number;
-				image: string | null;
-				title: string;
-				year: string;
-				popularity: number;
-		  }
-): RowItem => {
-	if (entry.kind === "person") {
-		return {
-			href: `/person/${entry.id}`,
-			id: `person-${entry.id}`,
-			image: entry.image,
-			mediaId: entry.id,
-			mediaType: "person",
-			overview: "",
-			stat: { kind: "popularity", value: entry.popularity } as const,
-			title: entry.title,
-			year: entry.year,
-		};
-	}
-	return {
-		href: `/${entry.kind}/${entry.id}`,
-		id: `${entry.kind}-${entry.id}`,
-		image: entry.image,
-		mediaId: entry.id,
-		mediaType: entry.kind,
-		overview: entry.overview,
-		stat: { kind: "rating", value: entry.rating } as const,
-		title: entry.title,
-		year: entry.year,
-	};
-};
-
-type WatchlistEntries = Awaited<ReturnType<typeof fetchWatchlist>>;
-
 function WatchlistPage() {
 	const { data: session, isPending: sessionPending } = authClient.useSession();
-	const queryClient = useQueryClient();
 	const userId = session?.user.id ?? null;
 	const [sort, setSort] = useState<WatchlistSortKey>("recent");
-	const { data: items, isPending: itemsPending } = useQuery({
-		queryFn: async () => {
-			const cached = queryClient.getQueryData<WatchlistEntries>([
-				"watchlist",
-				userId,
-			]);
-			const entries = cached ?? (await fetchWatchlist());
-			const settled = await Promise.allSettled(
-				entries.map(async (entry) => {
-					if (entry.mediaType === "movie") {
-						const details = await fetchMovieDetails({
-							data: { id: entry.mediaId, language: "en-US" },
-						});
-						return {
-							kind: "movie" as const,
-							id: details.id,
-							image: getPosterUrl(details.poster_path),
-							overview: details.overview,
-							rating: details.vote_average,
-							title: details.title,
-							year: details.release_date.slice(0, 4),
-						};
-					}
-					if (entry.mediaType === "tv") {
-						const details = await fetchTvSeriesDetails({
-							data: { id: entry.mediaId, language: "en-US" },
-						});
-						return {
-							kind: "tv" as const,
-							id: details.id,
-							image: getPosterUrl(details.poster_path),
-							overview: details.overview,
-							rating: details.vote_average,
-							title: details.name,
-							year: (details.first_air_date ?? "").slice(0, 4),
-						};
-					}
-					const details = await fetchPersonDetails({
-						data: { id: entry.mediaId, language: "en-US" },
-					});
-					return {
-						kind: "person" as const,
-						id: details.id,
-						image: getProfileUrl(details.profile_path),
-						popularity: details.popularity,
-						title: details.name,
-						year: details.known_for_department,
-					};
-				})
-			);
-			return settled.flatMap((result) =>
-				result.status === "fulfilled" ? [toRowItem(result.value)] : []
-			);
-		},
-		queryKey: ["watchlist", userId, "detailed"],
-		enabled: userId !== null,
-	});
+	const { data: items, isPending: itemsPending } = useQuery(
+		watchlistDetailsQueryOptions(userId)
+	);
 	const rows = items ?? [];
 	const movies = rows.filter((item) => item.mediaType === "movie");
 	const shows = rows.filter((item) => item.mediaType === "tv");
