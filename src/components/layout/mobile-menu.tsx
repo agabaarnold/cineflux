@@ -41,16 +41,10 @@ export const MobileMenu = ({ user }: { user: NavbarUser | null }) => {
 	return (
 		<div className="sm:hidden">
 			<Sheet onOpenChange={setOpen} open={open}>
-				<SheetTrigger
-					render={
-						<button
-							aria-label="Open menu"
-							className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors"
-							type="button"
-						/>
-					}
-				>
-					<IconMenu2 aria-hidden="true" className="size-4" />
+				<SheetTrigger render={<button aria-label="Open menu" type="button" />}>
+					<span className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors">
+						<IconMenu2 aria-hidden="true" className="size-4" />
+					</span>
 				</SheetTrigger>
 				<SheetContent side="left">
 					<SheetHeader>
