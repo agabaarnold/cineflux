@@ -8,9 +8,9 @@ minimumReleaseAgeExclude:
 patchedDependencies:
   "@tanstack/devtools-vite@0.8.5": patches/@tanstack__devtools-vite@0.8.5.patch
 permissions:
-  '@tanstack/devtools-vite':
+  "@tanstack/devtools-vite":
     skills: true
-  '@tanstack/react-start':
+  "@tanstack/react-start":
     skills: true
   drizzle-kit:
     skills: true
