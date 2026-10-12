@@ -1,10 +1,16 @@
-# CineFlux
+<div align="center">
 
-![CineFlux logo](public/logo.svg)
+<img src="public/logo.svg" alt="CineFlux logo" width="96" height="96" />
+
+# CineFlux
 
 **Discover trending movies, TV shows, and the people behind them — and keep a personal watchlist.**
 
 [![CI](https://github.com/agabaarnold/cineflux/actions/workflows/ci.yml/badge.svg)](https://github.com/agabaarnold/cineflux/actions/workflows/ci.yml) ![TanStack Start](https://img.shields.io/badge/TanStack_Start-React_19-black) ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
+
+</div>
+
+<!-- Add a screenshot or short GIF here, e.g. ![CineFlux home](docs/home.png) -->
 
 ## Features
 
