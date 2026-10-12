@@ -1,18 +1,10 @@
-<div align="center">
-
-<img src="public/logo.svg" alt="CineFlux logo" width="96" height="96" />
-
 # CineFlux
+
+![CineFlux logo](public/logo.svg)
 
 **Discover trending movies, TV shows, and the people behind them — and keep a personal watchlist.**
 
-[![CI](https://github.com/agabaarnold/cineflux/actions/workflows/ci.yml/badge.svg)](https://github.com/agabaarnold/cineflux/actions/workflows/ci.yml)
-![TanStack Start](https://img.shields.io/badge/TanStack_Start-React_19-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
-
-</div>
-
-<!-- Add a screenshot or short GIF here, e.g. ![CineFlux home](docs/home.png) -->
+[![CI](https://github.com/agabaarnold/cineflux/actions/workflows/ci.yml/badge.svg)](https://github.com/agabaarnold/cineflux/actions/workflows/ci.yml) ![TanStack Start](https://img.shields.io/badge/TanStack_Start-React_19-black) ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 
 ## Features
 
@@ -68,7 +60,7 @@ The app runs at <http://localhost:3000>.
 ### Environment variables
 
 | Variable | Required | Description |
-| --- | :---: | --- |
+| --- | :-: | --- |
 | `BETTER_AUTH_URL` | ✅ | Base URL of the app, e.g. `http://localhost:3000` |
 | `BETTER_AUTH_SECRET` | ✅ | Auth signing secret. Generate with `pnpm dlx @better-auth/cli secret` |
 | `DATABASE_URL` | ✅ | PostgreSQL connection string |
@@ -85,14 +77,16 @@ Variables are validated at startup with `@t3-oss/env-core`, so a missing value f
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` | Start the dev server on port 3000 |
-| `pnpm build` | Production build (self-contained Node server in `dist/`) |
+| `pnpm build` | Production build (self-contained Node server in `.output/`) |
 | `pnpm preview` | Preview the production build |
 | `pnpm test` | Run the Vitest suite |
 | `pnpm check` | Lint and format check (Ultracite) |
 | `pnpm fix` | Auto-fix lint and format issues |
+| `pnpm generate-routes` | Regenerate `src/routeTree.gen.ts` (Vite also does this on dev/build) |
 | `pnpm db:generate` | Generate a Drizzle migration from schema changes |
 | `pnpm db:migrate` | Apply migrations |
 | `pnpm db:push` | Push the schema directly (handy for prototyping) |
+| `pnpm db:pull` | Introspect the database schema back into Drizzle |
 | `pnpm db:studio` | Open Drizzle Studio |
 
 ## Testing
@@ -113,7 +107,7 @@ CI spins up Postgres 17, runs migrations, then type-checks (`tsc --noEmit`), lin
 
 ## Project structure
 
-```
+```bash
 src/
 ├── components/     # ui/ (shadcn primitives), media/ (cards, rows, hero), layout/, auth/
 ├── db/             # Drizzle client, schema, relations, watchlist queries
@@ -135,13 +129,29 @@ drizzle/            # Generated SQL migrations
 4. The TMDB token lives only on the server. The client never sees it.
 5. Cache lifetimes are tiered (`volatile`, `default`, `lists`, `slow`, `static`) in `src/lib/tmdb-query-cache.ts`.
 
+### Routes
+
+| Path | Page |
+| --- | --- |
+| `/` | Home: hero carousel, trending (day/week), popular movies, TV, and people |
+| `/movie`, `/movie/:movieId` | Movie list and detail |
+| `/tv`, `/tv/:tvId` | TV list and detail |
+| `/tv/:tvId/season/:n`, `/tv/:tvId/season/:n/episode/:m` | Season and episode detail |
+| `/people`, `/person/:personId` | People list and detail |
+| `/search` | Search with type and year filters |
+| `/watchlist` | Saved titles (sign-in required) |
+| `/sign-in`, `/sign-up` | Auth |
+| `/api/auth/*` | Better Auth handler |
+
+`_app` wraps the public pages and resolves the session in `beforeLoad`; `_auth` redirects already-signed-in users away from the sign-in/sign-up pages.
+
 ## Deployment
 
 Nitro builds a self-contained Node server:
 
 ```bash
 pnpm build
-node dist/server/index.mjs
+node .output/server/index.mjs
 ```
 
 Provide the environment variables above on your host (Render, Fly.io, a VPS, etc.) and run `pnpm db:migrate` against the production database. Nitro also supports host-specific presets; see the [Nitro deploy docs](https://v3.nitro.build/deploy).
