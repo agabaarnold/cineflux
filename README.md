@@ -70,7 +70,6 @@ The app runs at <http://localhost:3000>.
 | `BETTER_AUTH_URL` | ✅ | Base URL of the app, e.g. `http://localhost:3000` |
 | `BETTER_AUTH_SECRET` | ✅ | Auth signing secret. Generate with `pnpm dlx @better-auth/cli secret` |
 | `DATABASE_URL` | ✅ | PostgreSQL connection string |
-| `TMDB_API_KEY` | ✅ | TMDB API key |
 | `TMDB_READ_ACCESS_TOKEN` | ✅ | TMDB v4 read access token (server-only; never shipped to the client) |
 | `TMDB_BASE_URL` | ✅ | `https://api.themoviedb.org/3` |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | ❌ | Enable Google sign-in. Set **both** or neither |
