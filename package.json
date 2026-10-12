@@ -2,6 +2,7 @@
 	"name": "cineflux",
 	"private": true,
 	"type": "module",
+	"packageManager": "pnpm@12.11.2",
 	"imports": {
 		"#/*": "./src/*"
 	},
