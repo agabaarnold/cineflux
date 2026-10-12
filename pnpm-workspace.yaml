@@ -5,3 +5,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@tanstack/react-table@9.2.5"
   - "@tanstack/table-core@9.2.5"
+patchedDependencies:
+  "@tanstack/devtools-vite@0.8.5": patches/@tanstack__devtools-vite@0.8.5.patch
