@@ -7,7 +7,10 @@ import { useWatchlistItem } from "#/hooks/use-watchlist.ts";
 
 const mocks: {
 	navigate: ReturnType<typeof vi.fn>;
-	session: { data: { user: { id: string } } | null };
+	// `data` is optional to mirror `useSession()`: it is absent while loading,
+	// `null` when signed out, and populated once a session resolves. The hook
+	// must treat the first two as "not signed in yet".
+	session: { data?: { user: { id: string } } | null };
 } = vi.hoisted(() => ({
 	navigate: vi.fn(),
 	session: { data: null },
@@ -59,6 +62,10 @@ beforeEach(() => {
 
 const signIn = () => {
 	mocks.session = { data: { user: { id: "user-1" } } };
+};
+
+const sessionPending = () => {
+	mocks.session = {};
 };
 
 describe("useWatchlistItem", () => {
@@ -172,5 +179,43 @@ describe("useWatchlistItem", () => {
 		expect(mocks.navigate).toHaveBeenCalledWith({ to: "/sign-in" });
 		expect(vi.mocked(addToWatchlist)).not.toHaveBeenCalled();
 		expect(result.current.saved).toBe(false);
+	});
+
+	it("never fetches while the session is still resolving", async () => {
+		const { fetchWatchlist } = await import("#/server/functions/watchlist.ts");
+		sessionPending();
+
+		const { result } = renderHook(() => useWatchlistItem("movie", 550), {
+			wrapper: Wrapper,
+		});
+
+		// Flush microtasks so a spurious fetch would have had time to fire.
+		await act(async () => {});
+
+		expect(vi.mocked(fetchWatchlist)).not.toHaveBeenCalled();
+		expect(result.current.saved).toBe(false);
+	});
+
+	it("never fetches for a signed-out visitor", async () => {
+		const { fetchWatchlist } = await import("#/server/functions/watchlist.ts");
+
+		const { result } = renderHook(() => useWatchlistItem("movie", 550), {
+			wrapper: Wrapper,
+		});
+
+		await act(async () => {});
+
+		expect(vi.mocked(fetchWatchlist)).not.toHaveBeenCalled();
+		expect(result.current.saved).toBe(false);
+	});
+
+	it("fetches the watchlist once the session resolves", async () => {
+		const { fetchWatchlist } = await import("#/server/functions/watchlist.ts");
+		vi.mocked(fetchWatchlist).mockResolvedValue([]);
+		signIn();
+
+		renderHook(() => useWatchlistItem("movie", 550), { wrapper: Wrapper });
+
+		await waitFor(() => expect(fetchWatchlist).toHaveBeenCalled());
 	});
 });

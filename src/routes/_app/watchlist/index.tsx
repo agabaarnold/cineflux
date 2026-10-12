@@ -90,7 +90,7 @@ type WatchlistEntries = Awaited<ReturnType<typeof fetchWatchlist>>;
 function WatchlistPage() {
 	const { data: session, isPending: sessionPending } = authClient.useSession();
 	const queryClient = useQueryClient();
-	const userId = session?.user.id ?? "";
+	const userId = session?.user.id ?? null;
 	const [sort, setSort] = useState<WatchlistSortKey>("recent");
 	const { data: items, isPending: itemsPending } = useQuery({
 		queryFn: async () => {
@@ -147,7 +147,7 @@ function WatchlistPage() {
 			);
 		},
 		queryKey: ["watchlist", userId, "detailed"],
-		enabled: session !== null,
+		enabled: userId !== null,
 	});
 	const rows = items ?? [];
 	const movies = rows.filter((item) => item.mediaType === "movie");

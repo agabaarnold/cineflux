@@ -20,11 +20,8 @@ export const useWatchlistItem = (mediaType: CardMediaType, mediaId: number) => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { data: session } = authClient.useSession();
-	const userId = session?.user.id ?? "";
-	const { data: entries } = useQuery({
-		...fetchWatchlistQueryOptions(userId),
-		enabled: session !== null,
-	});
+	const userId = session?.user.id ?? null;
+	const { data: entries } = useQuery(fetchWatchlistQueryOptions(userId));
 
 	const { isPending, mutate } = useMutation<
 		{ ok: boolean },
