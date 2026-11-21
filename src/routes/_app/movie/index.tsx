@@ -53,11 +53,11 @@ function MoviesLandingPage() {
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+				<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 					{categories.map((category) => (
 						<Link
 							key={category.label}
-							className="group block bg-card rounded-2xl border p-6 hover:border-primary/50 hover:shadow-lg transition-all"
+							className="group bg-card hover:border-primary/50 block rounded-2xl border p-6 transition-all hover:shadow-lg"
 							to={category.to}
 						>
 							<div className="flex items-start gap-4">
@@ -79,10 +79,10 @@ function MoviesLandingPage() {
 									)}
 								</div>
 								<div>
-									<h3 className="text-lg font-semibold group-hover:text-primary transition-colors">
+									<h3 className="group-hover:text-primary text-lg font-semibold transition-colors">
 										{category.label}
 									</h3>
-									<p className="mt-1 text-muted-foreground text-sm">
+									<p className="text-muted-foreground mt-1 text-sm">
 										{category.description}
 									</p>
 								</div>
