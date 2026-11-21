@@ -85,8 +85,8 @@ const Slide = ({
 			<div className="absolute inset-0 bg-linear-to-r from-black/85 via-black/40 to-transparent" />
 			<div className="from-background absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
 
-			<div className="absolute bottom-0 left-0 max-w-2xl p-8 md:p-12">
-				<h2 className="text-4xl font-black tracking-tight text-white uppercase md:text-6xl">
+			<div className="absolute bottom-0 left-0 max-w-2xl p-6 sm:p-8 md:p-12">
+				<h2 className="text-3xl font-black tracking-tight text-white uppercase sm:text-4xl md:text-6xl">
 					{slide.title}
 				</h2>
 
@@ -224,7 +224,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 				<CarouselContent className="ml-0">
 					{slides.map((slide, index) => (
 						<CarouselItem className="basis-full pl-0" key={slide.id}>
-							<div className="h-[80vh] max-h-180 min-h-120">
+							<div className="h-[55vh] max-h-180 min-h-[300px] md:h-[80vh] md:min-h-120">
 								<Slide priority={index === 0} slide={slide} />
 							</div>
 						</CarouselItem>
@@ -232,7 +232,12 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 				</CarouselContent>
 			</Carousel>
 
-			<div className="absolute top-1/2 right-6 flex -translate-y-1/2 flex-col items-center gap-2">
+			<div
+				className={cn(
+					"absolute top-16 left-1/2 z-10 flex -translate-x-1/2 flex-row items-center gap-2",
+					"md:top-1/2 md:right-6 md:left-auto md:z-0 md:-translate-x-0 md:-translate-y-1/2 md:flex-col"
+				)}
+			>
 				{slides.map((slide, index) => (
 					<button
 						aria-label={`Go to slide ${index + 1}`}
@@ -249,7 +254,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 
 				<button
 					aria-label={playing ? "Pause autoplay" : "Resume autoplay"}
-					className="mt-1 flex size-9 items-center justify-center rounded-full bg-black/50 text-white"
+					className="mt-0 ml-2 flex size-9 items-center justify-center rounded-full bg-black/50 text-white md:mt-1 md:ml-0"
 					onClick={togglePlaying}
 					onKeyDown={onSlideKeyDown}
 					type="button"

@@ -42,7 +42,7 @@ export const MediaRow = ({
 				) : null}
 			</div>
 		) : null}
-		<div className="flex gap-4 overflow-x-auto pb-2">
+		<div className="scroll-snap-x flex snap-mandatory gap-4 overflow-x-auto pb-2">
 			{items.map((item) => (
 				<MediaCard
 					href={item.href}

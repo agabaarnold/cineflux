@@ -16,7 +16,6 @@ import { toast } from "react-hot-toast";
 
 import { authClient } from "#/lib/auth-client.ts";
 
-import { Logo } from "../shared/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
 	DropdownMenu,
@@ -136,14 +135,11 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 };
 
 export const Navbar = ({ user }: { user: NavbarUser | null }) => (
-	<header className="pointer-events-none fixed inset-x-0 top-5 z-50 flex justify-center px-4">
-		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-2.5 rounded-full border p-1.5 shadow-2xl shadow-black/20 backdrop-blur-xl">
+	<header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-5 sm:px-4">
+		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-3 rounded-full border p-1 shadow-2xl shadow-black/20 backdrop-blur-xl sm:h-12 sm:gap-2.5 sm:p-1.5">
 			<MobileMenu user={user} />
-			<Link to="/">
-				<Logo className="size-10" />
-			</Link>
 
-			<div className="hidden items-center gap-1.5 sm:flex">
+			<div className="hidden items-center gap-1.5 md:flex">
 				<NavItem to="/" icon={IconHome}>
 					Home
 				</NavItem>
