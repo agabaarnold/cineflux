@@ -114,24 +114,45 @@ function SearchFilters({
 	yearInput: string;
 }) {
 	return (
-		<div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
+		<div className="mt-4 flex flex-col items-start gap-x-4 gap-y-3 sm:flex-row sm:items-center">
 			<Tabs
 				onValueChange={(nextType) =>
 					// SAFETY: the only triggers carry the search types defined below.
 					onTypeChange(nextType as SearchType)
 				}
 				value={type}
+				className="w-full sm:w-auto"
 			>
-				<TabsList variant="line">
-					<TabsTrigger value="all">All</TabsTrigger>
-					<TabsTrigger value="movie">Movies</TabsTrigger>
-					<TabsTrigger value="tv">TV Shows</TabsTrigger>
-					<TabsTrigger value="person">People</TabsTrigger>
+				<TabsList variant="line" className="w-full sm:w-auto">
+					<TabsTrigger
+						value="all"
+						className="w-full text-center sm:w-auto sm:text-left"
+					>
+						All
+					</TabsTrigger>
+					<TabsTrigger
+						value="movie"
+						className="w-full text-center sm:w-auto sm:text-left"
+					>
+						Movies
+					</TabsTrigger>
+					<TabsTrigger
+						value="tv"
+						className="w-full text-center sm:w-auto sm:text-left"
+					>
+						TV Shows
+					</TabsTrigger>
+					<TabsTrigger
+						value="person"
+						className="w-full text-center sm:w-auto sm:text-left"
+					>
+						People
+					</TabsTrigger>
 				</TabsList>
 			</Tabs>
 			<Input
 				aria-label="Filter by release year"
-				className="h-9 w-28"
+				className="h-9 w-full sm:w-28"
 				inputMode="numeric"
 				max={2100}
 				min={1800}
@@ -530,7 +551,7 @@ function SearchPage() {
 				</p>
 			</div>
 
-			<search className="block max-w-xl">
+			<search className="block w-full sm:max-w-xl">
 				<InputGroup>
 					<InputGroupAddon>
 						<IconSearch aria-hidden="true" />

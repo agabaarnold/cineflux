@@ -113,7 +113,7 @@ function WatchlistPage() {
 					}
 					value={sort}
 				>
-					<TabsList variant="line">
+					<TabsList variant="line" className="overflow-x-auto">
 						<TabsTrigger value="recent">Recently added</TabsTrigger>
 						<TabsTrigger value="title">Title A–Z</TabsTrigger>
 						<TabsTrigger value="rating">Top rated</TabsTrigger>

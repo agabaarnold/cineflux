@@ -238,7 +238,7 @@ function MovieDetailsPage() {
 
 			<div className="mx-auto w-full max-w-7xl px-4 py-6">
 				<Tabs onValueChange={setTab} value={tab}>
-					<TabsList variant="line">
+					<TabsList variant="line" className="overflow-x-auto">
 						<TabsTrigger value="information">Information</TabsTrigger>
 						<TabsTrigger value="reviews">
 							Reviews{reviews.length > 0 ? ` (${reviews.length})` : ""}

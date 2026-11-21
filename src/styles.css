@@ -13,6 +13,7 @@ html,
 body,
 #app {
 	min-height: 100%;
+	overflow-x: hidden;
 }
 
 body {
@@ -97,6 +98,10 @@ body {
 	--sidebar-accent-foreground: oklch(0.218 0.008 223.9);
 	--sidebar-border: oklch(0.925 0.005 214.3);
 	--sidebar-ring: oklch(0.723 0.014 214.4);
+	--color-google-blue: #4285f4;
+	--color-google-red: #ea4335;
+	--color-google-yellow: #fbbc05;
+	--color-google-green: #34a853;
 }
 
 .dark {
@@ -148,4 +153,22 @@ body {
 	html {
 		@apply font-sans;
 	}
+}
+
+/* Subtle scrollbar for horizontal scroll containers (media rows, tabs) */
+.scroll-snap-x::-webkit-scrollbar {
+	height: 6px;
+}
+
+.scroll-snap-x::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.scroll-snap-x::-webkit-scrollbar-thumb {
+	background: oklch(0.723 0.014 214.4 / 40%);
+	border-radius: 3px;
+}
+
+.scroll-snap-x::-webkit-scrollbar-thumb:hover {
+	background: oklch(0.723 0.014 214.4 / 60%);
 }

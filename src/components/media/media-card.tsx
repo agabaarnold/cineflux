@@ -47,7 +47,7 @@ export const MediaCard = ({
 }) => {
 	const { isPending, saved, toggle } = useWatchlistItem(mediaType, mediaId);
 	return (
-		<div className="group w-44 shrink-0">
+		<div className="group w-40 shrink-0 snap-start sm:w-44">
 			<div className="bg-card relative overflow-hidden rounded-2xl border transition-transform duration-300 group-hover:scale-[1.03] group-hover:shadow-lg">
 				<Link className="block" to={href}>
 					<div className="relative">

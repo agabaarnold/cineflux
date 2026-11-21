@@ -235,7 +235,7 @@ function TvDetailsPage() {
 
 			<div className="mx-auto w-full max-w-7xl px-4 py-6">
 				<Tabs onValueChange={setTab} value={tab}>
-					<TabsList variant="line">
+					<TabsList variant="line" className="overflow-x-auto">
 						<TabsTrigger value="information">Information</TabsTrigger>
 						<TabsTrigger value="reviews">
 							Reviews{reviews.length > 0 ? ` (${reviews.length})` : ""}
@@ -295,10 +295,10 @@ function TvDetailsPage() {
 						{details.seasons.length > 0 ? (
 							<>
 								<h3 className="mt-8 text-lg font-semibold">Seasons</h3>
-								<div className="mt-3 flex gap-4 overflow-x-auto pb-2">
+								<div className="scroll-snap-x mt-3 flex snap-mandatory gap-4 overflow-x-auto pb-2">
 									{details.seasons.map((season) => (
 										<Link
-											className="bg-card group w-44 shrink-0 overflow-hidden rounded-2xl border transition-transform duration-300 hover:scale-[1.03]"
+											className="bg-card group w-44 shrink-0 snap-start overflow-hidden rounded-2xl border transition-transform duration-300 hover:scale-[1.03]"
 											key={season.id}
 											params={{
 												seasonNumber: String(season.season_number),
