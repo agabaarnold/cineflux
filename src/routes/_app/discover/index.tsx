@@ -1,6 +1,7 @@
 // oxlint-disable react/function-component-definition func-style unicorn/prefer-ternary sonarjs/no-duplicate-string
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
 import { MediaGridSkeleton } from "#/components/media/media-grid-skeleton.tsx";
@@ -88,7 +89,29 @@ export const Route = createFileRoute("/_app/discover/")({
 function DiscoverPage() {
 	const navigate = useNavigate();
 	const search = Route.useSearch();
+	const [yearInput, setYearInput] = useState(search.year ?? "");
 	const year = search.year ? Number(search.year) : undefined;
+
+	useEffect(() => {
+		// oxlint-disable-next-line react/set-state-in-effect
+		setYearInput(search.year ?? "");
+	}, [search.year]);
+
+	useEffect(() => {
+		const trimmed = yearInput.trim();
+		if (trimmed === "" || /^\d{4}$/u.test(trimmed)) {
+			const handle = setTimeout(() => {
+				navigate({
+					search: {
+						...search,
+						year: trimmed === "" ? undefined : trimmed,
+					},
+					to: "/discover",
+				});
+			}, 400);
+			return () => clearTimeout(handle);
+		}
+	}, [navigate, search, yearInput]);
 
 	const query = useInfiniteQuery({
 		queryKey: ["discover", search.type, search.sort, search.year],
@@ -262,18 +285,10 @@ function DiscoverPage() {
 						inputMode="numeric"
 						max={2100}
 						min={1800}
-						onChange={(event) =>
-							navigate({
-								search: {
-									...search,
-									year: event.target.value || undefined,
-								},
-								to: "/discover",
-							})
-						}
+						onChange={(event) => setYearInput(event.target.value)}
 						placeholder="Any year"
 						type="number"
-						value={search.year ?? ""}
+						value={yearInput}
 					/>
 				</div>
 
