@@ -102,7 +102,7 @@ export const DetailHero = ({
 			<div className="relative mx-auto w-full max-w-7xl px-4 pt-24 pb-8 md:pb-12">
 				<nav
 					aria-label="Breadcrumb"
-					className="flex items-center gap-1.5 text-sm text-white/60"
+					className="flex items-center gap-1.5 overflow-x-auto text-sm whitespace-nowrap text-white/60 sm:pb-2"
 				>
 					<Link className="transition-colors hover:text-white" to="/">
 						Home
