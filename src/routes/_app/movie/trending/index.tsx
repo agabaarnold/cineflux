@@ -2,6 +2,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { MediaGridSkeleton } from "#/components/media/media-grid-skeleton.tsx";
 import { MediaGrid } from "#/components/media/media-grid.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
@@ -66,7 +67,11 @@ function TrendingMoviesPage() {
 
 	return (
 		<div className="flex flex-col space-y-6">
-			<MediaGrid items={items} title="Trending Movies" gap="gap-2" />
+			{query.isPending ? (
+				<MediaGridSkeleton title="Trending Movies" gap="gap-2" />
+			) : (
+				<MediaGrid items={items} title="Trending Movies" gap="gap-2" />
+			)}
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">
 					<button
