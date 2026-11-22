@@ -91,7 +91,7 @@ function PersonDetailsPage() {
 		<div className="mx-auto w-full max-w-7xl px-4 pt-24 pb-6">
 			<nav
 				aria-label="Breadcrumb"
-				className="text-muted-foreground flex items-center gap-1.5 text-sm"
+				className="text-muted-foreground flex items-center gap-1.5 overflow-x-auto text-sm whitespace-nowrap sm:pb-2"
 			>
 				<Link className="hover:text-foreground transition-colors" to="/">
 					Home
