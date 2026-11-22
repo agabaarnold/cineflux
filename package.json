@@ -15,9 +15,11 @@
 		"db:push": "drizzle-kit push",
 		"db:pull": "drizzle-kit pull",
 		"db:studio": "drizzle-kit studio",
+		"db:test:migrate": "sh scripts/neon-test-db.sh migrate",
 		"check": "ultracite check",
 		"fix": "ultracite fix",
-		"test": "vitest run"
+		"test": "vitest run",
+		"test:integration": "sh scripts/neon-test-db.sh test"
 	},
 	"dependencies": {
 		"@base-ui/react": "^1.9.0",
