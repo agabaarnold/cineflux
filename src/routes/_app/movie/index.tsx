@@ -147,15 +147,19 @@ function MoviesPage() {
 							.map((movie) => ({
 								href: `/movie/${movie.id}`,
 								id: `movie-${movie.id}`,
-								image: getPosterUrl(movie.poster_path),
 								mediaId: movie.id,
 								mediaType: "movie",
+								image: getPosterUrl(movie.poster_path),
 								overview: movie.overview,
-								stat: { kind: "rating", value: movie.vote_average } as const,
+								stat: {
+									kind: "rating",
+									value: movie.vote_average,
+								} as const,
 								title: movie.title,
 								year: movie.release_date.slice(0, 4),
 							}))}
 						title=""
+						href="/movie/trending"
 					/>
 				</div>
 
@@ -164,14 +168,18 @@ function MoviesPage() {
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
 						mediaId: movie.id,
-						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
+						image: getPosterUrl(movie.poster_path),
 						overview: movie.overview,
-						stat: { kind: "rating", value: movie.vote_average } as const,
+						stat: {
+							kind: "rating",
+							value: movie.vote_average,
+						} as const,
 						title: movie.title,
 						year: movie.release_date.slice(0, 4),
 					}))}
 					title="Popular movies"
+					href="/movie/popular"
 				/>
 
 				<MediaRow
@@ -179,14 +187,18 @@ function MoviesPage() {
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
 						mediaId: movie.id,
-						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
+						image: getPosterUrl(movie.poster_path),
 						overview: movie.overview,
-						stat: { kind: "rating", value: movie.vote_average } as const,
+						stat: {
+							kind: "rating",
+							value: movie.vote_average,
+						} as const,
 						title: movie.title,
 						year: movie.release_date.slice(0, 4),
 					}))}
 					title="Now playing"
+					href="/movie/now-playing"
 				/>
 
 				<MediaRow
@@ -194,14 +206,18 @@ function MoviesPage() {
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
 						mediaId: movie.id,
-						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
+						image: getPosterUrl(movie.poster_path),
 						overview: movie.overview,
-						stat: { kind: "rating", value: movie.vote_average } as const,
+						stat: {
+							kind: "rating",
+							value: movie.vote_average,
+						} as const,
 						title: movie.title,
 						year: movie.release_date.slice(0, 4),
 					}))}
 					title="Top rated"
+					href="/movie/top-rated"
 				/>
 
 				<MediaRow
@@ -209,14 +225,18 @@ function MoviesPage() {
 						href: `/movie/${movie.id}`,
 						id: String(movie.id),
 						mediaId: movie.id,
-						image: getPosterUrl(movie.poster_path),
 						mediaType: "movie",
+						image: getPosterUrl(movie.poster_path),
 						overview: movie.overview,
-						stat: { kind: "rating", value: movie.vote_average } as const,
+						stat: {
+							kind: "rating",
+							value: movie.vote_average,
+						} as const,
 						title: movie.title,
 						year: movie.release_date.slice(0, 4),
 					}))}
 					title="Upcoming"
+					href="/movie/upcoming"
 				/>
 			</div>
 		</div>

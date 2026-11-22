@@ -1,1 +1,14 @@
-pnpm-*
+# pnpm
+/devtools-vite-plugin
+/drizzle
+/drizzle-generate
+/drizzle-hints
+/drizzle-migrations
+/drizzle-output-modes
+/drizzle-pull
+/drizzle-push
+/drizzle-responses-and-errors
+/migrate-from-nextjs
+/pnpm-ultracite-ultracite
+/react-start
+# pnpm end

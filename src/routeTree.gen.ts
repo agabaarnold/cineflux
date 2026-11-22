@@ -23,7 +23,17 @@ import { Route as AppWatchlistIndexRouteImport } from './routes/_app/watchlist/i
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppMovieNowPlayingIndexRouteImport } from './routes/_app/movie/now-playing/index'
+import { Route as AppMoviePopularIndexRouteImport } from './routes/_app/movie/popular/index'
+import { Route as AppMovieTopRatedIndexRouteImport } from './routes/_app/movie/top-rated/index'
+import { Route as AppMovieTrendingIndexRouteImport } from './routes/_app/movie/trending/index'
+import { Route as AppMovieUpcomingIndexRouteImport } from './routes/_app/movie/upcoming/index'
 import { Route as AppTvTvIdIndexRouteImport } from './routes/_app/tv/$tvId/index'
+import { Route as AppTvAiringTodayIndexRouteImport } from './routes/_app/tv/airing-today/index'
+import { Route as AppTvOnTheAirIndexRouteImport } from './routes/_app/tv/on-the-air/index'
+import { Route as AppTvPopularIndexRouteImport } from './routes/_app/tv/popular/index'
+import { Route as AppTvTopRatedIndexRouteImport } from './routes/_app/tv/top-rated/index'
+import { Route as AppTvTrendingIndexRouteImport } from './routes/_app/tv/trending/index'
 import { Route as AppTvTvIdSeasonSeasonNumberRouteRouteImport } from './routes/_app/tv/$tvId/season/$seasonNumber/route'
 import { Route as AppTvTvIdSeasonSeasonNumberIndexRouteImport } from './routes/_app/tv/$tvId/season/$seasonNumber/index'
 import { Route as AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRouteImport } from './routes/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
@@ -96,10 +106,60 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppMovieNowPlayingIndexRoute = AppMovieNowPlayingIndexRouteImport.update({
+  id: '/movie/now-playing/',
+  path: '/movie/now-playing/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppMoviePopularIndexRoute = AppMoviePopularIndexRouteImport.update({
+  id: '/movie/popular/',
+  path: '/movie/popular/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppMovieTopRatedIndexRoute = AppMovieTopRatedIndexRouteImport.update({
+  id: '/movie/top-rated/',
+  path: '/movie/top-rated/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppMovieTrendingIndexRoute = AppMovieTrendingIndexRouteImport.update({
+  id: '/movie/trending/',
+  path: '/movie/trending/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppMovieUpcomingIndexRoute = AppMovieUpcomingIndexRouteImport.update({
+  id: '/movie/upcoming/',
+  path: '/movie/upcoming/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppTvTvIdIndexRoute = AppTvTvIdIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppTvTvIdRouteRoute,
+} as any)
+const AppTvAiringTodayIndexRoute = AppTvAiringTodayIndexRouteImport.update({
+  id: '/tv/airing-today/',
+  path: '/tv/airing-today/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppTvOnTheAirIndexRoute = AppTvOnTheAirIndexRouteImport.update({
+  id: '/tv/on-the-air/',
+  path: '/tv/on-the-air/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppTvPopularIndexRoute = AppTvPopularIndexRouteImport.update({
+  id: '/tv/popular/',
+  path: '/tv/popular/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppTvTopRatedIndexRoute = AppTvTopRatedIndexRouteImport.update({
+  id: '/tv/top-rated/',
+  path: '/tv/top-rated/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppTvTrendingIndexRoute = AppTvTrendingIndexRouteImport.update({
+  id: '/tv/trending/',
+  path: '/tv/trending/',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppTvTvIdSeasonSeasonNumberRouteRoute =
   AppTvTvIdSeasonSeasonNumberRouteRouteImport.update({
@@ -133,7 +193,17 @@ export interface FileRoutesByFullPath {
   '/watchlist/': typeof AppWatchlistIndexRoute
   '/sign-in/': typeof AuthSignInIndexRoute
   '/sign-up/': typeof AuthSignUpIndexRoute
+  '/movie/now-playing/': typeof AppMovieNowPlayingIndexRoute
+  '/movie/popular/': typeof AppMoviePopularIndexRoute
+  '/movie/top-rated/': typeof AppMovieTopRatedIndexRoute
+  '/movie/trending/': typeof AppMovieTrendingIndexRoute
+  '/movie/upcoming/': typeof AppMovieUpcomingIndexRoute
   '/tv/$tvId/': typeof AppTvTvIdIndexRoute
+  '/tv/airing-today/': typeof AppTvAiringTodayIndexRoute
+  '/tv/on-the-air/': typeof AppTvOnTheAirIndexRoute
+  '/tv/popular/': typeof AppTvPopularIndexRoute
+  '/tv/top-rated/': typeof AppTvTopRatedIndexRoute
+  '/tv/trending/': typeof AppTvTrendingIndexRoute
   '/tv/$tvId/season/$seasonNumber': typeof AppTvTvIdSeasonSeasonNumberRouteRouteWithChildren
   '/tv/$tvId/season/$seasonNumber/': typeof AppTvTvIdSeasonSeasonNumberIndexRoute
   '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
@@ -150,7 +220,17 @@ export interface FileRoutesByTo {
   '/watchlist': typeof AppWatchlistIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
+  '/movie/now-playing': typeof AppMovieNowPlayingIndexRoute
+  '/movie/popular': typeof AppMoviePopularIndexRoute
+  '/movie/top-rated': typeof AppMovieTopRatedIndexRoute
+  '/movie/trending': typeof AppMovieTrendingIndexRoute
+  '/movie/upcoming': typeof AppMovieUpcomingIndexRoute
   '/tv/$tvId': typeof AppTvTvIdIndexRoute
+  '/tv/airing-today': typeof AppTvAiringTodayIndexRoute
+  '/tv/on-the-air': typeof AppTvOnTheAirIndexRoute
+  '/tv/popular': typeof AppTvPopularIndexRoute
+  '/tv/top-rated': typeof AppTvTopRatedIndexRoute
+  '/tv/trending': typeof AppTvTrendingIndexRoute
   '/tv/$tvId/season/$seasonNumber': typeof AppTvTvIdSeasonSeasonNumberIndexRoute
   '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
 }
@@ -170,7 +250,17 @@ export interface FileRoutesById {
   '/_app/watchlist/': typeof AppWatchlistIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
+  '/_app/movie/now-playing/': typeof AppMovieNowPlayingIndexRoute
+  '/_app/movie/popular/': typeof AppMoviePopularIndexRoute
+  '/_app/movie/top-rated/': typeof AppMovieTopRatedIndexRoute
+  '/_app/movie/trending/': typeof AppMovieTrendingIndexRoute
+  '/_app/movie/upcoming/': typeof AppMovieUpcomingIndexRoute
   '/_app/tv/$tvId/': typeof AppTvTvIdIndexRoute
+  '/_app/tv/airing-today/': typeof AppTvAiringTodayIndexRoute
+  '/_app/tv/on-the-air/': typeof AppTvOnTheAirIndexRoute
+  '/_app/tv/popular/': typeof AppTvPopularIndexRoute
+  '/_app/tv/top-rated/': typeof AppTvTopRatedIndexRoute
+  '/_app/tv/trending/': typeof AppTvTrendingIndexRoute
   '/_app/tv/$tvId/season/$seasonNumber': typeof AppTvTvIdSeasonSeasonNumberRouteRouteWithChildren
   '/_app/tv/$tvId/season/$seasonNumber/': typeof AppTvTvIdSeasonSeasonNumberIndexRoute
   '/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber': typeof AppTvTvIdSeasonSeasonNumberEpisodeEpisodeNumberRoute
@@ -190,7 +280,17 @@ export interface FileRouteTypes {
     | '/watchlist/'
     | '/sign-in/'
     | '/sign-up/'
+    | '/movie/now-playing/'
+    | '/movie/popular/'
+    | '/movie/top-rated/'
+    | '/movie/trending/'
+    | '/movie/upcoming/'
     | '/tv/$tvId/'
+    | '/tv/airing-today/'
+    | '/tv/on-the-air/'
+    | '/tv/popular/'
+    | '/tv/top-rated/'
+    | '/tv/trending/'
     | '/tv/$tvId/season/$seasonNumber'
     | '/tv/$tvId/season/$seasonNumber/'
     | '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
@@ -207,7 +307,17 @@ export interface FileRouteTypes {
     | '/watchlist'
     | '/sign-in'
     | '/sign-up'
+    | '/movie/now-playing'
+    | '/movie/popular'
+    | '/movie/top-rated'
+    | '/movie/trending'
+    | '/movie/upcoming'
     | '/tv/$tvId'
+    | '/tv/airing-today'
+    | '/tv/on-the-air'
+    | '/tv/popular'
+    | '/tv/top-rated'
+    | '/tv/trending'
     | '/tv/$tvId/season/$seasonNumber'
     | '/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
   id:
@@ -226,7 +336,17 @@ export interface FileRouteTypes {
     | '/_app/watchlist/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
+    | '/_app/movie/now-playing/'
+    | '/_app/movie/popular/'
+    | '/_app/movie/top-rated/'
+    | '/_app/movie/trending/'
+    | '/_app/movie/upcoming/'
     | '/_app/tv/$tvId/'
+    | '/_app/tv/airing-today/'
+    | '/_app/tv/on-the-air/'
+    | '/_app/tv/popular/'
+    | '/_app/tv/top-rated/'
+    | '/_app/tv/trending/'
     | '/_app/tv/$tvId/season/$seasonNumber'
     | '/_app/tv/$tvId/season/$seasonNumber/'
     | '/_app/tv/$tvId/season/$seasonNumber/episode/$episodeNumber'
@@ -338,12 +458,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/movie/now-playing/': {
+      id: '/_app/movie/now-playing/'
+      path: '/movie/now-playing'
+      fullPath: '/movie/now-playing/'
+      preLoaderRoute: typeof AppMovieNowPlayingIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/movie/popular/': {
+      id: '/_app/movie/popular/'
+      path: '/movie/popular'
+      fullPath: '/movie/popular/'
+      preLoaderRoute: typeof AppMoviePopularIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/movie/top-rated/': {
+      id: '/_app/movie/top-rated/'
+      path: '/movie/top-rated'
+      fullPath: '/movie/top-rated/'
+      preLoaderRoute: typeof AppMovieTopRatedIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/movie/trending/': {
+      id: '/_app/movie/trending/'
+      path: '/movie/trending'
+      fullPath: '/movie/trending/'
+      preLoaderRoute: typeof AppMovieTrendingIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/movie/upcoming/': {
+      id: '/_app/movie/upcoming/'
+      path: '/movie/upcoming'
+      fullPath: '/movie/upcoming/'
+      preLoaderRoute: typeof AppMovieUpcomingIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/tv/$tvId/': {
       id: '/_app/tv/$tvId/'
       path: '/'
       fullPath: '/tv/$tvId/'
       preLoaderRoute: typeof AppTvTvIdIndexRouteImport
       parentRoute: typeof AppTvTvIdRouteRoute
+    }
+    '/_app/tv/airing-today/': {
+      id: '/_app/tv/airing-today/'
+      path: '/tv/airing-today'
+      fullPath: '/tv/airing-today/'
+      preLoaderRoute: typeof AppTvAiringTodayIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/tv/on-the-air/': {
+      id: '/_app/tv/on-the-air/'
+      path: '/tv/on-the-air'
+      fullPath: '/tv/on-the-air/'
+      preLoaderRoute: typeof AppTvOnTheAirIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/tv/popular/': {
+      id: '/_app/tv/popular/'
+      path: '/tv/popular'
+      fullPath: '/tv/popular/'
+      preLoaderRoute: typeof AppTvPopularIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/tv/top-rated/': {
+      id: '/_app/tv/top-rated/'
+      path: '/tv/top-rated'
+      fullPath: '/tv/top-rated/'
+      preLoaderRoute: typeof AppTvTopRatedIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/tv/trending/': {
+      id: '/_app/tv/trending/'
+      path: '/tv/trending'
+      fullPath: '/tv/trending/'
+      preLoaderRoute: typeof AppTvTrendingIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/_app/tv/$tvId/season/$seasonNumber': {
       id: '/_app/tv/$tvId/season/$seasonNumber'
@@ -412,6 +602,16 @@ interface AppRouteRouteChildren {
   AppSearchIndexRoute: typeof AppSearchIndexRoute
   AppTvIndexRoute: typeof AppTvIndexRoute
   AppWatchlistIndexRoute: typeof AppWatchlistIndexRoute
+  AppMovieNowPlayingIndexRoute: typeof AppMovieNowPlayingIndexRoute
+  AppMoviePopularIndexRoute: typeof AppMoviePopularIndexRoute
+  AppMovieTopRatedIndexRoute: typeof AppMovieTopRatedIndexRoute
+  AppMovieTrendingIndexRoute: typeof AppMovieTrendingIndexRoute
+  AppMovieUpcomingIndexRoute: typeof AppMovieUpcomingIndexRoute
+  AppTvAiringTodayIndexRoute: typeof AppTvAiringTodayIndexRoute
+  AppTvOnTheAirIndexRoute: typeof AppTvOnTheAirIndexRoute
+  AppTvPopularIndexRoute: typeof AppTvPopularIndexRoute
+  AppTvTopRatedIndexRoute: typeof AppTvTopRatedIndexRoute
+  AppTvTrendingIndexRoute: typeof AppTvTrendingIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -424,6 +624,16 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppSearchIndexRoute: AppSearchIndexRoute,
   AppTvIndexRoute: AppTvIndexRoute,
   AppWatchlistIndexRoute: AppWatchlistIndexRoute,
+  AppMovieNowPlayingIndexRoute: AppMovieNowPlayingIndexRoute,
+  AppMoviePopularIndexRoute: AppMoviePopularIndexRoute,
+  AppMovieTopRatedIndexRoute: AppMovieTopRatedIndexRoute,
+  AppMovieTrendingIndexRoute: AppMovieTrendingIndexRoute,
+  AppMovieUpcomingIndexRoute: AppMovieUpcomingIndexRoute,
+  AppTvAiringTodayIndexRoute: AppTvAiringTodayIndexRoute,
+  AppTvOnTheAirIndexRoute: AppTvOnTheAirIndexRoute,
+  AppTvPopularIndexRoute: AppTvPopularIndexRoute,
+  AppTvTopRatedIndexRoute: AppTvTopRatedIndexRoute,
+  AppTvTrendingIndexRoute: AppTvTrendingIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

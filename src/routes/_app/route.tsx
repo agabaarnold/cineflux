@@ -1,6 +1,7 @@
 // oxlint-disable react/function-component-definition func-style
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
+import { Footer } from "#/components/layout/footer.tsx";
 import { Navbar } from "#/components/layout/navbar.tsx";
 import { fetchSession } from "#/server/functions/auth.ts";
 
@@ -20,11 +21,14 @@ export const Route = createFileRoute("/_app")({
 function AppLayout() {
 	const { user } = Route.useRouteContext();
 	return (
-		<>
+		<div className="flex min-h-screen flex-col">
 			<Navbar user={user} />
-			<main id="main-content">
+
+			<main id="main-content flex-1">
 				<Outlet />
 			</main>
-		</>
+
+			<Footer />
+		</div>
 	);
 }
