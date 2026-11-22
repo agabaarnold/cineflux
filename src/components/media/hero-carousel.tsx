@@ -107,7 +107,7 @@ const Slide = ({
 						to={slide.href}
 					>
 						<IconPlayerPlayFilled className="size-4" />
-						Play
+						View details
 					</Link>
 
 					<button
@@ -224,7 +224,7 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 				<CarouselContent className="ml-0">
 					{slides.map((slide, index) => (
 						<CarouselItem className="basis-full pl-0" key={slide.id}>
-							<div className="h-[55vh] max-h-180 min-h-[300px] md:h-[80vh] md:min-h-120">
+							<div className="h-[55vh] max-h-180 min-h-75 md:h-[80vh] md:min-h-120">
 								<Slide priority={index === 0} slide={slide} />
 							</div>
 						</CarouselItem>
@@ -235,21 +235,27 @@ export const HeroCarousel = ({ items }: { items: HeroSlide[] }) => {
 			<div
 				className={cn(
 					"absolute top-16 left-1/2 z-10 flex -translate-x-1/2 flex-row items-center gap-2",
-					"md:top-1/2 md:right-6 md:left-auto md:z-0 md:-translate-x-0 md:-translate-y-1/2 md:flex-col"
+					"md:top-1/2 md:right-6 md:left-auto md:z-0 md:translate-x-0 md:-translate-y-1/2 md:flex-col"
 				)}
 			>
 				{slides.map((slide, index) => (
 					<button
 						aria-label={`Go to slide ${index + 1}`}
 						className={cn(
-							"w-0.75 rounded-full transition-all",
-							index === current ? "h-12 bg-white" : "h-6 bg-white/30"
+							"flex h-11 w-6 items-center justify-center rounded-full"
 						)}
 						key={slide.id}
 						onClick={() => api?.scrollTo(index)}
 						onKeyDown={onSlideKeyDown}
 						type="button"
-					/>
+					>
+						<span
+							className={cn(
+								"w-0.75 rounded-full transition-all",
+								index === current ? "h-12 bg-white" : "h-6 bg-white/30"
+							)}
+						/>
+					</button>
 				))}
 
 				<button
