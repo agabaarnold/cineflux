@@ -1,12 +1,12 @@
 // oxlint-disable react/function-component-definition func-style
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
-import { fetchPopularMovies } from "#/server/functions/movie.ts";
+import { fetchPopularMoviesQueryOptions } from "#/queries/movie.ts";
 import { getPosterUrl } from "#/server/tmdb/images.ts";
 
 export const Route = createFileRoute("/_app/movie/popular/")({
@@ -21,90 +21,43 @@ export const Route = createFileRoute("/_app/movie/popular/")({
 });
 
 function PopularMoviesPage() {
-	const query = useInfiniteQuery({
-		queryKey: ["movies", "popular"],
-		queryFn: async ({ pageParam = 1 }) => {
-			return fetchPopularMovies({
-				data: { language: "en-US", page: pageParam },
-			});
-		},
-		getNextPageParam: (lastPage) => {
-			if (lastPage.page < lastPage.total_pages) {
-				return lastPage.page + 1;
-			}
-			return undefined;
-		},
-		initialPageParam: 1,
-	});
-
-	const pages = query.pages;
-	const items = pages.flatMap((page) =>
-		page.results.map((movie) => ({
-			href: `/movie/${movie.id}`,
-			id: `movie-${movie.id}`,
-			mediaId: movie.id,
-			mediaType: "movie" as const,
-			image: getPosterUrl(movie.poster_path),
-			overview: movie.overview,
-			stat: {
-				kind: "rating",
-				value: movie.vote_average,
-			} as const,
-			title: movie.title,
-			year: movie.release_date.slice(0, 4),
-		}))
+	const [page, setPage] = useState(1);
+	const { data, isFetching } = useSuspenseQuery(
+		fetchPopularMoviesQueryOptions({
+			data: { language: "en-US", page },
+		})
 	);
 
-	const observerRef = useCallback(
-		(node: HTMLDivElement | null) => {
-			if (query.isFetching) return;
-			if (observerRef.current) {
-				observerRef.current.disconnect();
-			}
-			observerRef.current = new IntersectionObserver(
-				(entries) => {
-					if (entries[0].isIntersecting && query.hasNextPage) {
-						query.fetchNextPage();
-					}
-				},
-				{ threshold: 0.1 }
-			);
-			if (node) {
-				observerRef.current.observe(node);
-			}
-		},
-		[query]
-	);
+	const items = data.results.map((movie) => ({
+		href: `/movie/${movie.id}`,
+		id: `movie-${movie.id}`,
+		mediaId: movie.id,
+		mediaType: "movie" as const,
+		image: getPosterUrl(movie.poster_path),
+		overview: movie.overview,
+		stat: {
+			kind: "rating",
+			value: movie.vote_average,
+		} as const,
+		title: movie.title,
+		year: movie.release_date.slice(0, 4),
+	}));
 
-	useEffect(() => {
-		return () => {
-			if (observerRef.current) {
-				observerRef.current.disconnect();
-			}
-		};
-	}, []);
+	const hasNextPage = page < data.total_pages;
 
 	return (
 		<div className="flex flex-col">
-			<MediaRow
-				items={items}
-				title="Popular Movies"
-				href="/movie/popular"
-			/>
-			{query.hasNextPage && (
-				<div className="mx-auto w-full max-w-7xl px-4 py-6 flex items-center justify-center">
+			<MediaRow items={items} title="Popular Movies" href="/movie/popular" />
+			{hasNextPage && (
+				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-6">
 					<button
 						className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-9 items-center justify-center rounded-full px-4 text-sm font-medium transition-colors"
-						disabled={query.isFetching}
-						onClick={() => query.fetchNextPage()}
+						disabled={isFetching}
+						onClick={() => setPage((p: number) => p + 1)}
+						type="button"
 					>
-						{query.isFetching ? "Loading…" : "Load more"}
+						{isFetching ? "Loading…" : "Load more"}
 					</button>
-					<div
-						ref={observerRef}
-						className="h-1 w-full"
-						aria-hidden="true"
-					/>
 				</div>
 			)}
 		</div>

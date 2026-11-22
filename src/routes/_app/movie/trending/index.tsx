@@ -1,6 +1,6 @@
 // oxlint-disable react/function-component-definition func-style
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
@@ -26,27 +26,41 @@ function TrendingMoviesPage() {
 		})
 	);
 
+	const items: {
+		href: string;
+		id: string;
+		mediaId: number;
+		mediaType: "movie";
+		image: string | null;
+		overview: string;
+		stat: { kind: "rating"; value: number };
+		title: string;
+		year: string;
+	}[] = [];
+
+	for (const item of trending.results) {
+		if (item.media_type !== "movie") {
+			continue;
+		}
+		items.push({
+			href: `/movie/${item.id}`,
+			id: `movie-${item.id}`,
+			mediaId: item.id,
+			mediaType: "movie",
+			image: getPosterUrl(item.poster_path),
+			overview: item.overview,
+			stat: {
+				kind: "rating",
+				value: item.vote_average,
+			},
+			title: item.title,
+			year: item.release_date.slice(0, 4),
+		});
+	}
+
 	return (
 		<div className="flex flex-col">
-			<MediaRow
-				items={trending.results
-					.filter((item) => item.media_type === "movie")
-					.map((movie) => ({
-						href: `/movie/${movie.id}`,
-						id: `movie-${movie.id}`,
-						mediaId: movie.id,
-						mediaType: "movie",
-						image: getPosterUrl(movie.poster_path),
-						overview: movie.overview,
-						stat: {
-							kind: "rating",
-							value: movie.vote_average,
-						} as const,
-						title: movie.title,
-						year: movie.release_date.slice(0, 4),
-					}))}
-				title="Trending Movies"
-			/>
+			<MediaRow items={items} title="Trending Movies" />
 		</div>
 	);
 }

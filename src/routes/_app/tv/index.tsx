@@ -156,6 +156,7 @@ function TVShowsPage() {
 								year: (show.first_air_date ?? "").slice(0, 4),
 							}))}
 						title=""
+						href="/tv/trending"
 					/>
 				</div>
 
@@ -172,6 +173,7 @@ function TVShowsPage() {
 						year: (show.first_air_date ?? "").slice(0, 4),
 					}))}
 					title="Popular TV shows"
+					href="/tv/popular"
 				/>
 
 				<MediaRow
@@ -187,6 +189,7 @@ function TVShowsPage() {
 						year: (show.first_air_date ?? "").slice(0, 4),
 					}))}
 					title="Airing today"
+					href="/tv/airing-today"
 				/>
 
 				<MediaRow
@@ -202,6 +205,7 @@ function TVShowsPage() {
 						year: (show.first_air_date ?? "").slice(0, 4),
 					}))}
 					title="On the air"
+					href="/tv/on-the-air"
 				/>
 
 				<MediaRow
@@ -217,6 +221,7 @@ function TVShowsPage() {
 						year: (show.first_air_date ?? "").slice(0, 4),
 					}))}
 					title="Top rated"
+					href="/tv/top-rated"
 				/>
 			</div>
 		</div>
