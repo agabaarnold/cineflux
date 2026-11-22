@@ -1,11 +1,11 @@
 // oxlint-disable react/function-component-definition func-style
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { MediaGrid } from "#/components/media/media-grid.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
-import { fetchTrendingQueryOptions } from "#/queries/trending.ts";
+import { fetchTrending } from "#/server/functions/trending.ts";
 import { getPosterUrl } from "#/server/tmdb/images.ts";
 
 export const Route = createFileRoute("/_app/movie/trending/")({
@@ -20,47 +20,65 @@ export const Route = createFileRoute("/_app/movie/trending/")({
 });
 
 function TrendingMoviesPage() {
-	const { data: trending } = useSuspenseQuery(
-		fetchTrendingQueryOptions({
-			data: { language: "en-US", media_type: "movie", time_window: "day" },
+	const query = useInfiniteQuery({
+		queryKey: ["movies", "trending", "day"],
+		queryFn: ({ pageParam = 1 }) =>
+			fetchTrending({
+				data: {
+					language: "en-US",
+					media_type: "movie",
+					page: pageParam,
+					time_window: "day",
+				},
+			}),
+		getNextPageParam: (lastPage) => {
+			if (lastPage.page < lastPage.total_pages) {
+				return lastPage.page + 1;
+			}
+		},
+		initialPageParam: 1,
+	});
+
+	const pages = query.data?.pages ?? [];
+	const items = pages.flatMap((page) =>
+		page.results.flatMap((item) => {
+			if (item.media_type !== "movie") {
+				return [];
+			}
+			return [
+				{
+					href: `/movie/${item.id}`,
+					id: `movie-${item.id}`,
+					mediaId: item.id,
+					mediaType: "movie" as const,
+					image: getPosterUrl(item.poster_path),
+					overview: item.overview,
+					stat: {
+						kind: "rating" as const,
+						value: item.vote_average,
+					},
+					title: item.title,
+					year: item.release_date.slice(0, 4),
+				},
+			];
 		})
 	);
 
-	const items: {
-		href: string;
-		id: string;
-		mediaId: number;
-		mediaType: "movie";
-		image: string | null;
-		overview: string;
-		stat: { kind: "rating"; value: number };
-		title: string;
-		year: string;
-	}[] = [];
-
-	for (const item of trending.results) {
-		if (item.media_type !== "movie") {
-			continue;
-		}
-		items.push({
-			href: `/movie/${item.id}`,
-			id: `movie-${item.id}`,
-			mediaId: item.id,
-			mediaType: "movie",
-			image: getPosterUrl(item.poster_path),
-			overview: item.overview,
-			stat: {
-				kind: "rating",
-				value: item.vote_average,
-			},
-			title: item.title,
-			year: item.release_date.slice(0, 4),
-		});
-	}
-
 	return (
-		<div className="flex flex-col">
-			<MediaGrid items={items} title="Trending Movies" />
+		<div className="flex flex-col space-y-6">
+			<MediaGrid items={items} title="Trending Movies" gap="gap-2" />
+			{query.hasNextPage && (
+				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">
+					<button
+						className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-9 items-center justify-center rounded-full px-4 text-sm font-medium transition-colors"
+						disabled={query.isFetching}
+						onClick={() => query.fetchNextPage()}
+						type="button"
+					>
+						{query.isFetching ? "Loading…" : "Load more"}
+					</button>
+				</div>
+			)}
 		</div>
 	);
 }
