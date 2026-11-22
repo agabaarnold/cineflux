@@ -50,8 +50,8 @@ The Managed client is Better Auth methods through Neon's wrapper. It is not inte
 import { createNeonAuth } from "@neon/auth/next/server";
 
 export const auth = createNeonAuth({
-  baseUrl: process.env.NEON_AUTH_BASE_URL!,
-  cookies: { secret: process.env.NEON_AUTH_COOKIE_SECRET! },
+	baseUrl: process.env.NEON_AUTH_BASE_URL!,
+	cookies: { secret: process.env.NEON_AUTH_COOKIE_SECRET! },
 });
 ```
 
@@ -81,12 +81,12 @@ Protect routes with `auth.middleware()` from `proxy.ts` on Next 16. Earlier Next
 import { auth } from "@/lib/auth/server";
 
 export default auth.middleware({
-  loginUrl: "/auth/sign-in",
-  publicRoutes: ["/"],
+	loginUrl: "/auth/sign-in",
+	publicRoutes: ["/"],
 });
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+	matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
 ```
 
@@ -99,7 +99,7 @@ Before reading protected data or performing a mutation, check the session inside
 ```typescript
 const { data: session } = await auth.getSession();
 if (!session?.user) {
-  return Response.json({ error: "Unauthorized" }, { status: 401 });
+	return Response.json({ error: "Unauthorized" }, { status: 401 });
 }
 ```
 
@@ -127,7 +127,7 @@ import { createAuthClient } from "@neon/auth";
 import { BetterAuthReactAdapter } from "@neon/auth/react/adapters";
 
 export const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL, {
-  adapter: BetterAuthReactAdapter(),
+	adapter: BetterAuthReactAdapter(),
 });
 ```
 
@@ -221,10 +221,10 @@ Existing external IdP:
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  dataApi: {
-    authProvider: "external",
-    jwksUrl: "https://your-idp/.well-known/jwks.json",
-  },
+	dataApi: {
+		authProvider: "external",
+		jwksUrl: "https://your-idp/.well-known/jwks.json",
+	},
 });
 ```
 

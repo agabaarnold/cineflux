@@ -8,26 +8,26 @@ A Function Trigger is a branch-scoped rule that POSTs to a Neon Function on a cr
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  functions: {
-    ingest: { name: "Object ingest", source: "src/index.ts" },
-    cron: { name: "Cron", source: "src/cron.ts" },
-  },
-  buckets: { assets: { access: "public_read" } },
-  triggers: {
-    "on-upload": {
-      type: "storage_object_created",
-      function: "ingest",
-      bucket: "assets",
-      prefix: "logos/",
-      functionPath: "/object",
-    },
-    "every-minute": {
-      type: "schedule",
-      function: "cron",
-      cron: "* * * * *",
-      functionPath: "/cron",
-    },
-  },
+	functions: {
+		ingest: { name: "Object ingest", source: "src/index.ts" },
+		cron: { name: "Cron", source: "src/cron.ts" },
+	},
+	buckets: { assets: { access: "public_read" } },
+	triggers: {
+		"on-upload": {
+			type: "storage_object_created",
+			function: "ingest",
+			bucket: "assets",
+			prefix: "logos/",
+			functionPath: "/object",
+		},
+		"every-minute": {
+			type: "schedule",
+			function: "cron",
+			cron: "* * * * *",
+			functionPath: "/cron",
+		},
+	},
 });
 ```
 

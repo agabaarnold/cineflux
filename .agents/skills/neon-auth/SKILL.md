@@ -1,16 +1,7 @@
 ---
 name: neon-auth
 description: >-
-  Add authentication to a new app. Use for "add auth", "add login", Neon Auth
-  (Managed Better Auth), identity routing, sign-up, sign-in, password reset,
-  email OTP, magic links, organizations, phone OTP, OAuth, OAuth server for MCP
-  or third-party OAuth clients, passkeys, MFA,
-  trusted domains, invalid domain, and @neon/auth. No existing identity:
-  default to Managed Better Auth. Keep working Better Auth, Clerk, Supabase
-  Auth, or another IdP. User asked to migrate from Supabase Auth: Managed
-  Better Auth. A required plugin outside Managed support: self-managed Better
-  Auth on a Neon Function or the existing app host. Also use for auth APIs in
-  @neon/neon-js.
+  Add authentication to a new app. Use for "add auth", "add login", Neon Auth (Managed Better Auth), identity routing, sign-up, sign-in, password reset, email OTP, magic links, organizations, phone OTP, OAuth, OAuth server for MCP or third-party OAuth clients, passkeys, MFA, trusted domains, invalid domain, and @neon/auth. No existing identity: default to Managed Better Auth. Keep working Better Auth, Clerk, Supabase Auth, or another IdP. User asked to migrate from Supabase Auth: Managed Better Auth. A required plugin outside Managed support: self-managed Better Auth on a Neon Function or the existing app host. Also use for auth APIs in @neon/neon-js.
 metadata:
   parent: neon
   source: https://github.com/neondatabase/agent-skills/tree/main/skills/neon-auth
@@ -70,7 +61,7 @@ Merge Auth into the existing `neon.ts`. Do not replace other fields:
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  auth: true,
+	auth: true,
 });
 ```
 

@@ -28,7 +28,7 @@ If that help lists `create` and you need Auth, `npm i @neon/config` and write `n
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  auth: true,
+	auth: true,
 });
 ```
 
@@ -64,10 +64,10 @@ neon deploy
 
 ```typescript
 export default defineConfig({
-  dataApi: {
-    authProvider: "external",
-    jwksUrl: "https://example.com/.well-known/jwks.json",
-  },
+	dataApi: {
+		authProvider: "external",
+		jwksUrl: "https://example.com/.well-known/jwks.json",
+	},
 });
 ```
 
@@ -111,9 +111,9 @@ GET  https://claimable.neon.tech/v1/projects/{id}/claim
 DELETE https://claimable.neon.tech/v1/projects/{id}
 ```
 
-| CLI                           | REST                                                                                              |
-| ----------------------------- | ------------------------------------------------------------------------------------------------- |
-| `neon claim create`           | `POST /v1/agent/identity`, then `POST /v1/oauth2/token`, then `GET /v1/projects/{id}/credentials` |
-| `neon claim accept --no-open` | `POST /v1/projects/{id}/claim`                                                                    |
-| `neon claim status`           | `GET /v1/projects/{id}/claim`                                                                     |
-| `neon claim delete --yes`     | `DELETE /v1/projects/{id}`                                                                        |
+| CLI | REST |
+| --- | --- |
+| `neon claim create` | `POST /v1/agent/identity`, then `POST /v1/oauth2/token`, then `GET /v1/projects/{id}/credentials` |
+| `neon claim accept --no-open` | `POST /v1/projects/{id}/claim` |
+| `neon claim status` | `GET /v1/projects/{id}/claim` |
+| `neon claim delete --yes` | `DELETE /v1/projects/{id}` |

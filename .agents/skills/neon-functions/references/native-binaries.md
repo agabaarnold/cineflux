@@ -2,11 +2,11 @@
 
 The default deploy bundles `source` into a single `index.mjs` with esbuild. A compiled binary cannot be inlined into that file, so it has to ship as a separate file in the deploy archive. There are three ways to put it there. Pick by what the binary is:
 
-| The binary is                                                                              | Use                                                            |
-| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
-| An npm package backed by a Node-API addon (`sharp`, most `@napi-rs/*` packages)             | [`externalPackages`](#externalpackages-npm-packages-with-a-node-addon) |
-| A file your own build step produces: a `.node` addon, a `.so`, a `.wasm`, model weights    | [`bundler: "none"`](#bundler-none-ship-a-prebuilt-directory) or a [custom `bundler`](#custom-bundler-return-the-file-map) |
-| A standalone executable you spawn (`ffmpeg`, a Go or Rust CLI)                              | A custom `bundler` or `"none"`, plus [a copy to `/run` at startup](#standalone-executables) |
+| The binary is | Use |
+| --- | --- |
+| An npm package backed by a Node-API addon (`sharp`, most `@napi-rs/*` packages) | [`externalPackages`](#externalpackages-npm-packages-with-a-node-addon) |
+| A file your own build step produces: a `.node` addon, a `.so`, a `.wasm`, model weights | [`bundler: "none"`](#bundler-none-ship-a-prebuilt-directory) or a [custom `bundler`](#custom-bundler-return-the-file-map) |
+| A standalone executable you spawn (`ffmpeg`, a Go or Rust CLI) | A custom `bundler` or `"none"`, plus [a copy to `/run` at startup](#standalone-executables) |
 
 The examples use top-level `functions`, which needs `neon` CLI 4.20 or newer and `@neon/config` 1.6 or newer.
 
@@ -27,13 +27,13 @@ The filesystem layout is observed behavior, not documented by Neon. Re-check it 
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  functions: {
-    resize: {
-      name: "Resize",
-      source: "./src/resize.ts",
-      externalPackages: ["sharp"],
-    },
-  },
+	functions: {
+		resize: {
+			name: "Resize",
+			source: "./src/resize.ts",
+			externalPackages: ["sharp"],
+		},
+	},
 });
 ```
 
@@ -72,9 +72,9 @@ dist/fn/
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  functions: {
-    api: { name: "API", source: "./dist/fn", bundler: "none" },
-  },
+	functions: {
+		api: { name: "API", source: "./dist/fn", bundler: "none" },
+	},
 });
 ```
 
@@ -96,36 +96,39 @@ An inline function in `neon.ts` returns archive paths mapped to bytes. `neon dep
 ```typescript
 // neon.ts
 import { readFile } from "node:fs/promises";
-import { build } from "esbuild";
+
 import { defineConfig } from "@neon/config/v1";
+import { build } from "esbuild";
 
 export default defineConfig({
-  functions: {
-    transcode: {
-      name: "Transcode",
-      source: "./src/transcode.ts",
-      bundler: async (fn) => {
-        const out = await build({
-          entryPoints: [fn.source],
-          bundle: true,
-          platform: "node",
-          format: "esm",
-          write: false,
-          outfile: "index.mjs",
-          // CommonJS dependencies call require(); ESM output has none in scope.
-          banner: {
-            js: "import{createRequire}from'module';const require=createRequire(import.meta.url);",
-          },
-        });
-        return {
-          "index.mjs": out.outputFiles[0].contents,
-          "bin/ffmpeg": new Uint8Array(
-            await readFile(new URL("./vendor/linux-arm64/ffmpeg", import.meta.url)),
-          ),
-        };
-      },
-    },
-  },
+	functions: {
+		transcode: {
+			name: "Transcode",
+			source: "./src/transcode.ts",
+			bundler: async (fn) => {
+				const out = await build({
+					entryPoints: [fn.source],
+					bundle: true,
+					platform: "node",
+					format: "esm",
+					write: false,
+					outfile: "index.mjs",
+					// CommonJS dependencies call require(); ESM output has none in scope.
+					banner: {
+						js: "import{createRequire}from'module';const require=createRequire(import.meta.url);",
+					},
+				});
+				return {
+					"index.mjs": out.outputFiles[0].contents,
+					"bin/ffmpeg": new Uint8Array(
+						await readFile(
+							new URL("./vendor/linux-arm64/ffmpeg", import.meta.url)
+						)
+					),
+				};
+			},
+		},
+	},
 });
 ```
 
@@ -149,21 +152,21 @@ const run = promisify(execFile);
 
 let ffmpeg: Promise<string> | undefined;
 function ffmpegPath(): Promise<string> {
-  if (process.env.FFMPEG_PATH) return Promise.resolve(process.env.FFMPEG_PATH);
-  ffmpeg ??= (async () => {
-    await mkdir("/run/bin", { recursive: true });
-    await copyFile(new URL("./bin/ffmpeg", import.meta.url), "/run/bin/ffmpeg");
-    await chmod("/run/bin/ffmpeg", 0o755);
-    return "/run/bin/ffmpeg";
-  })();
-  return ffmpeg;
+	if (process.env.FFMPEG_PATH) return Promise.resolve(process.env.FFMPEG_PATH);
+	ffmpeg ??= (async () => {
+		await mkdir("/run/bin", { recursive: true });
+		await copyFile(new URL("./bin/ffmpeg", import.meta.url), "/run/bin/ffmpeg");
+		await chmod("/run/bin/ffmpeg", 0o755);
+		return "/run/bin/ffmpeg";
+	})();
+	return ffmpeg;
 }
 
 export default {
-  async fetch() {
-    const { stdout } = await run(await ffmpegPath(), ["-version"]);
-    return new Response(stdout);
-  },
+	async fetch() {
+		const { stdout } = await run(await ffmpegPath(), ["-version"]);
+		return new Response(stdout);
+	},
 };
 ```
 
@@ -179,10 +182,10 @@ The binary must be statically linked, or its shared libraries must exist in the 
 
 `bundler: "none"`, a custom `bundler`, and `externalPackages` staging check the archive before upload:
 
-| Limit                    | Value   |
-| ------------------------ | ------- |
-| Compressed zip           | 10 MiB  |
-| Total uncompressed bytes | 64 MiB  |
-| Files in the archive     | 4,096   |
+| Limit                    | Value  |
+| ------------------------ | ------ |
+| Compressed zip           | 10 MiB |
+| Total uncompressed bytes | 64 MiB |
+| Files in the archive     | 4,096  |
 
 Exceeding one fails the deploy. The byte-limit errors list the four largest files. Check an executable's size before building around it: a single static binary can use most of the 64 MiB.

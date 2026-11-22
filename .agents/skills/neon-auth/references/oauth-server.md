@@ -62,7 +62,9 @@ Both pages receive the signed authorization query. Use `@neon/auth` 0.8.0 or lat
 ```tsx
 // lib/auth/client.ts
 import { createAuthClient } from "@neon/auth";
-export const authClient = createAuthClient(process.env.NEXT_PUBLIC_NEON_AUTH_URL!);
+export const authClient = createAuthClient(
+	process.env.NEXT_PUBLIC_NEON_AUTH_URL!
+);
 ```
 
 Login page. Existing sign-in calls (`signIn.email`, `signIn.social`) carry the query automatically. On every load, including the return from a social sign-in, resume if the user already has a session:
@@ -70,8 +72,9 @@ Login page. Existing sign-in calls (`signIn.email`, `signIn.social`) carry the q
 ```tsx
 const { data } = await authClient.getSession();
 if (data?.user) {
-  const { error } = await authClient.oauth2.continue({ selected: true });
-  if (error) showError("This sign-in link expired. Go back to the app and try again.");
+	const { error } = await authClient.oauth2.continue({ selected: true });
+	if (error)
+		showError("This sign-in link expired. Go back to the app and try again.");
 }
 ```
 
@@ -82,7 +85,7 @@ Consent page. Show the client name, the redirect URI hosts, and the requested `s
 ```tsx
 const params = new URLSearchParams(window.location.search);
 const { data: client } = await authClient.oauth2.publicClient({
-  query: { client_id: params.get("client_id") ?? "" },
+	query: { client_id: params.get("client_id") ?? "" },
 });
 // Allow / Deny buttons:
 await authClient.oauth2.consent({ accept }); // navigates the browser itself; do not redirect again
@@ -103,15 +106,15 @@ npm install @neon/oauth @modelcontextprotocol/sdk@^1.30.0 hono
 On a Neon Function, the default export is a Hono app (see the `neon-functions` skill, [references/mcp.md](https://neon.com/docs/ai/skills/neon-functions/references/mcp.md)):
 
 ```typescript
-import { Hono } from "hono";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { createMcpAuth } from "@neon/oauth/mcp";
 import { honoMcp, type McpAuthVariables } from "@neon/oauth/mcp/hono";
+import { Hono } from "hono";
 
 const mcpAuth = createMcpAuth({
-  baseUrl: process.env.NEON_AUTH_BASE_URL!, // the branch's Auth URL
-  resource: process.env.MCP_RESOURCE!, // exactly the --mcp-resource value
+	baseUrl: process.env.NEON_AUTH_BASE_URL!, // the branch's Auth URL
+	resource: process.env.MCP_RESOURCE!, // exactly the --mcp-resource value
 });
 
 const app = new Hono<McpAuthVariables>();
@@ -119,28 +122,28 @@ app.use(honoMcp(mcpAuth, { path: "/mcp" })); // metadata routes + bearer guard
 
 // Stateless: no standalone SSE stream and no session to delete.
 app.on(["GET", "DELETE"], "/mcp", (c) =>
-  c.json(
-    {
-      jsonrpc: "2.0",
-      error: { code: -32000, message: "Method not allowed." },
-      id: null,
-    },
-    405,
-    { Allow: "POST" },
-  ),
+	c.json(
+		{
+			jsonrpc: "2.0",
+			error: { code: -32000, message: "Method not allowed." },
+			id: null,
+		},
+		405,
+		{ Allow: "POST" }
+	)
 );
 
 app.post("/mcp", async (c) => {
-  const userId = c.get("auth").sub; // verified identity; scope every query by it
-  const server = new McpServer({ name: "my-mcp", version: "1.0.0" });
-  // register tools that close over userId
-  const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
-  await server.connect(transport);
-  return transport.handleRequest(c.req.raw, {
-    authInfo: c.get("authInfo"),
-  });
+	const userId = c.get("auth").sub; // verified identity; scope every query by it
+	const server = new McpServer({ name: "my-mcp", version: "1.0.0" });
+	// register tools that close over userId
+	const transport = new WebStandardStreamableHTTPServerTransport({
+		sessionIdGenerator: undefined,
+	});
+	await server.connect(transport);
+	return transport.handleRequest(c.req.raw, {
+		authInfo: c.get("authInfo"),
+	});
 });
 
 export default app;

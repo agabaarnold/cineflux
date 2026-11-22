@@ -16,15 +16,16 @@ npm install -D @types/pg @types/node
 SDK 1.30.0 is the first version that sends SSE keep-alives, so pin at least that.
 
 ```typescript
-// src/index.ts
-import { Hono } from "hono";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
-import { eq } from "drizzle-orm";
-import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { attachDatabasePool } from "@neon/functions";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-postgres";
+// src/index.ts
+import { Hono } from "hono";
+import { Pool } from "pg";
+import { z } from "zod";
+
 import { contacts } from "./db/schema";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 5 });
@@ -32,51 +33,51 @@ attachDatabasePool(pool);
 const db = drizzle(pool);
 
 function createServer() {
-  const server = new McpServer({ name: "contacts", version: "1.0.0" });
+	const server = new McpServer({ name: "contacts", version: "1.0.0" });
 
-  // Each tool: a name, a config (description + a Zod input schema), and a handler
-  // that returns MCP content. The Zod shape becomes the tool's JSON schema, which
-  // the client uses to call the tool correctly.
-  server.registerTool(
-    "create_contact",
-    {
-      title: "Create contact",
-      description: "Create a new contact.",
-      inputSchema: {
-        name: z.string().describe("Full name (required)."),
-        email: z.string().optional().describe("Email address."),
-      },
-    },
-    async ({ name, email }) => {
-      const [row] = await db
-        .insert(contacts)
-        .values({ name, email })
-        .returning();
-      return { content: [{ type: "text", text: JSON.stringify(row) }] };
-    },
-  );
+	// Each tool: a name, a config (description + a Zod input schema), and a handler
+	// that returns MCP content. The Zod shape becomes the tool's JSON schema, which
+	// the client uses to call the tool correctly.
+	server.registerTool(
+		"create_contact",
+		{
+			title: "Create contact",
+			description: "Create a new contact.",
+			inputSchema: {
+				name: z.string().describe("Full name (required)."),
+				email: z.string().optional().describe("Email address."),
+			},
+		},
+		async ({ name, email }) => {
+			const [row] = await db
+				.insert(contacts)
+				.values({ name, email })
+				.returning();
+			return { content: [{ type: "text", text: JSON.stringify(row) }] };
+		}
+	);
 
-  server.registerTool(
-    "delete_contact",
-    {
-      title: "Delete contact",
-      description: "Delete a contact by id.",
-      inputSchema: { id: z.number().int().positive() },
-    },
-    async ({ id }) => {
-      const [row] = await db
-        .delete(contacts)
-        .where(eq(contacts.id, id))
-        .returning();
-      return {
-        content: [
-          { type: "text", text: JSON.stringify(row ?? { error: "not found" }) },
-        ],
-      };
-    },
-  );
+	server.registerTool(
+		"delete_contact",
+		{
+			title: "Delete contact",
+			description: "Delete a contact by id.",
+			inputSchema: { id: z.number().int().positive() },
+		},
+		async ({ id }) => {
+			const [row] = await db
+				.delete(contacts)
+				.where(eq(contacts.id, id))
+				.returning();
+			return {
+				content: [
+					{ type: "text", text: JSON.stringify(row ?? { error: "not found" }) },
+				],
+			};
+		}
+	);
 
-  return server;
+	return server;
 }
 
 const app = new Hono();
@@ -84,24 +85,24 @@ const app = new Hono();
 // Stateless servers never push on a standalone stream or end a session, so
 // refuse GET and DELETE instead of holding an idle SSE stream open.
 app.on(["GET", "DELETE"], "/mcp", (c) =>
-  c.json(
-    {
-      jsonrpc: "2.0",
-      error: { code: -32000, message: "Method not allowed." },
-      id: null,
-    },
-    405,
-    { Allow: "POST" },
-  ),
+	c.json(
+		{
+			jsonrpc: "2.0",
+			error: { code: -32000, message: "Method not allowed." },
+			id: null,
+		},
+		405,
+		{ Allow: "POST" }
+	)
 );
 
 app.post("/mcp", async (c) => {
-  const server = createServer();
-  const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
-  await server.connect(transport);
-  return transport.handleRequest(c.req.raw);
+	const server = createServer();
+	const transport = new WebStandardStreamableHTTPServerTransport({
+		sessionIdGenerator: undefined,
+	});
+	await server.connect(transport);
+	return transport.handleRequest(c.req.raw);
 });
 
 export default app;
@@ -144,69 +145,69 @@ npm install @neon/oauth
 ```
 
 ```typescript
-import { and } from "drizzle-orm"; // eq, z, db, and contacts come from the main example
 import { createMcpAuth } from "@neon/oauth/mcp";
 import { honoMcp, type McpAuthVariables } from "@neon/oauth/mcp/hono";
+import { and } from "drizzle-orm"; // eq, z, db, and contacts come from the main example
 
 function createUserServer(userId: string) {
-  const server = new McpServer({ name: "contacts", version: "1.0.0" });
+	const server = new McpServer({ name: "contacts", version: "1.0.0" });
 
-  // Register create_contact as in the main example, but insert
-  // .values({ name, email, ownerId: userId }) so the row belongs to the caller.
+	// Register create_contact as in the main example, but insert
+	// .values({ name, email, ownerId: userId }) so the row belongs to the caller.
 
-  server.registerTool(
-    "delete_contact",
-    {
-      title: "Delete contact",
-      description: "Delete one of your contacts by id.",
-      inputSchema: { id: z.number().int().positive() },
-    },
-    async ({ id }) => {
-      const [row] = await db
-        .delete(contacts)
-        .where(and(eq(contacts.id, id), eq(contacts.ownerId, userId)))
-        .returning();
-      return {
-        content: [
-          { type: "text", text: JSON.stringify(row ?? { error: "not found" }) },
-        ],
-      };
-    },
-  );
+	server.registerTool(
+		"delete_contact",
+		{
+			title: "Delete contact",
+			description: "Delete one of your contacts by id.",
+			inputSchema: { id: z.number().int().positive() },
+		},
+		async ({ id }) => {
+			const [row] = await db
+				.delete(contacts)
+				.where(and(eq(contacts.id, id), eq(contacts.ownerId, userId)))
+				.returning();
+			return {
+				content: [
+					{ type: "text", text: JSON.stringify(row ?? { error: "not found" }) },
+				],
+			};
+		}
+	);
 
-  return server;
+	return server;
 }
 
 const mcpAuth = createMcpAuth({
-  baseUrl: process.env.NEON_AUTH_BASE_URL!, // the branch's Auth URL
-  resource: process.env.MCP_RESOURCE!, // exactly the --mcp-resource value
+	baseUrl: process.env.NEON_AUTH_BASE_URL!, // the branch's Auth URL
+	resource: process.env.MCP_RESOURCE!, // exactly the --mcp-resource value
 });
 
 const app = new Hono<McpAuthVariables>();
 app.use(honoMcp(mcpAuth, { path: "/mcp" }));
 
 app.on(["GET", "DELETE"], "/mcp", (c) =>
-  c.json(
-    {
-      jsonrpc: "2.0",
-      error: { code: -32000, message: "Method not allowed." },
-      id: null,
-    },
-    405,
-    { Allow: "POST" },
-  ),
+	c.json(
+		{
+			jsonrpc: "2.0",
+			error: { code: -32000, message: "Method not allowed." },
+			id: null,
+		},
+		405,
+		{ Allow: "POST" }
+	)
 );
 
 app.post("/mcp", async (c) => {
-  const userId = c.get("auth").sub;
-  const server = createUserServer(userId);
-  const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
-  await server.connect(transport);
-  return transport.handleRequest(c.req.raw, {
-    authInfo: c.get("authInfo"),
-  });
+	const userId = c.get("auth").sub;
+	const server = createUserServer(userId);
+	const transport = new WebStandardStreamableHTTPServerTransport({
+		sessionIdGenerator: undefined,
+	});
+	await server.connect(transport);
+	return transport.handleRequest(c.req.raw, {
+		authInfo: c.get("authInfo"),
+	});
 });
 
 export default app;
@@ -227,15 +228,15 @@ Either way it's one check at the top of the `/mcp` route — reject anything tha
 // Keep the GET/DELETE 405 route from the main example. Without it, Hono answers
 // GET with 404, which MCP clients report as an error.
 app.post("/mcp", async (c) => {
-  const auth = c.req.header("authorization");
-  if (!(await isValidApiKey(auth)))
-    return c.json({ error: "unauthorized" }, 401);
-  const server = createServer();
-  const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
-  await server.connect(transport);
-  return transport.handleRequest(c.req.raw);
+	const auth = c.req.header("authorization");
+	if (!(await isValidApiKey(auth)))
+		return c.json({ error: "unauthorized" }, 401);
+	const server = createServer();
+	const transport = new WebStandardStreamableHTTPServerTransport({
+		sessionIdGenerator: undefined,
+	});
+	await server.connect(transport);
+	return transport.handleRequest(c.req.raw);
 });
 ```
 
@@ -256,11 +257,11 @@ import { StreamableHTTPTransport } from "@hono/mcp";
 
 // Inside app.post("/mcp", ...), after the auth check and the server factory:
 const transport = new StreamableHTTPTransport({
-  sessionIdGenerator: undefined,
-  // JSON-only clients need a JSON reply instead of an SSE stream.
-  enableJsonResponse: !(c.req.header("accept") ?? "").includes(
-    "text/event-stream",
-  ),
+	sessionIdGenerator: undefined,
+	// JSON-only clients need a JSON reply instead of an SSE stream.
+	enableJsonResponse: !(c.req.header("accept") ?? "").includes(
+		"text/event-stream"
+	),
 });
 await server.connect(transport);
 return transport.handleRequest(c); // the Hono context, not c.req.raw

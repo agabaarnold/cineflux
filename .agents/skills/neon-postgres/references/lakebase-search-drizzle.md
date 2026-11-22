@@ -34,11 +34,11 @@ const databaseUrl = process.env.DATABASE_URL_UNPOOLED;
 if (!databaseUrl) throw new Error("Missing DATABASE_URL_UNPOOLED");
 
 export default defineConfig({
-  schema: "./src/schema.ts",
-  out: "./drizzle",
-  dialect: "postgresql",
-  // Direct (unpooled) URL. Neon exposes it as DATABASE_URL_UNPOOLED.
-  dbCredentials: { url: databaseUrl },
+	schema: "./src/schema.ts",
+	out: "./drizzle",
+	dialect: "postgresql",
+	// Direct (unpooled) URL. Neon exposes it as DATABASE_URL_UNPOOLED.
+	dbCredentials: { url: databaseUrl },
 });
 ```
 
@@ -61,42 +61,42 @@ CREATE EXTENSION IF NOT EXISTS lakebase_text;
 The columns, the generated `tsvector`, and the `lakebase_ann` index all go in `schema.ts`. `tsvector` has no built-in Drizzle type, so define it using the `customType`:
 
 ```typescript
+import { sql } from "drizzle-orm";
 // src/schema.ts
 import {
-  pgTable,
-  bigint,
-  text,
-  vector,
-  index,
-  customType,
+	pgTable,
+	bigint,
+	text,
+	vector,
+	index,
+	customType,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 const tsvector = customType<{ data: string }>({
-  dataType() {
-    return "tsvector";
-  },
+	dataType() {
+		return "tsvector";
+	},
 });
 
 export const documents = pgTable(
-  "documents",
-  {
-    id: bigint("id", { mode: "number" })
-      .generatedByDefaultAsIdentity()
-      .primaryKey(),
-    title: text("title").notNull(),
-    body: text("body").notNull(),
-    embedding: vector("embedding", { dimensions: 1024 }),
-    bodyTsv: tsvector("body_tsv").generatedAlwaysAs(
-      sql`to_tsvector('english', "body")`,
-    ),
-  },
-  (table) => [
-    index("documents_embedding_ann").using(
-      "lakebase_ann",
-      table.embedding.op("vector_cosine_ops"),
-    ),
-  ],
+	"documents",
+	{
+		id: bigint("id", { mode: "number" })
+			.generatedByDefaultAsIdentity()
+			.primaryKey(),
+		title: text("title").notNull(),
+		body: text("body").notNull(),
+		embedding: vector("embedding", { dimensions: 1024 }),
+		bodyTsv: tsvector("body_tsv").generatedAlwaysAs(
+			sql`to_tsvector('english', "body")`
+		),
+	},
+	(table) => [
+		index("documents_embedding_ann").using(
+			"lakebase_ann",
+			table.embedding.op("vector_cosine_ops")
+		),
+	]
 );
 ```
 
@@ -133,21 +133,21 @@ const embeddingModel = neon.embeddingModel("qwen3-embedding-0-6b");
 const providerOptions = { neon: { dimensions: 1024 } };
 // Qwen3 query prompt adapted for Neon documentation search; documents stay unprefixed.
 const queryPrompt =
-  "Instruct: Given a question about Neon, retrieve documentation passages that answer the question\nQuery: ";
+	"Instruct: Given a question about Neon, retrieve documentation passages that answer the question\nQuery: ";
 ```
 
 Generate a document vector, then insert it with Drizzle:
 
 ```typescript
 const { embedding } = await embed({
-  model: embeddingModel,
-  value: body,
-  providerOptions,
+	model: embeddingModel,
+	value: body,
+	providerOptions,
 });
 await db.insert(documents).values({
-  title,
-  body,
-  embedding,
+	title,
+	body,
+	embedding,
 });
 ```
 
@@ -158,21 +158,21 @@ const batchSize = 64;
 const nonBlankRows = rows.filter((row) => row && row.body.trim().length > 0);
 
 for (let offset = 0; offset < nonBlankRows.length; offset += batchSize) {
-  const batch = nonBlankRows.slice(offset, offset + batchSize);
-  const { embeddings: vectors } = await embedMany({
-    model: embeddingModel,
-    values: batch.map((row) => row.body),
-    providerOptions,
-    maxParallelCalls: 1,
-  });
-  await db.insert(documents).values(
-    batch.map((row, index) => {
-      const embedding = vectors[index];
-      if (!embedding)
-        throw new Error(`Missing embedding for batch row ${index}`);
-      return { ...row, embedding };
-    }),
-  );
+	const batch = nonBlankRows.slice(offset, offset + batchSize);
+	const { embeddings: vectors } = await embedMany({
+		model: embeddingModel,
+		values: batch.map((row) => row.body),
+		providerOptions,
+		maxParallelCalls: 1,
+	});
+	await db.insert(documents).values(
+		batch.map((row, index) => {
+			const embedding = vectors[index];
+			if (!embedding)
+				throw new Error(`Missing embedding for batch row ${index}`);
+			return { ...row, embedding };
+		})
+	);
 }
 ```
 
@@ -186,20 +186,21 @@ Use the query builder with Drizzle's `cosineDistance` helper for vector search. 
 
 ```typescript
 import { cosineDistance } from "drizzle-orm";
+
 import { documents } from "./schema";
 
 const { embedding: queryEmbedding } = await embed({
-  model: embeddingModel,
-  value: `${queryPrompt}${queryText}`,
-  providerOptions,
+	model: embeddingModel,
+	value: `${queryPrompt}${queryText}`,
+	providerOptions,
 });
 const distance = cosineDistance(documents.embedding, queryEmbedding);
 
 const rows = await db
-  .select({ id: documents.id, title: documents.title, distance })
-  .from(documents)
-  .orderBy(distance)
-  .limit(k);
+	.select({ id: documents.id, title: documents.title, distance })
+	.from(documents)
+	.orderBy(distance)
+	.limit(k);
 ```
 
 BM25 has no Drizzle helper: `<@>` and `to_bm25query` require raw SQL. Reference the generated column by its `body_tsv` name. Bind user input as parameters through the `sql` template:
@@ -233,20 +234,21 @@ Per-query GUCs (`lakebase_ann.probes`, `lakebase_ann.epsilon`, `lakebase_bm25.de
 
 ```typescript
 import { cosineDistance, sql } from "drizzle-orm";
+
 import { documents } from "./schema";
 
 const distance = cosineDistance(documents.embedding, queryEmbedding);
 
 const rows = await db.transaction(async (tx) => {
-  // SET LOCAL scopes the GUC to this transaction's connection; do not hoist it out.
-  // Keep probes at 'auto' unless an IVF `lists` layout exists: a numeric value must
-  // match the `lists` shape or it errors ("need 0 probes ..."). See vector-search.md.
-  await tx.execute(sql`SET LOCAL lakebase_ann.probes = 'auto'`);
-  return tx
-    .select({ id: documents.id, title: documents.title, distance })
-    .from(documents)
-    .orderBy(distance)
-    .limit(k);
+	// SET LOCAL scopes the GUC to this transaction's connection; do not hoist it out.
+	// Keep probes at 'auto' unless an IVF `lists` layout exists: a numeric value must
+	// match the `lists` shape or it errors ("need 0 probes ..."). See vector-search.md.
+	await tx.execute(sql`SET LOCAL lakebase_ann.probes = 'auto'`);
+	return tx
+		.select({ id: documents.id, title: documents.title, distance })
+		.from(documents)
+		.orderBy(distance)
+		.limit(k);
 });
 ```
 

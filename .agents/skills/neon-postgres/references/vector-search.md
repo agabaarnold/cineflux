@@ -56,18 +56,18 @@ const embeddingModel = neon.embeddingModel("qwen3-embedding-0-6b");
 const providerOptions = { neon: { dimensions: 1024 } };
 // Qwen3 query prompt adapted for Neon documentation search; documents stay unprefixed.
 const queryPrompt =
-  "Instruct: Given a question about Neon, retrieve documentation passages that answer the question\nQuery: ";
+	"Instruct: Given a question about Neon, retrieve documentation passages that answer the question\nQuery: ";
 
 const { embeddings: documentEmbeddings } = await embedMany({
-  model: embeddingModel,
-  values: documentBodies, // non-empty document batch; store vectors by input index
-  providerOptions,
-  maxParallelCalls: 1,
+	model: embeddingModel,
+	values: documentBodies, // non-empty document batch; store vectors by input index
+	providerOptions,
+	maxParallelCalls: 1,
 });
 const { embedding: queryEmbedding } = await embed({
-  model: embeddingModel,
-  value: `${queryPrompt}${queryText}`,
-  providerOptions,
+	model: embeddingModel,
+	value: `${queryPrompt}${queryText}`,
+	providerOptions,
 }); // bind to $1 below
 ```
 
@@ -86,29 +86,29 @@ import OpenAI from "openai";
 const apiKey = process.env.NEON_AI_GATEWAY_TOKEN;
 const gatewayBaseUrl = process.env.NEON_AI_GATEWAY_BASE_URL;
 if (!apiKey || !gatewayBaseUrl) {
-  throw new Error("Missing Neon AI Gateway credentials");
+	throw new Error("Missing Neon AI Gateway credentials");
 }
 
 const client = new OpenAI({
-  apiKey,
-  baseURL: `${gatewayBaseUrl}/v1`,
+	apiKey,
+	baseURL: `${gatewayBaseUrl}/v1`,
 });
 
 async function embedBatch(inputs: string[]): Promise<number[][]> {
-  if (inputs.length === 0) return [];
-  const response = await client.embeddings.create({
-    model: "qwen3-embedding-0-6b",
-    input: inputs,
-    dimensions: 1024,
-    encoding_format: "float",
-  });
-  const vectors: number[][] = [];
-  for (const item of response.data) vectors[item.index] = item.embedding;
-  return inputs.map((_, index) => {
-    const embedding = vectors[index];
-    if (!embedding) throw new Error(`Missing embedding for input ${index}`);
-    return embedding;
-  });
+	if (inputs.length === 0) return [];
+	const response = await client.embeddings.create({
+		model: "qwen3-embedding-0-6b",
+		input: inputs,
+		dimensions: 1024,
+		encoding_format: "float",
+	});
+	const vectors: number[][] = [];
+	for (const item of response.data) vectors[item.index] = item.embedding;
+	return inputs.map((_, index) => {
+		const embedding = vectors[index];
+		if (!embedding) throw new Error(`Missing embedding for input ${index}`);
+		return embedding;
+	});
 }
 
 const documentEmbeddings = await embedBatch(documentBodies);
@@ -124,11 +124,11 @@ Use the same model and output dimensions for stored documents and queries. Follo
 
 Choose the operator class and query operator as a matched pair:
 
-| Metric         | Common use                                                   | Operator class      | Distance operator |
-| -------------- | ------------------------------------------------------------ | ------------------- | ----------------- |
-| Cosine         | Most text embeddings                                         | `vector_cosine_ops` | `<=>`             |
-| L2 / Euclidean | Absolute distance matters; vectors do not need normalization | `vector_l2_ops`     | `<->`             |
-| Inner product  | Unit-normalized vectors; matches cosine for unit vectors     | `vector_ip_ops`     | `<#>`             |
+| Metric | Common use | Operator class | Distance operator |
+| --- | --- | --- | --- |
+| Cosine | Most text embeddings | `vector_cosine_ops` | `<=>` |
+| L2 / Euclidean | Absolute distance matters; vectors do not need normalization | `vector_l2_ops` | `<->` |
+| Inner product | Unit-normalized vectors; matches cosine for unit vectors | `vector_ip_ops` | `<#>` |
 
 Choose the metric recommended for the selected model, and keep its index operator class and query operator aligned. The [Qwen3 Embedding model card](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B) demonstrates cosine similarity and normalized dot product for retrieval. For unit-normalized vectors, cosine, inner product, and L2 have the same exact ranking; approximate indexes can still differ in recall and latency, so benchmark on your corpus.
 

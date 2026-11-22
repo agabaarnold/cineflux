@@ -90,62 +90,62 @@ import { experimental_decide as decide } from "ai";
 type Candidate = { id: string; title: string; body: string };
 
 async function rerankWithJev(
-  queryText: string,
-  candidates: Candidate[], // deduplicated, authorized rows in a stable order
-  limit = 10,
-  batchSize = 80,
+	queryText: string,
+	candidates: Candidate[], // deduplicated, authorized rows in a stable order
+	limit = 10,
+	batchSize = 80
 ): Promise<Candidate[]> {
-  if (!Number.isInteger(limit) || limit < 1) {
-    throw new Error("limit must be a positive integer");
-  }
-  if (!Number.isInteger(batchSize) || batchSize < 1) {
-    throw new Error("batchSize must be a positive integer");
-  }
-  if (candidates.length === 0) return [];
+	if (!Number.isInteger(limit) || limit < 1) {
+		throw new Error("limit must be a positive integer");
+	}
+	if (!Number.isInteger(batchSize) || batchSize < 1) {
+		throw new Error("batchSize must be a positive integer");
+	}
+	if (candidates.length === 0) return [];
 
-  const model = neon.decisionModel("typesafeai-jev-1-14-0");
-  const criteria = {
-    true: "The candidate states the specific facts or steps the query asks for.",
-    false:
-      "The candidate only shares keywords or a topic with the query, answers a different question, or lacks the requested information.",
-  };
-  const abortSignal = AbortSignal.timeout(10_000); // whole reranking budget
-  const scored: { doc: Candidate; index: number; probability: number }[] = [];
-  for (let start = 0; start < candidates.length; start += batchSize) {
-    const batch = candidates.slice(start, start + batchSize);
-    const { answers } = await decide({
-      model,
-      state: { query: queryText }, // original text, without embedding instructions
-      questions: Object.fromEntries(
-        batch.map((doc, offset) => [
-          `d${start + offset}`, // response key only; the candidate goes in instructions
-          {
-            type: "boolean" as const,
-            instructions: {
-              question:
-                "Given the search query in state.query, does this candidate passage supply the specific information the user is looking for?",
-              candidate: { title: doc.title, body: doc.body },
-            },
-            criteria,
-          },
-        ]),
-      ),
-      maxRetries: 0, // propagate errors to the caller without retrying
-      abortSignal,
-    });
-    for (const [offset, doc] of batch.entries()) {
-      const index = start + offset;
-      const answer = answers[`d${index}`];
-      if (answer.type !== "boolean") {
-        throw new Error(`Missing relevance probability for d${index}`);
-      }
-      scored.push({ doc, index, probability: answer.probability });
-    }
-  }
-  return scored
-    .sort((a, b) => b.probability - a.probability || a.index - b.index)
-    .slice(0, limit)
-    .map(({ doc }) => doc);
+	const model = neon.decisionModel("typesafeai-jev-1-14-0");
+	const criteria = {
+		true: "The candidate states the specific facts or steps the query asks for.",
+		false:
+			"The candidate only shares keywords or a topic with the query, answers a different question, or lacks the requested information.",
+	};
+	const abortSignal = AbortSignal.timeout(10_000); // whole reranking budget
+	const scored: { doc: Candidate; index: number; probability: number }[] = [];
+	for (let start = 0; start < candidates.length; start += batchSize) {
+		const batch = candidates.slice(start, start + batchSize);
+		const { answers } = await decide({
+			model,
+			state: { query: queryText }, // original text, without embedding instructions
+			questions: Object.fromEntries(
+				batch.map((doc, offset) => [
+					`d${start + offset}`, // response key only; the candidate goes in instructions
+					{
+						type: "boolean" as const,
+						instructions: {
+							question:
+								"Given the search query in state.query, does this candidate passage supply the specific information the user is looking for?",
+							candidate: { title: doc.title, body: doc.body },
+						},
+						criteria,
+					},
+				])
+			),
+			maxRetries: 0, // propagate errors to the caller without retrying
+			abortSignal,
+		});
+		for (const [offset, doc] of batch.entries()) {
+			const index = start + offset;
+			const answer = answers[`d${index}`];
+			if (answer.type !== "boolean") {
+				throw new Error(`Missing relevance probability for d${index}`);
+			}
+			scored.push({ doc, index, probability: answer.probability });
+		}
+	}
+	return scored
+		.sort((a, b) => b.probability - a.probability || a.index - b.index)
+		.slice(0, limit)
+		.map(({ doc }) => doc);
 }
 ```
 

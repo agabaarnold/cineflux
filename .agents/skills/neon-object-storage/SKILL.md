@@ -1,18 +1,7 @@
 ---
 name: neon-object-storage
 description: >-
-  S3-compatible object storage that branches with your database, so each
-  branch gets its own copy of the files and the rows that point at them.
-  Use when a user wants
-  object storage, a bucket, blob/file storage, or somewhere to put uploads,
-  images, documents, avatars, or user-generated files for their app or agent —
-  especially when they already use (or are setting up) Lakebase Postgres and don't
-  want to add a separate storage provider like AWS S3, Cloudflare R2, or
-  Supabase Storage. Triggers include "object storage", "bucket", "blob
-  storage", "file storage", "store uploads/images/files", "S3-compatible
-  storage", "presigned URL", "where do I put files", "storage logs",
-  "bucket logs", "CDN in front of object storage", "Neon Object Storage",
-  "Neon Storage", and "storage that branches with my database".
+  S3-compatible object storage that branches with your database, so each branch gets its own copy of the files and the rows that point at them. Use when a user wants object storage, a bucket, blob/file storage, or somewhere to put uploads, images, documents, avatars, or user-generated files for their app or agent — especially when they already use (or are setting up) Lakebase Postgres and don't want to add a separate storage provider like AWS S3, Cloudflare R2, or Supabase Storage. Triggers include "object storage", "bucket", "blob storage", "file storage", "store uploads/images/files", "S3-compatible storage", "presigned URL", "where do I put files", "storage logs", "bucket logs", "CDN in front of object storage", "Neon Object Storage", "Neon Storage", and "storage that branches with my database".
 metadata:
   parent: neon
   source: https://github.com/neondatabase/agent-skills/tree/main/skills/neon-object-storage
@@ -72,10 +61,10 @@ Object storage is part of the `neon.ts` infrastructure-as-code config (see the `
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  buckets: {
-    images: {}, // private by default
-    "public-assets": { access: "public_read" },
-  },
+	buckets: {
+		images: {}, // private by default
+		"public-assets": { access: "public_read" },
+	},
 });
 ```
 
@@ -107,12 +96,12 @@ neon env pull            # writes the branch's vars into .env (or .env.local)
 neon-env run -- <your dev command>
 ```
 
-| Variable                | Meaning                                             |
-| ----------------------- | --------------------------------------------------- |
-| `AWS_ACCESS_KEY_ID`     | S3 Access Key ID (the branch credential's token id) |
-| `AWS_SECRET_ACCESS_KEY` | S3 Secret Access Key                                |
-| `AWS_ENDPOINT_URL_S3`   | Branch S3 endpoint URL                              |
-| `AWS_REGION`            | Region, e.g. `us-east-2`                            |
+| Variable | Meaning |
+| --- | --- |
+| `AWS_ACCESS_KEY_ID` | S3 Access Key ID (the branch credential's token id) |
+| `AWS_SECRET_ACCESS_KEY` | S3 Secret Access Key |
+| `AWS_ENDPOINT_URL_S3` | Branch S3 endpoint URL |
+| `AWS_REGION` | Region, e.g. `us-east-2` |
 
 Because the names are AWS-standard, the AWS SDK picks up the credentials, endpoint, and region from the environment automatically. Credentials are branch-scoped and valid for that branch and all its descendants.
 
@@ -137,7 +126,9 @@ import { neon } from "files-sdk/neon";
 const files = new Files({ adapter: neon({ bucket: "images" }) });
 
 // Upload — body may be a Buffer, Uint8Array, Blob, File, ReadableStream, or string
-await files.upload("generated/cat.jpg", fileBuffer, { contentType: "image/jpeg" });
+await files.upload("generated/cat.jpg", fileBuffer, {
+	contentType: "image/jpeg",
+});
 
 // Download
 const file = await files.download("generated/cat.jpg");
@@ -159,7 +150,7 @@ Neon speaks the S3 API directly, so you can drop down to the AWS SDK whenever yo
 import { S3Client } from "@aws-sdk/client-s3";
 
 const s3 = new S3Client({
-  forcePathStyle: true, // required: Neon uses path-style addressing
+	forcePathStyle: true, // required: Neon uses path-style addressing
 });
 ```
 
@@ -173,25 +164,25 @@ const BUCKET = "images";
 
 // Upload
 await s3.send(
-  new PutObjectCommand({
-    Bucket: BUCKET,
-    Key: "generated/cat.jpg",
-    Body: fileBuffer,
-    ContentType: "image/jpeg",
-  }),
+	new PutObjectCommand({
+		Bucket: BUCKET,
+		Key: "generated/cat.jpg",
+		Body: fileBuffer,
+		ContentType: "image/jpeg",
+	})
 );
 
 // Download
 const res = await s3.send(
-  new GetObjectCommand({ Bucket: BUCKET, Key: "generated/cat.jpg" }),
+	new GetObjectCommand({ Bucket: BUCKET, Key: "generated/cat.jpg" })
 );
 const bytes = await res.Body?.transformToByteArray();
 
 // Presigned GET — share without exposing credentials
 const url = await getSignedUrl(
-  s3,
-  new GetObjectCommand({ Bucket: BUCKET, Key: "generated/cat.jpg" }),
-  { expiresIn: 3600 },
+	s3,
+	new GetObjectCommand({ Bucket: BUCKET, Key: "generated/cat.jpg" }),
+	{ expiresIn: 3600 }
 );
 ```
 

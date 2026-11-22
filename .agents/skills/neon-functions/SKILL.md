@@ -1,20 +1,7 @@
 ---
 name: neon-functions
 description: >-
-  Long-running, serverless Node.js HTTP functions deployed onto your Neon
-  branch, with DATABASE_URL injected automatically and compute that runs next
-  to your data. Use when a user wants to host an API, an AI agent with long
-  streaming responses, a WebSocket or server-sent-events (SSE) server, a
-  webhook handler, a Discord bot, an MCP server, or any request/response
-  workload that risks timing out on short, lambda-style serverless functions —
-  and wants it to branch with their database. Also use for Function Triggers:
-  a cron or an object-storage event that POSTs to a function. Triggers include
-  "serverless function", "deploy an API", "long-running function",
-  "streaming agent", "SSE server", "WebSocket server", "webhook handler",
-  "MCP server", "cron", "scheduled function", "object storage trigger",
-  "on upload", "function that won't time out", "function logs",
-  "Neon Functions", "Neon Compute", "DDoS protection", "rate limiting", and
-  "production hardening". For live UIs over database rows, use neon-realtime.
+  Long-running, serverless Node.js HTTP functions deployed onto your Neon branch, with DATABASE_URL injected automatically and compute that runs next to your data. Use when a user wants to host an API, an AI agent with long streaming responses, a WebSocket or server-sent-events (SSE) server, a webhook handler, a Discord bot, an MCP server, or any request/response workload that risks timing out on short, lambda-style serverless functions — and wants it to branch with their database. Also use for Function Triggers: a cron or an object-storage event that POSTs to a function. Triggers include "serverless function", "deploy an API", "long-running function", "streaming agent", "SSE server", "WebSocket server", "webhook handler", "MCP server", "cron", "scheduled function", "object storage trigger", "on upload", "function that won't time out", "function logs", "Neon Functions", "Neon Compute", "DDoS protection", "rate limiting", and "production hardening". For live UIs over database rows, use neon-realtime.
 metadata:
   parent: neon
   source: https://github.com/neondatabase/agent-skills/tree/main/skills/neon-functions
@@ -89,13 +76,13 @@ Functions are declared in `neon.ts` (see the `neon` skill for the branch-first w
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  functions: {
-    todos: {
-      // slug: ^[a-z0-9]{1,20}$ — lowercase letters/digits, no hyphens
-      name: "todo api", // display label only
-      source: "src/index.ts", // entry file, relative to neon.ts
-    },
-  },
+	functions: {
+		todos: {
+			// slug: ^[a-z0-9]{1,20}$ — lowercase letters/digits, no hyphens
+			name: "todo api", // display label only
+			source: "src/index.ts", // entry file, relative to neon.ts
+		},
+	},
 });
 ```
 
@@ -104,12 +91,13 @@ The slug is the function's permanent identity (it appears in the invocation URL 
 A minimal function — a Hono app that queries the branch's Postgres via the injected `DATABASE_URL`:
 
 ```typescript
-// src/index.ts
-import { Hono } from "hono";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
 import { parseEnv } from "@neon/env";
 import { attachDatabasePool } from "@neon/functions";
+import { drizzle } from "drizzle-orm/node-postgres";
+// src/index.ts
+import { Hono } from "hono";
+import { Pool } from "pg";
+
 import config from "../neon";
 import { todos } from "./db/schema";
 
@@ -121,9 +109,9 @@ const db = drizzle(pool);
 const app = new Hono();
 app.get("/", (c) => c.text("Neon + Hono + Drizzle"));
 app.post("/todos", async (c) => {
-  const { text } = await c.req.json<{ text: string }>();
-  const [row] = await db.insert(todos).values({ text }).returning();
-  return c.json(row, 201);
+	const { text } = await c.req.json<{ text: string }>();
+	const [row] = await db.insert(todos).values({ text }).returning();
+	return c.json(row, 201);
 });
 app.get("/todos", async (c) => c.json(await db.select().from(todos)));
 
@@ -179,10 +167,10 @@ Per-branch deploy tuning (e.g. `runtime`) lives in the `branch` closure, keyed b
 
 ```typescript
 export default defineConfig({
-  functions: { todos: { name: "todo api", source: "src/index.ts" } },
-  branch: (branch) => ({
-    functions: { todos: { runtime: "nodejs24" } },
-  }),
+	functions: { todos: { name: "todo api", source: "src/index.ts" } },
+	branch: (branch) => ({
+		functions: { todos: { runtime: "nodejs24" } },
+	}),
 });
 ```
 
@@ -190,16 +178,16 @@ export default defineConfig({
 
 Neon injects branch-scoped connection strings and service URLs at runtime — you don't declare these or pass them at deploy time:
 
-| Variable                    | Notes                                                                                                                                                              |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `NEON_BRANCH`               | The branch **name** (e.g. `main`, `preview/foo`). Injected on every branch, including the default.                                                                 |
-| `NEON_BRANCH_ID`            | The branch **id** (`br-…`). Injected on every branch.                                                                                                              |
+| Variable | Notes |
+| --- | --- |
+| `NEON_BRANCH` | The branch **name** (e.g. `main`, `preview/foo`). Injected on every branch, including the default. |
+| `NEON_BRANCH_ID` | The branch **id** (`br-…`). Injected on every branch. |
 | `NEON_FUNCTION_HOST_SUFFIX` | The hostname suffix every function on the branch shares (`.compute.c-2.us-east-2.aws.neon.tech`). See [How to get the function URL](#how-to-get-the-function-url). |
-| `DATABASE_URL`              | Pooled connection string. Use for most queries. Present only if the branch has Postgres.                                                                           |
-| `DATABASE_URL_UNPOOLED`     | Direct connection. Use for migrations, `LISTEN`/`NOTIFY`, multi-round-trip transactions.                                                                           |
-| `NEON_AUTH_BASE_URL`        | Present when Neon Auth is enabled on the branch.                                                                                                                   |
-| `NEON_AUTH_JWKS_URL`        | Present when Neon Auth is enabled on the branch. JWKS for verifying Managed Auth JWTs.                                                                             |
-| `NEON_DATA_API_URL`         | Present when the Data API is enabled on the branch.                                                                                                                |
+| `DATABASE_URL` | Pooled connection string. Use for most queries. Present only if the branch has Postgres. |
+| `DATABASE_URL_UNPOOLED` | Direct connection. Use for migrations, `LISTEN`/`NOTIFY`, multi-round-trip transactions. |
+| `NEON_AUTH_BASE_URL` | Present when Neon Auth is enabled on the branch. |
+| `NEON_AUTH_JWKS_URL` | Present when Neon Auth is enabled on the branch. JWKS for verifying Managed Auth JWTs. |
+| `NEON_DATA_API_URL` | Present when the Data API is enabled on the branch. |
 
 Object storage (`AWS_*`) and AI Gateway (`NEON_AI_GATEWAY_*`) vars are also injected when those services are declared — see the `neon-object-storage` and `neon-ai-gateway` skills.
 
@@ -249,12 +237,12 @@ import { functionBaseUrl } from "@neon/env";
 const res = await fetch(`${functionBaseUrl("todos")}/api/todos`);
 ```
 
-| Where the code runs                        | `functionBaseUrl("todos")` returns                  |
-| ------------------------------------------ | --------------------------------------------------- |
-| A deployed function on the branch          | `https://<branch_id>-todos.compute.…` (runtime env) |
-| An app or script after `neon env pull`     | the same URL, from the pulled env                   |
-| `neon dev`, when it serves `todos`         | `http://localhost:<port>`                           |
-| `neon dev`, when it does not serve `todos` | the deployed URL on the linked branch               |
+| Where the code runs | `functionBaseUrl("todos")` returns |
+| --- | --- |
+| A deployed function on the branch | `https://<branch_id>-todos.compute.…` (runtime env) |
+| An app or script after `neon env pull` | the same URL, from the pulled env |
+| `neon dev`, when it serves `todos` | `http://localhost:<port>` |
+| `neon dev`, when it does not serve `todos` | the deployed URL on the linked branch |
 
 It reads `process.env` by default. Pass the two variables explicitly when they come from elsewhere: `functionBaseUrl("todos", { NEON_BRANCH_ID, NEON_FUNCTION_HOST_SUFFIX })`. It throws when either variable is missing; run `neon env pull` (or `neon env pull -s functions` for only the branch variables) to fix that locally. The function does not have to be deployed for the URL to resolve, but the request fails until it is.
 
@@ -333,36 +321,36 @@ const jwks = createRemoteJWKSet(new URL(process.env.NEON_AUTH_JWKS_URL!));
 const issuer = new URL(process.env.NEON_AUTH_BASE_URL!).origin;
 
 export default {
-  async fetch(request: Request) {
-    if (request.method === "OPTIONS")
-      return new Response(null, { status: 204, headers: cors(request) });
+	async fetch(request: Request) {
+		if (request.method === "OPTIONS")
+			return new Response(null, { status: 204, headers: cors(request) });
 
-    const auth = request.headers.get("authorization");
-    if (!auth?.toLowerCase().startsWith("bearer ")) {
-      return new Response("Unauthorized", {
-        status: 401,
-        headers: cors(request),
-      });
-    }
-    let userId: string;
-    try {
-      const { payload } = await jwtVerify(auth.slice(7), jwks, { issuer });
-      if (!payload.sub) {
-        return new Response("Unauthorized", {
-          status: 401,
-          headers: cors(request),
-        });
-      }
-      userId = payload.sub;
-    } catch {
-      return new Response("Unauthorized", {
-        status: 401,
-        headers: cors(request),
-      });
-    }
-    // Authorize resource access by userId, then run the agent scoped to that user.
-    // ... return result.toUIMessageStreamResponse({ headers: cors(request) })
-  },
+		const auth = request.headers.get("authorization");
+		if (!auth?.toLowerCase().startsWith("bearer ")) {
+			return new Response("Unauthorized", {
+				status: 401,
+				headers: cors(request),
+			});
+		}
+		let userId: string;
+		try {
+			const { payload } = await jwtVerify(auth.slice(7), jwks, { issuer });
+			if (!payload.sub) {
+				return new Response("Unauthorized", {
+					status: 401,
+					headers: cors(request),
+				});
+			}
+			userId = payload.sub;
+		} catch {
+			return new Response("Unauthorized", {
+				status: 401,
+				headers: cors(request),
+			});
+		}
+		// Authorize resource access by userId, then run the agent scoped to that user.
+		// ... return result.toUIMessageStreamResponse({ headers: cors(request) })
+	},
 };
 ```
 
@@ -382,15 +370,15 @@ A WebSocket server is the canonical Functions workload: a long-running handler h
 import { upgradeWebSocket } from "@neon/functions";
 
 export default {
-  async fetch(req: Request): Promise<Response> {
-    if (req.headers.get("upgrade")?.toLowerCase() !== "websocket") {
-      return new Response("expected a websocket upgrade", { status: 426 });
-    }
+	async fetch(req: Request): Promise<Response> {
+		if (req.headers.get("upgrade")?.toLowerCase() !== "websocket") {
+			return new Response("expected a websocket upgrade", { status: 426 });
+		}
 
-    const { socket, response } = upgradeWebSocket(req);
-    socket.addEventListener("message", (event) => socket.send(event.data));
-    return response;
-  },
+		const { socket, response } = upgradeWebSocket(req);
+		socket.addEventListener("message", (event) => socket.send(event.data));
+		return response;
+	},
 };
 ```
 
@@ -411,24 +399,24 @@ import { upgradeWebSocket } from "@neon/functions";
 const clients = new Set<WebSocket>();
 
 export default {
-  async fetch(request: Request): Promise<Response> {
-    if (request.headers.get("upgrade")?.toLowerCase() !== "websocket") {
-      return new Response("WebSocket endpoint — connect with ?token=<jwt>");
-    }
+	async fetch(request: Request): Promise<Response> {
+		if (request.headers.get("upgrade")?.toLowerCase() !== "websocket") {
+			return new Response("WebSocket endpoint — connect with ?token=<jwt>");
+		}
 
-    const url = new URL(request.url);
-    const identity = await verifyToken(url.searchParams.get("token"));
-    if (!identity) return new Response("unauthorized", { status: 401 });
+		const url = new URL(request.url);
+		const identity = await verifyToken(url.searchParams.get("token"));
+		if (!identity) return new Response("unauthorized", { status: 401 });
 
-    const { socket, response } = upgradeWebSocket(request);
-    clients.add(socket);
-    socket.addEventListener("close", () => clients.delete(socket));
-    socket.addEventListener("message", (event) => {
-      if (typeof event.data !== "string") return;
-      persist(identity.id, event.data); // fan out to every isolate — see below
-    });
-    return response;
-  },
+		const { socket, response } = upgradeWebSocket(request);
+		clients.add(socket);
+		socket.addEventListener("close", () => clients.delete(socket));
+		socket.addEventListener("message", (event) => {
+			if (typeof event.data !== "string") return;
+			persist(identity.id, event.data); // fan out to every isolate — see below
+		});
+		return response;
+	},
 };
 ```
 
@@ -437,35 +425,35 @@ export default {
 **Hono.** Use `upgradeWebSocket` from `@neon/functions/hono` — the same primitive as Hono's own WebSocket helper, with no `ws` dependency and not the deprecated `@hono/node-ws`. Auth is ordinary middleware; gate upgrade requests before `next()`:
 
 ```typescript
+import { upgradeWebSocket } from "@neon/functions/hono";
 // src/index.ts
 import { Hono } from "hono";
-import { upgradeWebSocket } from "@neon/functions/hono";
 
 const clients = new Set<WebSocket>();
 
 const app = new Hono<{ Variables: { userId: string } }>();
 
 app.use("/ws", async (c, next) => {
-  const identity = await verifyToken(c.req.query("token"));
-  if (!identity) return c.text("Unauthorized", 401);
-  c.set("userId", identity.id);
-  await next();
+	const identity = await verifyToken(c.req.query("token"));
+	if (!identity) return c.text("Unauthorized", 401);
+	c.set("userId", identity.id);
+	await next();
 });
 
 app.get(
-  "/ws",
-  upgradeWebSocket((c) => ({
-    onOpen(_event, ws) {
-      clients.add(ws.raw);
-      ws.send("welcome");
-    },
-    onClose(_event, ws) {
-      clients.delete(ws.raw);
-    },
-    onMessage(event, ws) {
-      ws.send(`echo: ${event.data}`);
-    },
-  })),
+	"/ws",
+	upgradeWebSocket((c) => ({
+		onOpen(_event, ws) {
+			clients.add(ws.raw);
+			ws.send("welcome");
+		},
+		onClose(_event, ws) {
+			clients.delete(ws.raw);
+		},
+		onMessage(event, ws) {
+			ws.send(`echo: ${event.data}`);
+		},
+	}))
 );
 
 export default app;
@@ -485,9 +473,9 @@ The standard `WebSocket` interface has no `ping()`, so send an application-level
 const HEARTBEAT_MS = 25_000; // comfortably under proxy idle timeouts
 
 const beat = setInterval(() => {
-  for (const socket of clients) {
-    if (socket.readyState === socket.OPEN) socket.send('{"type":"ping"}');
-  }
+	for (const socket of clients) {
+		if (socket.readyState === socket.OPEN) socket.send('{"type":"ping"}');
+	}
 }, HEARTBEAT_MS);
 beat.unref?.();
 ```
@@ -509,34 +497,34 @@ let lastId = "0"; // bigint id, so a string
 let polling = false;
 
 async function poll() {
-  if (polling || clients.size === 0) return; // guard overlap; no clients → no query → compute can scale to zero
-  polling = true;
-  try {
-    const { rows } = await pool.query(
-      "SELECT id, payload FROM events WHERE id > $1 ORDER BY id",
-      [lastId],
-    );
-    for (const { id, payload } of rows) {
-      lastId = id;
-      for (const socket of clients) {
-        if (socket.readyState === socket.OPEN) socket.send(payload);
-      }
-    }
-  } catch (err) {
-    console.error("[poll]", err);
-  } finally {
-    polling = false;
-  }
+	if (polling || clients.size === 0) return; // guard overlap; no clients → no query → compute can scale to zero
+	polling = true;
+	try {
+		const { rows } = await pool.query(
+			"SELECT id, payload FROM events WHERE id > $1 ORDER BY id",
+			[lastId]
+		);
+		for (const { id, payload } of rows) {
+			lastId = id;
+			for (const socket of clients) {
+				if (socket.readyState === socket.OPEN) socket.send(payload);
+			}
+		}
+	} catch (err) {
+		console.error("[poll]", err);
+	} finally {
+		polling = false;
+	}
 }
 
 // Seed from the latest id so a fresh isolate sends only new rows, not the whole table, then poll.
 pool
-  .query("SELECT coalesce(max(id), 0)::text AS id FROM events")
-  .then((seed) => {
-    lastId = seed.rows[0].id;
-  })
-  .catch((err) => console.error("[seed]", err))
-  .finally(() => setInterval(poll, 1000).unref?.());
+	.query("SELECT coalesce(max(id), 0)::text AS id FROM events")
+	.then((seed) => {
+		lastId = seed.rows[0].id;
+	})
+	.catch((err) => console.error("[seed]", err))
+	.finally(() => setInterval(poll, 1000).unref?.());
 ```
 
 - **Latency:** up to the interval (~1s).
@@ -559,25 +547,25 @@ const CHANNEL = "chat_events";
 // Don't call attachDatabasePool here: it would silence the idle drop that killed the feed.
 // The error listener keeps the process alive; reconnect the client on error in production (omitted here).
 const listener = new Client({
-  connectionString: process.env.DATABASE_URL_UNPOOLED,
+	connectionString: process.env.DATABASE_URL_UNPOOLED,
 });
 listener.on("error", (err) => {
-  console.error(err);
+	console.error(err);
 });
 listener.connect().then(() => listener.query(`LISTEN ${CHANNEL}`));
 listener.on("notification", (msg) => {
-  if (!msg.payload) return;
-  for (const socket of clients) {
-    if (socket.readyState === socket.OPEN) socket.send(msg.payload);
-  }
+	if (!msg.payload) return;
+	for (const socket of clients) {
+		if (socket.readyState === socket.OPEN) socket.send(msg.payload);
+	}
 });
 
 // Broadcast by NOTIFYing through the pool — every isolate's listener fires.
 function broadcast(event: unknown) {
-  return pool.query("SELECT pg_notify($1, $2)", [
-    CHANNEL,
-    JSON.stringify(event),
-  ]);
+	return pool.query("SELECT pg_notify($1, $2)", [
+		CHANNEL,
+		JSON.stringify(event),
+	]);
 }
 ```
 
@@ -591,24 +579,24 @@ Idle functions are evicted (and isolates restart for operational reasons), so a 
 
 ```typescript
 let closed = false,
-  retry = 0,
-  timer: ReturnType<typeof setTimeout>;
+	retry = 0,
+	timer: ReturnType<typeof setTimeout>;
 
 async function connect() {
-  if (closed) return;
-  const token = await getToken(); // re-mint each attempt; short-lived
-  const ws = new WebSocket(`${WS_URL}?token=${encodeURIComponent(token)}`);
-  ws.onopen = () => {
-    retry = 0; // reset backoff on success
-  };
-  ws.onmessage = (e) => {
-    /* apply the event */
-  };
-  ws.onclose = () => {
-    if (!closed)
-      timer = setTimeout(connect, Math.min(1000 * 2 ** retry++, 15000));
-  };
-  ws.onerror = () => ws.close(); // let onclose drive the retry
+	if (closed) return;
+	const token = await getToken(); // re-mint each attempt; short-lived
+	const ws = new WebSocket(`${WS_URL}?token=${encodeURIComponent(token)}`);
+	ws.onopen = () => {
+		retry = 0; // reset backoff on success
+	};
+	ws.onmessage = (e) => {
+		/* apply the event */
+	};
+	ws.onclose = () => {
+		if (!closed)
+			timer = setTimeout(connect, Math.min(1000 * 2 ** retry++, 15000));
+	};
+	ws.onerror = () => ws.close(); // let onclose drive the retry
 }
 connect();
 ```
@@ -623,29 +611,29 @@ When you only need **server → client** streaming (live counters, notifications
 // src/index.ts — minimal SSE endpoint
 const encoder = new TextEncoder();
 export default {
-  fetch: () => {
-    let t: ReturnType<typeof setInterval>;
-    return new Response(
-      new ReadableStream<Uint8Array>({
-        start(controller) {
-          controller.enqueue(encoder.encode("data: hello\n\n"));
-          t = setInterval(
-            () => controller.enqueue(encoder.encode(": ping\n\n")),
-            25_000,
-          );
-        },
-        cancel() {
-          clearInterval(t); // fires when the client disconnects
-        },
-      }),
-      {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache, no-transform",
-        },
-      },
-    );
-  },
+	fetch: () => {
+		let t: ReturnType<typeof setInterval>;
+		return new Response(
+			new ReadableStream<Uint8Array>({
+				start(controller) {
+					controller.enqueue(encoder.encode("data: hello\n\n"));
+					t = setInterval(
+						() => controller.enqueue(encoder.encode(": ping\n\n")),
+						25_000
+					);
+				},
+				cancel() {
+					clearInterval(t); // fires when the client disconnects
+				},
+			}),
+			{
+				headers: {
+					"Content-Type": "text/event-stream",
+					"Cache-Control": "no-cache, no-transform",
+				},
+			}
+		);
+	},
 };
 ```
 
@@ -665,24 +653,24 @@ The simplest host is a Hono app using the official [`@modelcontextprotocol/sdk`]
 
 ```typescript
 app.on(["GET", "DELETE"], "/mcp", (c) =>
-  c.json(
-    {
-      jsonrpc: "2.0",
-      error: { code: -32000, message: "Method not allowed." },
-      id: null,
-    },
-    405,
-    { Allow: "POST" },
-  ),
+	c.json(
+		{
+			jsonrpc: "2.0",
+			error: { code: -32000, message: "Method not allowed." },
+			id: null,
+		},
+		405,
+		{ Allow: "POST" }
+	)
 );
 
 app.post("/mcp", async (c) => {
-  const server = createServer();
-  const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
-  await server.connect(transport);
-  return transport.handleRequest(c.req.raw);
+	const server = createServer();
+	const transport = new WebStandardStreamableHTTPServerTransport({
+		sessionIdGenerator: undefined,
+	});
+	await server.connect(transport);
+	return transport.handleRequest(c.req.raw);
 });
 ```
 
