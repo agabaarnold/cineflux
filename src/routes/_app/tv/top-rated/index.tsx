@@ -56,9 +56,18 @@ function TopRatedTvPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			{query.isPending ? (
-				<MediaGridSkeleton title="Top Rated TV Shows" gap="gap-2" />
+				<MediaGridSkeleton
+					description="TV shows ranked by their audience ratings."
+					gap="gap-2"
+					title="Top Rated TV Shows"
+				/>
 			) : (
-				<MediaGrid items={items} title="Top Rated TV Shows" gap="gap-2" />
+				<MediaGrid
+					description="TV shows ranked by their audience ratings."
+					gap="gap-2"
+					items={items}
+					title="Top Rated TV Shows"
+				/>
 			)}
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">

@@ -56,9 +56,18 @@ function OnTheAirTvPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			{query.isPending ? (
-				<MediaGridSkeleton title="On the Air" gap="gap-2" />
+				<MediaGridSkeleton
+					description="TV shows currently airing and releasing new episodes."
+					gap="gap-2"
+					title="On the Air"
+				/>
 			) : (
-				<MediaGrid items={items} title="On the Air" gap="gap-2" />
+				<MediaGrid
+					description="TV shows currently airing and releasing new episodes."
+					gap="gap-2"
+					items={items}
+					title="On the Air"
+				/>
 			)}
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">

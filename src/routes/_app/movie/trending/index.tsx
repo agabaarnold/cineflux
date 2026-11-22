@@ -68,9 +68,18 @@ function TrendingMoviesPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			{query.isPending ? (
-				<MediaGridSkeleton title="Trending Movies" gap="gap-2" />
+				<MediaGridSkeleton
+					description="Movies gaining attention across the CineFlux community today."
+					gap="gap-2"
+					title="Trending Movies"
+				/>
 			) : (
-				<MediaGrid items={items} title="Trending Movies" gap="gap-2" />
+				<MediaGrid
+					description="Movies gaining attention across the CineFlux community today."
+					gap="gap-2"
+					items={items}
+					title="Trending Movies"
+				/>
 			)}
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">

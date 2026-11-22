@@ -56,9 +56,18 @@ function PopularTvPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			{query.isPending ? (
-				<MediaGridSkeleton title="Popular TV Shows" gap="gap-2" />
+				<MediaGridSkeleton
+					description="TV shows with the highest popularity and audience interest."
+					gap="gap-2"
+					title="Popular TV Shows"
+				/>
 			) : (
-				<MediaGrid items={items} title="Popular TV Shows" gap="gap-2" />
+				<MediaGrid
+					description="TV shows with the highest popularity and audience interest."
+					gap="gap-2"
+					items={items}
+					title="Popular TV Shows"
+				/>
 			)}
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">

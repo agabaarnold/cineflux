@@ -56,9 +56,18 @@ function UpcomingMoviesPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			{query.isPending ? (
-				<MediaGridSkeleton title="Upcoming Movies" gap="gap-2" />
+				<MediaGridSkeleton
+					description="Movies scheduled for release soon."
+					gap="gap-2"
+					title="Upcoming Movies"
+				/>
 			) : (
-				<MediaGrid items={items} title="Upcoming Movies" gap="gap-2" />
+				<MediaGrid
+					description="Movies scheduled for release soon."
+					gap="gap-2"
+					items={items}
+					title="Upcoming Movies"
+				/>
 			)}
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">

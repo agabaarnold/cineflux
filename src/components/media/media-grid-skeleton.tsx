@@ -2,10 +2,12 @@ import { Skeleton } from "#/components/ui/skeleton.tsx";
 
 export const MediaGridSkeleton = ({
 	compact = false,
+	description,
 	gap = "gap-3",
 	title,
 }: {
 	compact?: boolean;
+	description?: string;
 	gap?: string;
 	title: string;
 }) => (
@@ -16,9 +18,14 @@ export const MediaGridSkeleton = ({
 	>
 		<span className="sr-only">Loading {title}</span>
 		{title ? (
-			<h2 className="mb-5 text-center text-xl font-semibold uppercase">
-				{title}
-			</h2>
+			<div className="mb-5 text-center">
+				<h2 className="text-xl font-semibold uppercase">{title}</h2>
+				{description ? (
+					<p className="text-muted-foreground mx-auto mt-1 max-w-xl text-sm">
+						{description}
+					</p>
+				) : null}
+			</div>
 		) : null}
 
 		<div

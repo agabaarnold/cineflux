@@ -56,9 +56,18 @@ function NowPlayingMoviesPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			{query.isPending ? (
-				<MediaGridSkeleton title="Now Playing" gap="gap-2" />
+				<MediaGridSkeleton
+					description="Movies currently being shown in cinemas."
+					gap="gap-2"
+					title="Now Playing"
+				/>
 			) : (
-				<MediaGrid items={items} title="Now Playing" gap="gap-2" />
+				<MediaGrid
+					description="Movies currently being shown in cinemas."
+					gap="gap-2"
+					items={items}
+					title="Now Playing"
+				/>
 			)}
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">
