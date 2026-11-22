@@ -1,16 +1,18 @@
 import { Skeleton } from "#/components/ui/skeleton.tsx";
 
 export const MediaGridSkeleton = ({
+	compact = false,
 	gap = "gap-3",
 	title,
 }: {
+	compact?: boolean;
 	gap?: string;
 	title: string;
 }) => (
 	<section
 		aria-label={`${title} loading`}
 		aria-busy="true"
-		className="mx-auto mt-20 mb-4"
+		className={compact ? "mx-auto mb-4 w-full" : "mx-auto mt-20 mb-4"}
 	>
 		<span className="sr-only">Loading {title}</span>
 		{title ? (
@@ -29,11 +31,11 @@ export const MediaGridSkeleton = ({
 					key={`media-grid-skeleton-${index}`}
 				>
 					<div className="bg-card h-full overflow-hidden rounded-2xl border">
-						<Skeleton className="aspect-[2/3] w-full" />
+						<Skeleton className="aspect-2/3 w-full" />
 						<div className="p-4">
 							<Skeleton className="h-5 w-3/4" />
 							<Skeleton className="mt-2 h-4 w-1/2" />
-							<Skeleton className="mt-2 h-[3.75rem] w-full" />
+							<Skeleton className="mt-2 h-15 w-full" />
 						</div>
 					</div>
 				</div>
