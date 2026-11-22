@@ -74,6 +74,9 @@ The app runs at <http://localhost:3000>.
 | `TMDB_BASE_URL` | ✅ | `https://api.themoviedb.org/3` |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | ❌ | Enable Google sign-in. Set **both** or neither |
 | `VITE_SITE_URL` | ❌ | Public origin (no path) used for canonical links and social cards |
+| `NEON_PROJECT_ID` | ❌ | Neon project ID for test branches; can be omitted after linking with `npx neon link` |
+| `NEON_TEST_BRANCH` | ❌ | Neon test branch name. Defaults to `cineflux-test` |
+| `NEON_TEST_DATABASE` | ❌ | Database name on the test branch. Defaults to `neondb` |
 
 Variables are validated at startup with `@t3-oss/env-core`, so a missing value fails fast with a clear error.
 
@@ -85,6 +88,8 @@ Variables are validated at startup with `@t3-oss/env-core`, so a missing value f
 | `pnpm build` | Production build (self-contained Node server in `.output/`) |
 | `pnpm preview` | Preview the production build |
 | `pnpm test` | Run the Vitest suite |
+| `pnpm test:integration` | Run the full Vitest suite against the CineFlux Neon test branch |
+| `pnpm db:test:migrate` | Apply Drizzle migrations to the CineFlux Neon test branch |
 | `pnpm check` | Lint and format check (Ultracite) |
 | `pnpm fix` | Auto-fix lint and format issues |
 | `pnpm generate-routes` | Regenerate `src/routeTree.gen.ts` (Vite also does this on dev/build) |
@@ -106,6 +111,13 @@ Unit and hook tests run with no extra setup. The watchlist database integration 
 TEST_DATABASE_URL=postgresql://postgres@localhost:5432/cineflux_test \
 DATABASE_URL=postgresql://postgres@localhost:5432/cineflux_test \
 pnpm test
+```
+
+For the configured Neon workflow, the tests can use the disposable `cineflux-test` branch directly:
+
+```bash
+pnpm db:test:migrate
+pnpm test:integration
 ```
 
 CI spins up Postgres 17, runs migrations, then type-checks (`tsc --noEmit`), lints, and tests on every push and pull request.
