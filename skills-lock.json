@@ -54,7 +54,8 @@
 			"source": "haydenbleasel/ultracite",
 			"sourceType": "github",
 			"skillPath": "skills/ultracite/SKILL.md",
-			"computedHash": ""
+			"computedHash": "52eac7a3ac5f3117d8d70f1058eed56403e9755fc93e0ba944c4c501fa560ba6",
+			"commit": "2067174fb236c67bc76c706b81a3b095de2c5bac"
 		}
 	}
 }
