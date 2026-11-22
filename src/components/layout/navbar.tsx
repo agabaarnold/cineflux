@@ -1,6 +1,7 @@
 // oxlint-disable shadcn/no-restyle
 import {
 	IconBookmark,
+	IconCompass,
 	IconDeviceTv,
 	IconHome,
 	IconLogout,
@@ -136,12 +137,16 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 
 export const Navbar = ({ user }: { user: NavbarUser | null }) => (
 	<header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-5 sm:px-4">
-		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-3 rounded-full border py-1 sm:py-0.5 shadow-2xl shadow-black/20 backdrop-blur-xl sm:h-12 sm:gap-2.5">
+		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-3 rounded-full border py-1 shadow-2xl shadow-black/20 backdrop-blur-xl sm:h-12 sm:gap-2.5 sm:py-0.5">
 			<MobileMenu user={user} />
 
 			<div className="hidden items-center gap-1.5 md:flex">
 				<NavItem to="/" icon={IconHome}>
 					Home
+				</NavItem>
+
+				<NavItem to="/discover" icon={IconCompass}>
+					Discover
 				</NavItem>
 
 				<NavItem to="/movie" icon={IconMovie}>

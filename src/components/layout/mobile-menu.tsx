@@ -1,5 +1,6 @@
 import {
 	IconBookmark,
+	IconCompass,
 	IconDeviceTv,
 	IconHome,
 	IconMenu2,
@@ -26,6 +27,7 @@ import { Logo } from "../shared/logo";
 
 const menuLinks = [
 	{ icon: IconHome, label: "Home", to: "/" },
+	{ icon: IconCompass, label: "Discover", to: "/discover" },
 	{ icon: IconMovie, label: "Movies", to: "/movie" },
 	{ icon: IconDeviceTv, label: "TV Shows", to: "/tv" },
 	{ icon: IconUsersGroup, label: "People", to: "/people" },

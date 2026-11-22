@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppDiscoverIndexRouteImport } from './routes/_app/discover/index'
 import { Route as AppMovieIndexRouteImport } from './routes/_app/movie/index'
 import { Route as AppMovieMovieIdRouteImport } from './routes/_app/movie/$movieId'
 import { Route as AppPeopleIndexRouteImport } from './routes/_app/people/index'
@@ -49,6 +50,11 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppDiscoverIndexRoute = AppDiscoverIndexRouteImport.update({
+  id: '/discover/',
+  path: '/discover/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppMovieIndexRoute = AppMovieIndexRouteImport.update({
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/movie/$movieId': typeof AppMovieMovieIdRoute
   '/person/$personId': typeof AppPersonPersonIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/discover/': typeof AppDiscoverIndexRoute
   '/movie/': typeof AppMovieIndexRoute
   '/people/': typeof AppPeopleIndexRoute
   '/search/': typeof AppSearchIndexRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/movie/$movieId': typeof AppMovieMovieIdRoute
   '/person/$personId': typeof AppPersonPersonIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/discover': typeof AppDiscoverIndexRoute
   '/movie': typeof AppMovieIndexRoute
   '/people': typeof AppPeopleIndexRoute
   '/search': typeof AppSearchIndexRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/_app/movie/$movieId': typeof AppMovieMovieIdRoute
   '/_app/person/$personId': typeof AppPersonPersonIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_app/discover/': typeof AppDiscoverIndexRoute
   '/_app/movie/': typeof AppMovieIndexRoute
   '/_app/people/': typeof AppPeopleIndexRoute
   '/_app/search/': typeof AppSearchIndexRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/movie/$movieId'
     | '/person/$personId'
     | '/api/auth/$'
+    | '/discover/'
     | '/movie/'
     | '/people/'
     | '/search/'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/movie/$movieId'
     | '/person/$personId'
     | '/api/auth/$'
+    | '/discover'
     | '/movie'
     | '/people'
     | '/search'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/_app/movie/$movieId'
     | '/_app/person/$personId'
     | '/api/auth/$'
+    | '/_app/discover/'
     | '/_app/movie/'
     | '/_app/people/'
     | '/_app/search/'
@@ -379,6 +391,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/discover/': {
+      id: '/_app/discover/'
+      path: '/discover'
+      fullPath: '/discover/'
+      preLoaderRoute: typeof AppDiscoverIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/movie/': {
@@ -597,6 +616,7 @@ interface AppRouteRouteChildren {
   AppTvTvIdRouteRoute: typeof AppTvTvIdRouteRouteWithChildren
   AppMovieMovieIdRoute: typeof AppMovieMovieIdRoute
   AppPersonPersonIdRoute: typeof AppPersonPersonIdRoute
+  AppDiscoverIndexRoute: typeof AppDiscoverIndexRoute
   AppMovieIndexRoute: typeof AppMovieIndexRoute
   AppPeopleIndexRoute: typeof AppPeopleIndexRoute
   AppSearchIndexRoute: typeof AppSearchIndexRoute
@@ -619,6 +639,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppTvTvIdRouteRoute: AppTvTvIdRouteRouteWithChildren,
   AppMovieMovieIdRoute: AppMovieMovieIdRoute,
   AppPersonPersonIdRoute: AppPersonPersonIdRoute,
+  AppDiscoverIndexRoute: AppDiscoverIndexRoute,
   AppMovieIndexRoute: AppMovieIndexRoute,
   AppPeopleIndexRoute: AppPeopleIndexRoute,
   AppSearchIndexRoute: AppSearchIndexRoute,

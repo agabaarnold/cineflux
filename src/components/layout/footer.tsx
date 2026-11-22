@@ -25,6 +25,12 @@ export const Footer = () => (
 					</Link>
 					<Link
 						className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+						to="/discover"
+					>
+						Discover
+					</Link>
+					<Link
+						className="text-muted-foreground hover:text-foreground text-sm transition-colors"
 						to="/movie"
 					>
 						Movies
