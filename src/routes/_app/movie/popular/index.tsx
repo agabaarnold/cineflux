@@ -55,6 +55,7 @@ function PopularMoviesPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			<MediaGrid items={items} title="Popular Movies" gap="gap-3" />
+			
 			{query.hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">
 					<button
