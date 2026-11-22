@@ -56,9 +56,18 @@ function PopularMoviesPage() {
 	return (
 		<div className="flex flex-col space-y-6">
 			{query.isPending ? (
-				<MediaGridSkeleton title="Popular Movies" gap="gap-3" />
+				<MediaGridSkeleton
+					description="Movies with the highest popularity and audience interest."
+					gap="gap-3"
+					title="Popular Movies"
+				/>
 			) : (
-				<MediaGrid items={items} title="Popular Movies" gap="gap-3" />
+				<MediaGrid
+					description="Movies with the highest popularity and audience interest."
+					gap="gap-3"
+					items={items}
+					title="Popular Movies"
+				/>
 			)}
 
 			{query.hasNextPage && (

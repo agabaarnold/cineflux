@@ -5,21 +5,29 @@ export const MediaGrid = ({
 	items,
 	title,
 	gap = "gap-3",
+	description,
 }: {
 	items: RowItem[];
 	title: string;
 	gap?: string;
+	description?: string;
 }) => (
-	<section className="mx-auto mt-20 mb-4">
+	<section className="mx-auto mt-20 mb-4 w-full max-w-7xl px-4">
 		{title ? (
-			<h2 className="mb-5 text-center text-xl font-semibold uppercase">
-				{title}
-			</h2>
+			<div className="mb-5 text-center">
+				<h2 className="text-xl font-semibold uppercase">{title}</h2>
+				{description ? (
+					<p className="text-muted-foreground mx-auto mt-1 max-w-xl text-sm">
+						{description}
+					</p>
+				) : null}
+			</div>
 		) : null}
 
 		<div className={`grid grid-cols-2 ${gap} sm:grid-cols-3 lg:grid-cols-4`}>
 			{items.map((item) => (
 				<MediaCard
+					grid
 					key={item.id}
 					href={item.href}
 					image={item.image}

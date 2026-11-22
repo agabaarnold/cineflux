@@ -1,5 +1,6 @@
 import {
 	IconBookmark,
+	IconCompass,
 	IconDeviceTv,
 	IconHome,
 	IconMenu2,
@@ -26,6 +27,7 @@ import { Logo } from "../shared/logo";
 
 const menuLinks = [
 	{ icon: IconHome, label: "Home", to: "/" },
+	{ icon: IconCompass, label: "Discover", to: "/discover" },
 	{ icon: IconMovie, label: "Movies", to: "/movie" },
 	{ icon: IconDeviceTv, label: "TV Shows", to: "/tv" },
 	{ icon: IconUsersGroup, label: "People", to: "/people" },
@@ -42,7 +44,7 @@ export const MobileMenu = ({ user }: { user: NavbarUser | null }) => {
 		<div className="sm:hidden">
 			<Sheet onOpenChange={setOpen} open={open}>
 				<SheetTrigger render={<button aria-label="Open menu" type="button" />}>
-					<span className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors">
+					<span className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-11 items-center justify-center rounded-full transition-colors">
 						<IconMenu2 aria-hidden="true" className="size-4" />
 					</span>
 				</SheetTrigger>

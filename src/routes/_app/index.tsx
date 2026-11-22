@@ -147,10 +147,15 @@ function Home() {
 
 	return (
 		<div className="flex flex-col">
-			<h1 className="sr-only">Discover movies, TV shows, and people</h1>
 			<HeroCarousel items={heroItems} />
 
 			<div className="mx-auto w-full max-w-7xl space-y-10 px-4 py-6">
+				<div>
+					<h1 className="text-3xl font-bold">Discover</h1>
+					<p className="text-muted-foreground mt-1">
+						Explore trending movies, TV shows, and people worth watching.
+					</p>
+				</div>
 				<div>
 					<div className="mb-3 flex items-center justify-between">
 						<h2 className="text-2xl font-semibold">Trending</h2>

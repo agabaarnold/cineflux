@@ -1,6 +1,7 @@
 // oxlint-disable shadcn/no-restyle
 import {
 	IconBookmark,
+	IconCompass,
 	IconDeviceTv,
 	IconHome,
 	IconLogout,
@@ -39,7 +40,7 @@ const NavItem = ({ to, children, icon: Icon }: NavItemProps) => (
 	<Link
 		to={to}
 		className={cn(
-			"flex h-9 items-center gap-2 rounded-full px-3",
+			"flex h-11 items-center gap-2 rounded-full px-3",
 			"text-primary/75 text-sm font-medium",
 			"transition-colors duration-200"
 		)}
@@ -67,7 +68,7 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 	if (!user) {
 		return (
 			<Link
-				className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-9 items-center rounded-full px-4 text-sm font-medium transition-colors"
+				className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-11 items-center rounded-full px-4 text-sm font-medium transition-colors"
 				to="/sign-in"
 			>
 				Sign in
@@ -88,7 +89,7 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				aria-label="Profile menu"
-				className="ring-foreground/15 hover:ring-foreground/30 rounded-full ring-1 transition outline-none"
+				className="flex size-11 items-center justify-center rounded-full transition outline-none"
 			>
 				<Avatar>
 					{user.image ? <AvatarImage alt={user.name} src={user.image} /> : null}
@@ -136,12 +137,16 @@ const ProfileControl = ({ user }: { user: NavbarUser | null }) => {
 
 export const Navbar = ({ user }: { user: NavbarUser | null }) => (
 	<header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-5 sm:px-4">
-		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-3 rounded-full border p-1 shadow-2xl shadow-black/20 backdrop-blur-xl sm:h-12 sm:gap-2.5 sm:p-1.5">
+		<nav className="border-border/70 bg-card/80 supports-backdrop-filter:bg-card/65 pointer-events-auto flex h-12 items-center gap-3 rounded-full border py-1 shadow-2xl shadow-black/20 backdrop-blur-xl sm:h-12 sm:gap-2.5 sm:py-0.5">
 			<MobileMenu user={user} />
 
 			<div className="hidden items-center gap-1.5 md:flex">
 				<NavItem to="/" icon={IconHome}>
 					Home
+				</NavItem>
+
+				<NavItem to="/discover" icon={IconCompass}>
+					Discover
 				</NavItem>
 
 				<NavItem to="/movie" icon={IconMovie}>
@@ -160,7 +165,7 @@ export const Navbar = ({ user }: { user: NavbarUser | null }) => (
 			<Link
 				aria-label="Search"
 				to="/search"
-				className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors"
+				className="text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-11 items-center justify-center rounded-full transition-colors"
 				activeProps={{ className: "bg-primary text-secondary" }}
 			>
 				<IconSearch aria-hidden="true" className="size-4" />
