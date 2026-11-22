@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { MediaGridSkeleton } from "#/components/media/media-grid-skeleton.tsx";
 import { MediaGrid } from "#/components/media/media-grid.tsx";
+import type { RowItem } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Button } from "#/components/ui/button.tsx";
 import { Input } from "#/components/ui/input.tsx";
@@ -115,9 +116,9 @@ function DiscoverPage() {
 
 	const query = useInfiniteQuery({
 		queryKey: ["discover", search.type, search.sort, search.year],
-		queryFn: ({ pageParam = 1 }) => {
+		queryFn: async ({ pageParam = 1 }) => {
 			if (search.type === "tv") {
-				return discoverTvShows({
+				const page = await discoverTvShows({
 					data: {
 						first_air_date_year: year,
 						language: "en-US",
@@ -125,8 +126,16 @@ function DiscoverPage() {
 						sort_by: normalizeTvSort(search.sort),
 					},
 				});
+				return {
+					page: page.page,
+					results: page.results.map((item) => ({
+						item,
+						kind: "tv" as const,
+					})),
+					total_pages: page.total_pages,
+				};
 			}
-			return discoverMovies({
+			const page = await discoverMovies({
 				data: {
 					language: "en-US",
 					page: pageParam,
@@ -134,6 +143,14 @@ function DiscoverPage() {
 					sort_by: normalizeMovieSort(search.sort),
 				},
 			});
+			return {
+				page: page.page,
+				results: page.results.map((item) => ({
+					item,
+					kind: "movie" as const,
+				})),
+				total_pages: page.total_pages,
+			};
 		},
 		getNextPageParam: (lastPage) =>
 			lastPage.page < lastPage.total_pages ? lastPage.page + 1 : undefined,
@@ -141,56 +158,42 @@ function DiscoverPage() {
 	});
 
 	const pages = query.data?.pages ?? [];
-	let items;
-	if (search.type === "movie") {
-		items = pages.flatMap((page) =>
-			page.results.flatMap((item) => {
-				if (!("title" in item)) {
-					return [];
-				}
-				return [
-					{
-						href: `/movie/${item.id}`,
-						id: `movie-${item.id}`,
-						image: getPosterUrl(item.poster_path),
-						mediaId: item.id,
-						mediaType: "movie" as const,
-						overview: item.overview,
-						stat: {
-							kind: "rating" as const,
-							value: item.vote_average,
-						},
-						title: item.title,
-						year: item.release_date.slice(0, 4),
-					},
-				];
-			})
-		);
-	} else {
-		items = pages.flatMap((page) =>
-			page.results.flatMap((item) => {
-				if (!("name" in item)) {
-					return [];
-				}
-				return [
-					{
-						href: `/tv/${item.id}`,
-						id: `tv-${item.id}`,
-						image: getPosterUrl(item.poster_path),
-						mediaId: item.id,
-						mediaType: "tv" as const,
-						overview: item.overview,
-						stat: {
-							kind: "rating" as const,
-							value: item.vote_average,
-						},
-						title: item.name,
-						year: (item.first_air_date ?? "").slice(0, 4),
-					},
-				];
-			})
-		);
-	}
+	const items: RowItem[] = pages.flatMap((page) =>
+		page.results.map((result) => {
+			if (result.kind === "movie") {
+				const { item } = result;
+				return {
+					href: `/movie/${item.id}`,
+					id: `movie-${item.id}`,
+					image: getPosterUrl(item.poster_path),
+					mediaId: item.id,
+					mediaType: "movie",
+					overview: item.overview,
+					stat: {
+						kind: "rating",
+						value: item.vote_average,
+					} as const,
+					title: item.title,
+					year: item.release_date.slice(0, 4),
+				};
+			}
+			const { item } = result;
+			return {
+				href: `/tv/${item.id}`,
+				id: `tv-${item.id}`,
+				image: getPosterUrl(item.poster_path),
+				mediaId: item.id,
+				mediaType: "tv",
+				overview: item.overview,
+				stat: {
+					kind: "rating",
+					value: item.vote_average,
+				} as const,
+				title: item.name,
+				year: (item.first_air_date ?? "").slice(0, 4),
+			};
+		})
+	);
 
 	const sortOptions =
 		search.type === "movie" ? movieSortOptions : tvSortOptions;
