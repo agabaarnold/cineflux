@@ -13,35 +13,35 @@ A function's default export is `{ fetch }`; SSE needs nothing more. Return a `Re
 const encoder = new TextEncoder();
 
 export default {
-  fetch(request: Request): Response {
-    const url = new URL(request.url);
-    if (url.pathname !== "/events") return new Response("ok");
+	fetch(request: Request): Response {
+		const url = new URL(request.url);
+		if (url.pathname !== "/events") return new Response("ok");
 
-    let timer: ReturnType<typeof setInterval>;
-    const stream = new ReadableStream<Uint8Array>({
-      start(controller) {
-        // An SSE frame is `data: <payload>\n\n`. A line starting with `:` is a
-        // comment — used here as a heartbeat to keep the stream from going idle.
-        controller.enqueue(encoder.encode("data: hello\n\n"));
-        timer = setInterval(
-          () => controller.enqueue(encoder.encode(": ping\n\n")),
-          25_000,
-        );
-      },
-      // cancel() fires when the client disconnects.
-      cancel() {
-        clearInterval(timer);
-      },
-    });
+		let timer: ReturnType<typeof setInterval>;
+		const stream = new ReadableStream<Uint8Array>({
+			start(controller) {
+				// An SSE frame is `data: <payload>\n\n`. A line starting with `:` is a
+				// comment — used here as a heartbeat to keep the stream from going idle.
+				controller.enqueue(encoder.encode("data: hello\n\n"));
+				timer = setInterval(
+					() => controller.enqueue(encoder.encode(": ping\n\n")),
+					25_000
+				);
+			},
+			// cancel() fires when the client disconnects.
+			cancel() {
+				clearInterval(timer);
+			},
+		});
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache, no-transform",
-        Connection: "keep-alive",
-      },
-    });
-  },
+		return new Response(stream, {
+			headers: {
+				"Content-Type": "text/event-stream",
+				"Cache-Control": "no-cache, no-transform",
+				Connection: "keep-alive",
+			},
+		});
+	},
 };
 ```
 
@@ -60,18 +60,18 @@ const app = new Hono();
 app.use("*", cors({ origin: process.env.WEB_ORIGIN ?? "*" })); // EventSource is cross-origin from a SPA
 
 app.get("/events", (c) => {
-  const stream = new ReadableStream<Uint8Array>({
-    start(controller) {
-      controller.enqueue(new TextEncoder().encode("data: connected\n\n"));
-      // ...register `controller` in a broadcast set; see fan-out below.
-    },
-  });
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-    },
-  });
+	const stream = new ReadableStream<Uint8Array>({
+		start(controller) {
+			controller.enqueue(new TextEncoder().encode("data: connected\n\n"));
+			// ...register `controller` in a broadcast set; see fan-out below.
+		},
+	});
+	return new Response(stream, {
+		headers: {
+			"Content-Type": "text/event-stream",
+			"Cache-Control": "no-cache, no-transform",
+		},
+	});
 });
 
 export default app;
@@ -96,30 +96,30 @@ const CHANNEL = "events";
 // Don't call attachDatabasePool here: it would silence the idle drop that killed the feed.
 // The error listener keeps the process alive; reconnect the client on error in production (omitted here).
 const listener = new Client({
-  connectionString: process.env.DATABASE_URL_UNPOOLED,
+	connectionString: process.env.DATABASE_URL_UNPOOLED,
 });
 listener.on("error", (err) => {
-  console.error(err);
+	console.error(err);
 });
 listener.connect().then(() => listener.query(`LISTEN ${CHANNEL}`));
 listener.on("notification", (msg) => {
-  if (!msg.payload) return;
-  const frame = encoder.encode(`data: ${msg.payload}\n\n`);
-  for (const controller of clients) {
-    try {
-      controller.enqueue(frame); // enqueue is synchronous — no concurrent-await hazard
-    } catch {
-      clients.delete(controller); // controller already closed
-    }
-  }
+	if (!msg.payload) return;
+	const frame = encoder.encode(`data: ${msg.payload}\n\n`);
+	for (const controller of clients) {
+		try {
+			controller.enqueue(frame); // enqueue is synchronous — no concurrent-await hazard
+		} catch {
+			clients.delete(controller); // controller already closed
+		}
+	}
 });
 
 // Anywhere you mutate state, NOTIFY so every isolate pushes to its own streams.
 function publish(payload: unknown) {
-  return pool.query("SELECT pg_notify($1, $2)", [
-    CHANNEL,
-    JSON.stringify(payload),
-  ]);
+	return pool.query("SELECT pg_notify($1, $2)", [
+		CHANNEL,
+		JSON.stringify(payload),
+	]);
 }
 ```
 
@@ -145,7 +145,7 @@ Send `data:` with no `event:` field to deliver the default `message` event, whic
 const source = new EventSource(`${FUNCTION_URL}/events`); // GET only
 source.onmessage = (e) => console.log("update", e.data);
 source.onerror = () => {
-  /* EventSource auto-reconnects; nothing to do */
+	/* EventSource auto-reconnects; nothing to do */
 };
 // source.close() to stop.
 ```

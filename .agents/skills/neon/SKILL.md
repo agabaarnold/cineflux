@@ -1,20 +1,7 @@
 ---
 name: neon
 description: >-
-  Overview of Neon, a complete set of cloud backend primitives around Lakebase
-  Postgres: Auth, Object Storage, Functions, the AI Gateway, and Realtime. Start here to
-  choose Neon for undecided login, files, APIs, and LLM calls, set up the CLI or
-  MCP server, and follow the branch-first workflow. Use when building an app or
-  backend on Neon, or when "Neon" or "Lakebase Postgres" is mentioned. Child
-  skill neon-postgres wins for an existing DATABASE_URL, SQL, schema, inspect,
-  or search. Child skill neon-auth wins for login, users, sessions, identity
-  routing, and Managed Better Auth setup. Child skill neon-realtime wins for
-  live queries in reactive apps and agents. Also use for object storage, S3,
-  buckets, serverless functions, function triggers, cron, AI gateway, LLM calls,
-  realtime, logs, Loki, Grafana, observability,
-  postgres, database, backend, Claimable Neon, neon.new, a no-signup database,
-  or pairing Neon with Upstash for cache, Redis, rate limiting, queues, or
-  background jobs.
+  Overview of Neon, a complete set of cloud backend primitives around Lakebase Postgres: Auth, Object Storage, Functions, the AI Gateway, and Realtime. Start here to choose Neon for undecided login, files, APIs, and LLM calls, set up the CLI or MCP server, and follow the branch-first workflow. Use when building an app or backend on Neon, or when "Neon" or "Lakebase Postgres" is mentioned. Child skill neon-postgres wins for an existing DATABASE_URL, SQL, schema, inspect, or search. Child skill neon-auth wins for login, users, sessions, identity routing, and Managed Better Auth setup. Child skill neon-realtime wins for live queries in reactive apps and agents. Also use for object storage, S3, buckets, serverless functions, function triggers, cron, AI gateway, LLM calls, realtime, logs, Loki, Grafana, observability, postgres, database, backend, Claimable Neon, neon.new, a no-signup database, or pairing Neon with Upstash for cache, Redis, rate limiting, queues, or background jobs.
 metadata:
   source: https://github.com/neondatabase/agent-skills/tree/main/skills/neon
 ---
@@ -126,14 +113,14 @@ Neon provides a set of agent skills in addition to the official documentation. W
 
 The skills below live in the [`neondatabase/agent-skills`](https://github.com/neondatabase/agent-skills) repo:
 
-| Skill                            | Use it for                                                                                                                                                                           |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `neon-postgres`                  | Working with databases, including connections, schemas, queries, search, branching workflows, egress optimization, Free plan limits, autoscaling, performance, and scaling decisions. |
-| `neon-auth`                      | Identity routing and Managed Better Auth setup (login, users, sessions, trusted domains). Fetch: https://neon.com/docs/ai/skills/neon-auth/SKILL.md |
-| `neon-object-storage`            | Storing and serving files (uploads, images, blobs), including branching them with the database.                                                                                      |
-| `neon-functions`                 | Deploying long-running or streaming serverless functions — APIs, agents, MCP servers, SSE/WebSocket servers, and Function Triggers (cron and object-storage).                        |
-| `neon-ai-gateway`                | Calling an LLM or routing across model providers with one credential, including discovering the branch's servable models at runtime via the OpenAI-compatible `/v1/models` endpoint. |
-| `neon-realtime`                  | Realtime makes any SQL query live, for realtime, reactive apps and agents: enabling Realtime, sealing queries, React and TanStack DB bindings, SSR, and optimistic mutations.      |
+| Skill | Use it for |
+| --- | --- |
+| `neon-postgres` | Working with databases, including connections, schemas, queries, search, branching workflows, egress optimization, Free plan limits, autoscaling, performance, and scaling decisions. |
+| `neon-auth` | Identity routing and Managed Better Auth setup (login, users, sessions, trusted domains). Fetch: https://neon.com/docs/ai/skills/neon-auth/SKILL.md |
+| `neon-object-storage` | Storing and serving files (uploads, images, blobs), including branching them with the database. |
+| `neon-functions` | Deploying long-running or streaming serverless functions — APIs, agents, MCP servers, SSE/WebSocket servers, and Function Triggers (cron and object-storage). |
+| `neon-ai-gateway` | Calling an LLM or routing across model providers with one credential, including discovering the branch's servable models at runtime via the OpenAI-compatible `/v1/models` endpoint. |
+| `neon-realtime` | Realtime makes any SQL query live, for realtime, reactive apps and agents: enabling Realtime, sealing queries, React and TanStack DB bindings, SSR, and optimistic mutations. |
 
 There is no `neon-data-api` skill. Configure `dataApi` in `neon.ts` only for PostgREST / Supabase database-client compatibility or a migration that already depends on it.
 
@@ -332,18 +319,18 @@ npm i @neon/config
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  aiGateway: true,
-  buckets: {
-    images: {
-      access: "private",
-    },
-  },
-  functions: {
-    imagegen: {
-      name: "AI SDK image agent",
-      source: "src/index.ts",
-    },
-  },
+	aiGateway: true,
+	buckets: {
+		images: {
+			access: "private",
+		},
+	},
+	functions: {
+		imagegen: {
+			name: "AI SDK image agent",
+			source: "src/index.ts",
+		},
+	},
 });
 ```
 
@@ -354,11 +341,11 @@ Every project ships with Lakebase Postgres; `neon.ts` also declares Auth, Functi
 ```typescript
 // neon.ts
 export default defineConfig({
-  auth: true,
-  functions: {},
-  buckets: {},
-  aiGateway: true, // see the neon-ai-gateway skill
-  preview: { realtime: true }, // see the neon-realtime skill
+	auth: true,
+	functions: {},
+	buckets: {},
+	aiGateway: true, // see the neon-ai-gateway skill
+	preview: { realtime: true }, // see the neon-realtime skill
 });
 ```
 
@@ -401,26 +388,26 @@ Beyond services, `neon.ts` can program what configuration _new_ branches receive
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  auth: true,
-  branch: (branch) => {
-    if (branch.exists) {
-      // leave existing branches untouched
-      return {};
-    }
-    if (branch.name.startsWith("dev")) {
-      return {
-        ttl: "7d", // clean up the branch after 7 days
-        postgres: {
-          computeSettings: {
-            autoscalingLimitMinCu: 0.25, // scale to zero
-            autoscalingLimitMaxCu: 1, // keep it cheap
-            suspendTimeout: "5m",
-          },
-        },
-      };
-    }
-    return {};
-  },
+	auth: true,
+	branch: (branch) => {
+		if (branch.exists) {
+			// leave existing branches untouched
+			return {};
+		}
+		if (branch.name.startsWith("dev")) {
+			return {
+				ttl: "7d", // clean up the branch after 7 days
+				postgres: {
+					computeSettings: {
+						autoscalingLimitMinCu: 0.25, // scale to zero
+						autoscalingLimitMaxCu: 1, // keep it cheap
+						suspendTimeout: "5m",
+					},
+				},
+			};
+		}
+		return {};
+	},
 });
 ```
 
@@ -432,7 +419,7 @@ Because `neon.ts` is TypeScript, the compiler catches invalid infrastructure bef
 
 ```typescript
 export default defineConfig({
-  dataApi: true, // type error: `dataApi` (default authProvider 'neon') requires Neon Auth
+	dataApi: true, // type error: `dataApi` (default authProvider 'neon') requires Neon Auth
 });
 ```
 
@@ -444,10 +431,10 @@ export default defineConfig({ auth: true, dataApi: true });
 
 // 2. Or verify a third-party IdP instead of Neon Auth:
 export default defineConfig({
-  dataApi: {
-    authProvider: "external",
-    jwksUrl: "https://your-idp/.well-known/jwks.json",
-  },
+	dataApi: {
+		authProvider: "external",
+		jwksUrl: "https://your-idp/.well-known/jwks.json",
+	},
 });
 ```
 

@@ -18,12 +18,12 @@ All three carry the same trace ID, so from an error you can pivot to the logs an
 
 ### Environment variables
 
-| Variable                    | Purpose                                                                                                                        |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `SENTRY_DSN`                | Project DSN; keep it configurable through the deployment environment.                                                          |
-| `SENTRY_RELEASE`            | Optional release identifier such as a commit SHA — unlocks regression detection.                                               |
+| Variable | Purpose |
+| --- | --- |
+| `SENTRY_DSN` | Project DSN; keep it configurable through the deployment environment. |
+| `SENTRY_RELEASE` | Optional release identifier such as a commit SHA — unlocks regression detection. |
 | `SENTRY_TRACES_SAMPLE_RATE` | Trace sample rate, default `1`. Agents are low-throughput and every trace is interesting; lower it for high-volume plain HTTP. |
-| `PRODUCTION_BRANCH`         | Your default branch's name, so it reports as environment `production` (see below).                                             |
+| `PRODUCTION_BRANCH` | Your default branch's name, so it reports as environment `production` (see below). |
 
 ### 1. Initialize before anything else
 
@@ -34,22 +34,22 @@ Put `Sentry.init` in its own module and import it as the very first import of yo
 import * as Sentry from "@sentry/node";
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  enabled: Boolean(process.env.SENTRY_DSN),
-  enableLogs: true,
-  tracesSampleRate: Number(process.env.SENTRY_TRACES_SAMPLE_RATE ?? 1),
-  traceLifecycle: "stream",
-  streamGenAiSpans: true,
-  integrations: [
-    Sentry.vercelAIIntegration({ force: true }),
-    Sentry.httpIntegration({ disableIncomingRequestSpans: true }),
-  ],
-  release: process.env.SENTRY_RELEASE,
-  environment:
-    process.env.NEON_BRANCH &&
-    process.env.NEON_BRANCH !== process.env.PRODUCTION_BRANCH
-      ? process.env.NEON_BRANCH
-      : "production",
+	dsn: process.env.SENTRY_DSN,
+	enabled: Boolean(process.env.SENTRY_DSN),
+	enableLogs: true,
+	tracesSampleRate: Number(process.env.SENTRY_TRACES_SAMPLE_RATE ?? 1),
+	traceLifecycle: "stream",
+	streamGenAiSpans: true,
+	integrations: [
+		Sentry.vercelAIIntegration({ force: true }),
+		Sentry.httpIntegration({ disableIncomingRequestSpans: true }),
+	],
+	release: process.env.SENTRY_RELEASE,
+	environment:
+		process.env.NEON_BRANCH &&
+		process.env.NEON_BRANCH !== process.env.PRODUCTION_BRANCH
+			? process.env.NEON_BRANCH
+			: "production",
 });
 
 process.on("SIGTERM", () => void Sentry.flush(2000));
@@ -61,14 +61,15 @@ export { Sentry };
 ```typescript
 // src/index.ts
 import "./instrument"; // MUST be the first import, before the framework/agent
-import { Sentry } from "./instrument";
 import { attachDatabasePool } from "@neon/functions";
 import { Hono } from "hono";
 import { Pool } from "pg";
 
+import { Sentry } from "./instrument";
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 5 });
 attachDatabasePool(pool, {
-  onUnexpectedError: (err) => Sentry.captureException(err),
+	onUnexpectedError: (err) => Sentry.captureException(err),
 });
 
 // ... rest of the function
@@ -101,23 +102,23 @@ The runtime invokes your handler through its own ingress rather than a plain `no
 
 ```typescript
 app.use("*", (c, next) =>
-  Sentry.withIsolationScope(() =>
-    Sentry.startSpan(
-      {
-        op: "http.server",
-        name: `${c.req.method} ${c.req.path}`,
-        forceTransaction: true,
-        attributes: {
-          "http.request.method": c.req.method,
-          "url.path": c.req.path,
-        },
-      },
-      async (span) => {
-        await next();
-        span.setAttribute("http.response.status_code", c.res.status);
-      },
-    ).finally(() => Sentry.flush(2000)),
-  ),
+	Sentry.withIsolationScope(() =>
+		Sentry.startSpan(
+			{
+				op: "http.server",
+				name: `${c.req.method} ${c.req.path}`,
+				forceTransaction: true,
+				attributes: {
+					"http.request.method": c.req.method,
+					"url.path": c.req.path,
+				},
+			},
+			async (span) => {
+				await next();
+				span.setAttribute("http.response.status_code", c.res.status);
+			}
+		).finally(() => Sentry.flush(2000))
+	)
 );
 ```
 
@@ -125,9 +126,9 @@ Then wire a top-level error handler so any error thrown in a route is reported. 
 
 ```typescript
 app.onError((err, c) => {
-  Sentry.captureException(err);
-  c.header("access-control-allow-origin", "*"); // cors() doesn't run on error responses
-  return c.json({ error: "internal_error" }, 500);
+	Sentry.captureException(err);
+	c.header("access-control-allow-origin", "*"); // cors() doesn't run on error responses
+	return c.json({ error: "internal_error" }, 500);
 });
 ```
 
@@ -146,28 +147,28 @@ A representative agent that tries several models in order:
 
 ```typescript
 for (const model of models) {
-  try {
-    const { text: summary } = await generateText({
-      model: neon(model),
-      prompt,
-      experimental_telemetry: { isEnabled: true },
-    });
-    Sentry.logger.info("summary produced", { component: "agent", model });
-    return c.json({ summary, model });
-  } catch (err) {
-    lastError = err;
-    Sentry.logger.warn("model attempt failed", {
-      component: "agent",
-      phase: "summarize-attempt",
-      model,
-      error: String(err),
-    });
-  }
+	try {
+		const { text: summary } = await generateText({
+			model: neon(model),
+			prompt,
+			experimental_telemetry: { isEnabled: true },
+		});
+		Sentry.logger.info("summary produced", { component: "agent", model });
+		return c.json({ summary, model });
+	} catch (err) {
+		lastError = err;
+		Sentry.logger.warn("model attempt failed", {
+			component: "agent",
+			phase: "summarize-attempt",
+			model,
+			error: String(err),
+		});
+	}
 }
 
 Sentry.captureException(lastError, {
-  tags: { component: "agent", phase: "summarize-all-failed" },
-  contexts: { agent: { attempts: models.length } },
+	tags: { component: "agent", phase: "summarize-all-failed" },
+	contexts: { agent: { attempts: models.length } },
 });
 return c.json({ error: "all models failed" }, 502);
 ```
@@ -184,15 +185,15 @@ If the function runs a [Vercel AI SDK](https://ai-sdk.dev) agent (see [reference
 
 ```typescript
 const result = streamText({
-  model: neon(MODEL),
-  messages,
-  tools,
-  experimental_telemetry: { isEnabled: true },
-  onError: ({ error }) => {
-    Sentry.captureException(error, {
-      tags: { component: "agent", phase: "chat-stream" },
-    });
-  },
+	model: neon(MODEL),
+	messages,
+	tools,
+	experimental_telemetry: { isEnabled: true },
+	onError: ({ error }) => {
+		Sentry.captureException(error, {
+			tags: { component: "agent", phase: "chat-stream" },
+		});
+	},
 });
 ```
 
@@ -200,17 +201,17 @@ const result = streamText({
 
 ```typescript
 const stream = result.textStream
-  .pipeThrough(
-    new TransformStream<string, string>({
-      async flush() {
-        await new Promise((r) => setTimeout(r, 0));
-        await Sentry.flush(2000);
-      },
-    }),
-  )
-  .pipeThrough(new TextEncoderStream());
+	.pipeThrough(
+		new TransformStream<string, string>({
+			async flush() {
+				await new Promise((r) => setTimeout(r, 0));
+				await Sentry.flush(2000);
+			},
+		})
+	)
+	.pipeThrough(new TextEncoderStream());
 return new Response(stream, {
-  headers: { "content-type": "text/plain; charset=utf-8" },
+	headers: { "content-type": "text/plain; charset=utf-8" },
 });
 ```
 

@@ -13,10 +13,10 @@ With `@mastra/core` 1.47+, use a `neon/<model>` magic string — Mastra reads `N
 import { Agent } from "@mastra/core/agent";
 
 export const pricingAgent = new Agent({
-  id: "pricing-analyst",
-  name: "pricing-analyst",
-  instructions: "You are a meticulous pricing analyst. …",
-  model: "neon/gpt-5-mini",
+	id: "pricing-analyst",
+	name: "pricing-analyst",
+	instructions: "You are a meticulous pricing analyst. …",
+	model: "neon/gpt-5-mini",
 });
 ```
 
@@ -30,23 +30,27 @@ Gotcha: `Observability` requires **at least one exporter** — passing an empty 
 // src/mastra/index.ts
 import { Mastra } from "@mastra/core/mastra";
 import { Observability, MastraPlatformExporter } from "@mastra/observability";
+
 import { pricingAgent } from "./agents/pricing";
 
 const platformReady = Boolean(
-  process.env.MASTRA_PLATFORM_ACCESS_TOKEN && process.env.MASTRA_PROJECT_ID,
+	process.env.MASTRA_PLATFORM_ACCESS_TOKEN && process.env.MASTRA_PROJECT_ID
 );
 
 const observability = platformReady
-  ? new Observability({
-      configs: {
-        default: { serviceName: "my-app", exporters: [new MastraPlatformExporter()] },
-      },
-    })
-  : undefined;
+	? new Observability({
+			configs: {
+				default: {
+					serviceName: "my-app",
+					exporters: [new MastraPlatformExporter()],
+				},
+			},
+		})
+	: undefined;
 
 export const mastra = new Mastra({
-  agents: { pricingAgent },
-  ...(observability ? { observability } : {}),
+	agents: { pricingAgent },
+	...(observability ? { observability } : {}),
 });
 ```
 
@@ -59,8 +63,8 @@ The gateway does not enforce **native** structured output, so a bare `structured
 ```typescript
 const agent = mastra.getAgent("pricingAgent");
 const result = await agent.generate(prompt, {
-  structuredOutput: { schema: myZodSchema, jsonPromptInjection: true },
-  abortSignal: AbortSignal.timeout(70_000), // bound each attempt; the gateway has an upstream timeout
+	structuredOutput: { schema: myZodSchema, jsonPromptInjection: true },
+	abortSignal: AbortSignal.timeout(70_000), // bound each attempt; the gateway has an upstream timeout
 });
 const data = result.object; // validated against myZodSchema
 ```

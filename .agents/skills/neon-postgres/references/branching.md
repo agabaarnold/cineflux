@@ -12,8 +12,7 @@ Use this decision rule first:
 1. If the user wants to test complex migrations, performance, or behavior against production-like data, choose a **normal branch**.
 2. If the user needs to avoid copying sensitive data, choose a **schema-only branch**.
 
-If the request is ambiguous, ask one clarifying question:
-"Do you need realistic data for testing, or only schema structure because the data is sensitive?"
+If the request is ambiguous, ask one clarifying question: "Do you need realistic data for testing, or only schema structure because the data is sensitive?"
 
 ## Tool Selection: CLI or MCP
 
@@ -42,8 +41,7 @@ Support both the Neon CLI and the Neon MCP server, but **default to the CLI**. U
 
 ## Create a Normal Branch (Preferred for Real-Data Migration Testing)
 
-Use this when the user needs realistic testing conditions.
-Real production-like data can expose edge cases your seed or data migration scripts miss, which helps catch migration issues before going live.
+Use this when the user needs realistic testing conditions. Real production-like data can expose edge cases your seed or data migration scripts miss, which helps catch migration issues before going live.
 
 Link: https://neon.com/docs/introduction/branching.md
 
@@ -197,24 +195,24 @@ npm i @neon/config
 import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
-  branch: (branch) => {
-    if (branch.exists) return {}; // never reconcile existing branches
-    if (branch.isDefault) return { protected: true };
-    if (branch.name.startsWith("preview/") || branch.name.startsWith("dev")) {
-      return {
-        parent: "main",
-        ttl: "7d", // ephemeral: auto-expire 7 days after creation (max 30d)
-        postgres: {
-          computeSettings: {
-            autoscalingLimitMinCu: 0.25, // scale to zero
-            autoscalingLimitMaxCu: 1, // keep throwaway branches cheap
-            suspendTimeout: "5m",
-          },
-        },
-      };
-    }
-    return {};
-  },
+	branch: (branch) => {
+		if (branch.exists) return {}; // never reconcile existing branches
+		if (branch.isDefault) return { protected: true };
+		if (branch.name.startsWith("preview/") || branch.name.startsWith("dev")) {
+			return {
+				parent: "main",
+				ttl: "7d", // ephemeral: auto-expire 7 days after creation (max 30d)
+				postgres: {
+					computeSettings: {
+						autoscalingLimitMinCu: 0.25, // scale to zero
+						autoscalingLimitMaxCu: 1, // keep throwaway branches cheap
+						suspendTimeout: "5m",
+					},
+				},
+			};
+		}
+		return {};
+	},
 });
 ```
 

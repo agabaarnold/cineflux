@@ -54,19 +54,19 @@ In TypeScript applications, use `@neon/sdk`. Every method takes one named parame
 
 ```typescript
 for await (const record of neon.logs.query({
-  projectId,
-  branchId,
-  since: "1h",
-  source: "function",
+	projectId,
+	branchId,
+	since: "1h",
+	source: "function",
 })) {
-  console.log(record.timestamp, record.severity_text, record.message);
+	console.log(record.timestamp, record.severity_text, record.message);
 }
 
 const { data: fields } = await neon.logs.fields({ projectId, branchId });
 const { data: serviceNames } = await neon.logs.fieldValues({
-  projectId,
-  branchId,
-  fieldName: "service_name",
+	projectId,
+	branchId,
+	fieldName: "service_name",
 });
 ```
 
@@ -76,15 +76,16 @@ const { data: serviceNames } = await neon.logs.fieldValues({
 
 ```typescript
 const { data, error } = await neon.logs.loki.queryRange({
-  projectId,
-  branchId,
-  query: '{entity_type="function"} |= "timeout"',
-  since: "30m",
-  limit: 100,
+	projectId,
+	branchId,
+	query: '{entity_type="function"} |= "timeout"',
+	since: "30m",
+	limit: 100,
 });
 if (error) throw error;
 for (const { stream, values } of data.data.result) {
-  for (const [timestampNs, line] of values) console.log(timestampNs, stream.service_name, line);
+	for (const [timestampNs, line] of values)
+		console.log(timestampNs, stream.service_name, line);
 }
 
 await neon.logs.loki.labels({ projectId, branchId });
