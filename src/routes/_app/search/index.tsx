@@ -1,20 +1,23 @@
-// oxlint-disable react/function-component-definition func-style
-import { IconSearch } from "@tabler/icons-react";
+// oxlint-disable react/function-component-definition func-style react/set-state-in-effect
+import { IconSearch, IconX } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { z } from "zod";
 
+import { MediaRowSkeleton } from "#/components/media/media-row-skeleton.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
+	InputGroupButton,
 } from "#/components/ui/input-group.tsx";
 import { Input } from "#/components/ui/input.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
+import { useDebounce } from "#/hooks/use-debounce.ts";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
 import {
 	searchMoviesQueryOptions,
@@ -56,9 +59,12 @@ const readRecentSearches = (): string[] => {
 
 function NoResults({ query }: { query: string }) {
 	return (
-		<p className="text-muted-foreground text-sm">
-			No results for &ldquo;{query}&rdquo;.
-		</p>
+		<div className="rounded-2xl border border-dashed px-6 py-16 text-center">
+			<h2 className="text-xl font-semibold">No results found</h2>
+			<p className="text-muted-foreground mt-1 text-sm">
+				No matches for &ldquo;{query}&rdquo;. Try another title or name.
+			</p>
+		</div>
 	);
 }
 
@@ -152,7 +158,7 @@ function SearchFilters({
 			</Tabs>
 			<Input
 				aria-label="Filter by release year"
-				className="h-9 w-full sm:w-28"
+				className="h-11 w-full sm:w-28"
 				inputMode="numeric"
 				max={2100}
 				min={1800}
@@ -449,10 +455,14 @@ function SearchPage() {
 	const [value, setValue] = useState(search.query);
 	const [yearInput, setYearInput] = useState(search.year ?? "");
 	const [recent, setRecent] = useState<string[]>([]);
+	const debouncedValue = useDebounce(value, 400);
+	const isComposing = useRef(false);
 
 	useEffect(() => {
 		const syncFromUrl = () => {
+			// oxlint-disable-next-line react/set-state-in-effect
 			setValue(search.query);
+			// oxlint-disable-next-line react/set-state-in-effect
 			setYearInput(search.year ?? "");
 		};
 		syncFromUrl();
@@ -474,19 +484,18 @@ function SearchPage() {
 	}, []);
 
 	useEffect(() => {
-		const trimmed = value.trim();
+		const trimmed = debouncedValue.trim();
 		if (trimmed === search.query) {
 			return;
 		}
-		const handle = setTimeout(() => {
-			navigate({
-				search: { query: trimmed, type: search.type, year: search.year },
-				to: ".",
-			});
+		navigate({
+			search: { query: trimmed, type: search.type, year: search.year },
+			to: ".",
+		});
+		if (trimmed) {
 			recordRecent(trimmed);
-		}, 400);
-		return () => clearTimeout(handle);
-	}, [value, search, navigate, recordRecent]);
+		}
+	}, [debouncedValue, search, navigate, recordRecent]);
 
 	// SAFETY: localStorage only exists in the browser; effects never run on the server.
 	useEffect(() => {
@@ -509,26 +518,58 @@ function SearchPage() {
 		search.year === undefined ? undefined : Number(search.year);
 	const { isPending, movieResults, multiResults, personResults, showResults } =
 		useTypedSearch(query, type, yearNumber);
+	const isDebouncing = value.trim() !== search.query.trim();
+
+	const submitSearch = () => {
+		const trimmed = value.trim();
+		navigate({
+			search: { query: trimmed, type: search.type, year: search.year },
+			to: ".",
+		});
+		if (trimmed) {
+			recordRecent(trimmed);
+		}
+	};
+
+	const clearSearch = () => {
+		setValue("");
+		navigate({
+			search: { query: "", type: search.type, year: search.year },
+			to: ".",
+		});
+	};
 
 	let body: ReactNode;
-	if (query === "") {
+	if (query === "" && value.trim() === "") {
 		body = (
-			<>
-				<p className="text-muted-foreground text-sm">
-					Type to search across movies, TV shows, and people.
-				</p>
-				<RecentSearches
-					onClear={clearRecents}
-					onSelect={setValue}
-					terms={recent}
-				/>
-			</>
+			<RecentSearches
+				onClear={clearRecents}
+				onSelect={setValue}
+				terms={recent}
+			/>
 		);
-	} else if (isPending) {
+	} else if (isDebouncing || isPending) {
+		let loadingTitle = "People";
+		if (type === "movie") {
+			loadingTitle = "Movies";
+		} else if (type === "tv") {
+			loadingTitle = "TV Shows";
+		}
 		body = (
-			<p className="text-muted-foreground text-sm">
-				Searching for &ldquo;{query}&rdquo;…
-			</p>
+			<div aria-live="polite">
+				<span className="sr-only">
+					Searching for &ldquo;{value.trim()}&rdquo;
+				</span>
+				{type === "all" ? (
+					<div className="space-y-8">
+						<MediaRowSkeleton title="Movies" />
+						<MediaRowSkeleton title="TV Shows" />
+						<MediaRowSkeleton title="People" />
+					</div>
+				) : (
+					<MediaRowSkeleton title={loadingTitle} />
+				)}
+			</div>
 		);
 	} else if (type === "movie") {
 		body = <MovieResults items={movieResults} query={query} />;
@@ -552,18 +593,48 @@ function SearchPage() {
 			</div>
 
 			<search className="block w-full sm:max-w-xl">
-				<InputGroup>
-					<InputGroupAddon>
-						<IconSearch aria-hidden="true" />
-					</InputGroupAddon>
-					<InputGroupInput
-						aria-label="Search movies, TV shows, and people"
-						onChange={(event) => setValue(event.target.value)}
-						placeholder="Search titles or people…"
-						type="text"
-						value={value}
-					/>
-				</InputGroup>
+				<form
+					onSubmit={(event) => {
+						event.preventDefault();
+						submitSearch();
+					}}
+				>
+					<InputGroup className="h-12">
+						<InputGroupAddon>
+							<IconSearch aria-hidden="true" />
+						</InputGroupAddon>
+						<InputGroupInput
+							aria-label="Search movies, TV shows, and people"
+							autoFocus
+							onChange={(event) => setValue(event.target.value)}
+							onCompositionEnd={() => {
+								isComposing.current = false;
+							}}
+							onCompositionStart={() => {
+								isComposing.current = true;
+							}}
+							onKeyDown={(event) => {
+								if (event.key === "Enter" && isComposing.current) {
+									event.preventDefault();
+								}
+							}}
+							placeholder="Search titles or people…"
+							type="search"
+							value={value}
+						/>
+						{value ? (
+							<InputGroupAddon align="inline-end">
+								<InputGroupButton
+									aria-label="Clear search"
+									onClick={clearSearch}
+									size="icon-sm"
+								>
+									<IconX aria-hidden="true" />
+								</InputGroupButton>
+							</InputGroupAddon>
+						) : null}
+					</InputGroup>
+				</form>
 			</search>
 
 			<SearchFilters
