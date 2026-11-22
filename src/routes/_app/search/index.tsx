@@ -79,7 +79,7 @@ function RecentSearches({
 			<div className="mb-3 flex items-center justify-between">
 				<h2 className="text-lg font-semibold">Recent searches</h2>
 				<button
-					className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+					className="text-muted-foreground hover:text-foreground min-h-11 px-2 text-xs transition-colors"
 					onClick={onClear}
 					type="button"
 				>
@@ -89,7 +89,7 @@ function RecentSearches({
 			<div className="flex flex-wrap gap-2">
 				{terms.map((term) => (
 					<button
-						className="hover:bg-accent hover:text-accent-foreground flex h-9 items-center rounded-full border px-4 text-sm transition-colors"
+						className="hover:bg-accent hover:text-accent-foreground flex h-11 items-center rounded-full border px-4 text-sm transition-colors"
 						key={term}
 						onClick={() => onSelect(term)}
 						type="button"

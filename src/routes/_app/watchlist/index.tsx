@@ -5,6 +5,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
+import { MediaGridSkeleton } from "#/components/media/media-grid-skeleton.tsx";
 import { MediaRow } from "#/components/media/media-row.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs.tsx";
@@ -70,7 +71,12 @@ function WatchlistPage() {
 
 	let body: ReactNode;
 	if (itemsPending) {
-		body = <p className="text-muted-foreground text-sm">Loading your list…</p>;
+		body = (
+			<output aria-busy="true" className="block">
+				<span className="sr-only">Loading your watchlist</span>
+				<MediaGridSkeleton compact gap="gap-2" title="" />
+			</output>
+		);
 	} else if (rows.length === 0) {
 		body = (
 			<div className="flex flex-col items-center rounded-2xl border border-dashed px-6 py-16 text-center">
