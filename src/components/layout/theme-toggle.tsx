@@ -12,7 +12,7 @@ export const ThemeToggle = ({ className }: { className?: string }) => {
 			aria-pressed={dark}
 			className={
 				className ??
-				"text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-9 items-center justify-center rounded-full transition-colors"
+				"text-primary/75 hover:bg-accent hover:text-accent-foreground flex size-11 items-center justify-center rounded-full transition-colors"
 			}
 			onClick={toggle}
 			type="button"
