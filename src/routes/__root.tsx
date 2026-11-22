@@ -10,7 +10,6 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "react-hot-toast";
 
-import { Footer } from "#/components/layout/footer.tsx";
 import { TooltipProvider } from "#/components/ui/tooltip.tsx";
 import { ThemeProvider } from "#/hooks/use-theme.tsx";
 import { THEME_INIT_SCRIPT } from "#/lib/theme.ts";
@@ -120,7 +119,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<ThemeProvider>
 					<TooltipProvider>{children}</TooltipProvider>
 				</ThemeProvider>
-				<Footer />
 				<Toaster />
 
 				<TanStackDevtools
