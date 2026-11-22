@@ -27,6 +27,7 @@ const mediaTypeLabel = (mediaType: CardMediaType) => {
 };
 
 export const MediaCard = ({
+	grid = false,
 	href,
 	image,
 	mediaId,
@@ -36,6 +37,7 @@ export const MediaCard = ({
 	title,
 	year,
 }: {
+	grid?: boolean;
 	href: string;
 	image: string | null;
 	mediaId: number;
@@ -47,7 +49,13 @@ export const MediaCard = ({
 }) => {
 	const { isPending, saved, toggle } = useWatchlistItem(mediaType, mediaId);
 	return (
-		<div className="group h-full w-40 shrink-0 snap-start sm:w-44">
+		<div
+			className={
+				grid
+					? "group h-full w-full min-w-0 snap-start"
+					: "group h-full w-40 shrink-0 snap-start sm:w-44"
+			}
+		>
 			<div className="bg-card relative h-full overflow-hidden rounded-2xl border transition-transform duration-300 group-hover:scale-[1.03] group-hover:shadow-lg">
 				<Link className="flex h-full flex-col" to={href}>
 					<div className="relative">
@@ -87,7 +95,7 @@ export const MediaCard = ({
 						</p>
 						<p
 							aria-label={overview ? undefined : "Description unavailable"}
-							className="text-muted-foreground mt-2 line-clamp-3 min-h-[3.75rem] text-xs leading-relaxed"
+							className="text-muted-foreground mt-2 line-clamp-3 min-h-15 text-xs leading-relaxed"
 						>
 							{overview || "\u00A0"}
 						</p>

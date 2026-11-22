@@ -10,7 +10,7 @@ export const MediaGrid = ({
 	title: string;
 	gap?: string;
 }) => (
-	<section className="mx-auto mt-20 mb-4">
+	<section className="mx-auto mt-20 mb-4 w-full max-w-7xl px-4">
 		{title ? (
 			<h2 className="mb-5 text-center text-xl font-semibold uppercase">
 				{title}
@@ -20,6 +20,7 @@ export const MediaGrid = ({
 		<div className={`grid grid-cols-2 ${gap} sm:grid-cols-3 lg:grid-cols-4`}>
 			{items.map((item) => (
 				<MediaCard
+					grid
 					key={item.id}
 					href={item.href}
 					image={item.image}
