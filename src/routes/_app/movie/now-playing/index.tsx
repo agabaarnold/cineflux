@@ -53,10 +53,10 @@ function NowPlayingMoviesPage() {
 	);
 
 	return (
-		<div className="flex flex-col">
-			<MediaGrid items={items} title="Now Playing" />
+		<div className="flex flex-col space-y-6">
+			<MediaGrid items={items} title="Now Playing" gap="gap-2" />
 			{query.hasNextPage && (
-				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-6">
+				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-4">
 					<button
 						className="bg-primary text-primary-foreground hover:bg-primary/90 flex h-9 items-center justify-center rounded-full px-4 text-sm font-medium transition-colors"
 						disabled={query.isFetching}
