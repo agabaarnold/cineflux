@@ -27,6 +27,6 @@ export const fetchTrending = createServerFn({ method: "GET" })
 		tmdbFetchValidated(
 			`/trending/${data.media_type}/${data.time_window}`,
 			trendingResponseSchemas[data.media_type],
-			{ params: { language: data.language } }
+			{ params: { language: data.language, page: data.page } }
 		)
 	);

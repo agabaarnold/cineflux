@@ -9,6 +9,7 @@ import { tvSeriesSchema } from "./tv";
 export const trendingSchema = z.object({
 	time_window: timeWindowSchema,
 	language: z.string().min(2).optional(),
+	page: z.number().int().positive().optional(),
 });
 
 export const trendingMoviesSchema = movieSchema.extend({
