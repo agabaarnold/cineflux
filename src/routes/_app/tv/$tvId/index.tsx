@@ -15,7 +15,7 @@ import {
 	ReviewsList,
 } from "#/components/media/detail-sections.tsx";
 import type { ReviewItem } from "#/components/media/detail-sections.tsx";
-import { MediaRow } from "#/components/media/media-row.tsx";
+import { MediaGrid } from "#/components/media/media-grid.tsx";
 import { WatchProviders } from "#/components/media/watch-providers.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import {
@@ -347,7 +347,7 @@ function TvDetailsPage() {
 					</TabsContent>
 
 					<TabsContent className="mt-4" value="similar">
-						<MediaRow
+						<MediaGrid
 							items={similar.slice(0, 10).map((show) => ({
 								href: `/tv/${show.id}`,
 								id: String(show.id),

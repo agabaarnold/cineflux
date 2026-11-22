@@ -47,7 +47,7 @@ function AiringTodayTvPage() {
 
 	return (
 		<div className="flex flex-col">
-			<MediaRow items={items} title="Airing Today" href="/tv/airing-today" />
+			<MediaRow items={items} title="Airing Today" />
 			{hasNextPage && (
 				<div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4 py-6">
 					<button

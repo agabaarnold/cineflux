@@ -16,7 +16,7 @@ import {
 	ReviewsList,
 } from "#/components/media/detail-sections.tsx";
 import type { ReviewItem } from "#/components/media/detail-sections.tsx";
-import { MediaRow } from "#/components/media/media-row.tsx";
+import { MediaGrid } from "#/components/media/media-grid.tsx";
 import { WatchProviders } from "#/components/media/watch-providers.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import {
@@ -282,7 +282,7 @@ function MovieDetailsPage() {
 						<WatchProviders providers={providers} />
 						{franchise.length > 0 ? (
 							<div className="mt-8">
-								<MediaRow
+								<MediaGrid
 									items={franchise.map((movie) => ({
 										href: `/movie/${movie.id}`,
 										id: String(movie.id),
@@ -323,7 +323,7 @@ function MovieDetailsPage() {
 					</TabsContent>
 
 					<TabsContent className="mt-4" value="similar">
-						<MediaRow
+						<MediaGrid
 							items={similar.slice(0, 10).map((movie) => ({
 								href: `/movie/${movie.id}`,
 								id: String(movie.id),
