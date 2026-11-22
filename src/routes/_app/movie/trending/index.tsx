@@ -2,7 +2,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { MediaRow } from "#/components/media/media-row.tsx";
+import { MediaGrid } from "#/components/media/media-grid.tsx";
 import { RouteError } from "#/components/shared/route-error.tsx";
 import { pageHead, pageTitle } from "#/lib/seo.ts";
 import { fetchTrendingQueryOptions } from "#/queries/trending.ts";
@@ -60,7 +60,7 @@ function TrendingMoviesPage() {
 
 	return (
 		<div className="flex flex-col">
-			<MediaRow items={items} title="Trending Movies" />
+			<MediaGrid items={items} title="Trending Movies" />
 		</div>
 	);
 }
