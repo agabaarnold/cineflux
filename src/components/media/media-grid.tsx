@@ -10,8 +10,13 @@ export const MediaGrid = ({
 	title: string;
 	gap?: string;
 }) => (
-	<section>
-		{title ? <h2 className="mb-2 text-xl font-semibold">{title}</h2> : null}
+	<section className="mx-auto mt-20 mb-4">
+		{title ? (
+			<h2 className="mb-5 text-center text-xl font-semibold uppercase">
+				{title}
+			</h2>
+		) : null}
+
 		<div className={`grid grid-cols-2 ${gap} sm:grid-cols-3 lg:grid-cols-4`}>
 			{items.map((item) => (
 				<MediaCard

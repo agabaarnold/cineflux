@@ -109,7 +109,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 
-			<body>
+			<body className="min-h-dvh">
 				<a
 					className="bg-primary text-primary-foreground absolute top-4 left-4 z-60 -translate-y-40 rounded-full px-4 py-2 text-sm font-medium transition-transform focus:translate-y-0"
 					href="#main-content"

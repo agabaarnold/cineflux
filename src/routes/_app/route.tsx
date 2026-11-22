@@ -21,10 +21,10 @@ export const Route = createFileRoute("/_app")({
 function AppLayout() {
 	const { user } = Route.useRouteContext();
 	return (
-		<div className="flex min-h-screen flex-col">
+		<div className="flex min-h-dvh flex-col">
 			<Navbar user={user} />
 
-			<main id="main-content flex-1">
+			<main className="flex-1" id="main-content">
 				<Outlet />
 			</main>
 

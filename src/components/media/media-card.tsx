@@ -47,9 +47,9 @@ export const MediaCard = ({
 }) => {
 	const { isPending, saved, toggle } = useWatchlistItem(mediaType, mediaId);
 	return (
-		<div className="group w-40 shrink-0 snap-start sm:w-44">
-			<div className="bg-card relative overflow-hidden rounded-2xl border transition-transform duration-300 group-hover:scale-[1.03] group-hover:shadow-lg">
-				<Link className="block" to={href}>
+		<div className="group h-full w-40 shrink-0 snap-start sm:w-44">
+			<div className="bg-card relative h-full overflow-hidden rounded-2xl border transition-transform duration-300 group-hover:scale-[1.03] group-hover:shadow-lg">
+				<Link className="flex h-full flex-col" to={href}>
 					<div className="relative">
 						<AspectRatio ratio={2 / 3}>
 							{image ? (
@@ -85,11 +85,12 @@ export const MediaCard = ({
 							)}
 							{year ? <span>{year}</span> : null}
 						</p>
-						{overview ? (
-							<p className="text-muted-foreground mt-2 line-clamp-3 text-xs leading-relaxed">
-								{overview}
-							</p>
-						) : null}
+						<p
+							aria-label={overview ? undefined : "Description unavailable"}
+							className="text-muted-foreground mt-2 line-clamp-3 min-h-[3.75rem] text-xs leading-relaxed"
+						>
+							{overview || "\u00A0"}
+						</p>
 					</div>
 				</Link>
 				<button
