@@ -302,9 +302,7 @@ function DiscoverPage() {
 				</Button>
 			</form>
 
-			{query.isPending ? (
-				<MediaGridSkeleton compact gap="gap-3" title="" />
-			) : null}
+			{query.isPending ? <MediaGridSkeleton gap="gap-3" title="" /> : null}
 			{!query.isPending && items.length === 0 ? (
 				<div className="my-8 rounded-2xl border border-dashed px-6 py-16 text-center">
 					<h2 className="text-xl font-semibold">No titles found</h2>

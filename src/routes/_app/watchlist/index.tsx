@@ -74,7 +74,7 @@ function WatchlistPage() {
 		body = (
 			<output aria-busy="true" className="block">
 				<span className="sr-only">Loading your watchlist</span>
-				<MediaGridSkeleton compact gap="gap-2" title="" />
+				<MediaGridSkeleton gap="gap-2" title="" />
 			</output>
 		);
 	} else if (rows.length === 0) {
